@@ -11,3 +11,7 @@ wheels/
 
 *.mp4
 wandb/
+slurm*
+
+datasets/*
+outputs/*

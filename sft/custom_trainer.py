@@ -1,71 +1,137 @@
 from functools import partial
 from typing import Callable, Optional, Union, Any
 
+import contextlib
 import torch
 import torch.nn as nn
+from torch.distributed.fsdp import FullyShardedDataParallel
 from torch.utils.data import DataLoader, Dataset
 
 from transformers.trainer_utils import seed_worker
 from transformers.utils import is_datasets_available
 from transformers import Seq2SeqTrainer
+from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
+from transformers.integrations.fsdp import is_fsdp_managed_module
 
 if is_datasets_available():
     import datasets
 
 class CausalPoolTrainer(Seq2SeqTrainer):
-    
-    def __init__(self, *args, data_collator_train=None, data_collator_eval=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if data_collator_train is None:
-            data_collator_train = self.data_collator
-        if data_collator_eval is None:
-            data_collator_eval = self.data_collator
-        self.data_collator_train = data_collator_train
-        self.data_collator_eval = data_collator_eval
 
-    def _get_dataloader(
+    def prediction_step(
         self,
-        dataset: Dataset,
-        description: str,
-        batch_size: int,
-        sampler_fn: Optional[Callable[[Dataset], torch.utils.data.Sampler]] = None,
-        is_training: bool = False,
-        dataloader_key: Optional[str] = None,
-    ) -> DataLoader:
-        """Create a [`~torch.utils.data.DataLoader`] from the given dataset."""
+        model: nn.Module,
+        inputs: dict[str, Union[torch.Tensor, Any]],
+        prediction_loss_only: bool,
+        ignore_keys: Optional[list[str]] = None,
+        **gen_kwargs,
+    ) -> tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]:
+        """
+        Perform an evaluation step on `model` using `inputs`.
 
-        # with Seq2SeqTrainer, during eval, the eval_dataloader will use self.data_collator_eval
-        data_collator = self.data_collator_train if is_training else self.data_collator_eval
-        if is_datasets_available() and isinstance(dataset, datasets.Dataset):
-            dataset = self._remove_unused_columns(dataset, description=description)
-        else:
-            data_collator = self._get_collator_with_removed_columns(data_collator, description=description)
+        Subclass and override to inject custom behavior.
 
-        dataloader_params = {
-            "batch_size": batch_size,
-            "collate_fn": data_collator,
-            "num_workers": self.args.dataloader_num_workers,
-            "pin_memory": self.args.dataloader_pin_memory,
-            "persistent_workers": self.args.dataloader_persistent_workers,
-        }
+        Args:
+            model (`nn.Module`):
+                The model to evaluate.
+            inputs (`dict[str, Union[torch.Tensor, Any]]`):
+                The inputs and targets of the model.
 
-        if not isinstance(dataset, torch.utils.data.IterableDataset):
-            if sampler_fn is not None:
-                dataloader_params["sampler"] = sampler_fn(dataset)
-            dataloader_params["drop_last"] = self.args.dataloader_drop_last
-            dataloader_params["prefetch_factor"] = self.args.dataloader_prefetch_factor
-            if is_training:
-                dataloader_params["worker_init_fn"] = partial(
-                    seed_worker, num_workers=self.args.dataloader_num_workers, rank=self.args.process_index
-                )
+                The dictionary will be unpacked before being fed to the model. Most models expect the targets under the
+                argument `labels`. Check your model's documentation for all accepted arguments.
+            prediction_loss_only (`bool`):
+                Whether or not to return the loss only.
+            gen_kwargs:
+                Additional `generate` specific kwargs.
 
-        dataloader = self.accelerator.prepare(DataLoader(dataset, **dataloader_params))
+        Return:
+            tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]: A tuple with the loss, logits and
+            labels (each being optional).
+        """
 
-        # Store the prepared dataloader for subsequent evaluations if using persistent workers.
-        if dataloader_key is not None and self.args.dataloader_persistent_workers:
-            if hasattr(self, "_eval_dataloaders"):
-                self._eval_dataloaders[dataloader_key] = dataloader
+        if not self.args.predict_with_generate or prediction_loss_only:
+            return super().prediction_step(
+                model, inputs, prediction_loss_only=prediction_loss_only, ignore_keys=ignore_keys
+            )
+
+        has_labels = "labels" in inputs
+        inputs = self._prepare_inputs(inputs)
+
+        # Priority (handled in generate):
+        # non-`None` gen_kwargs > model.generation_config > default GenerationConfig()
+        if len(gen_kwargs) == 0 and hasattr(self, "_gen_kwargs"):
+            gen_kwargs = self._gen_kwargs.copy()
+        if "num_beams" in gen_kwargs and gen_kwargs["num_beams"] is None:
+            gen_kwargs.pop("num_beams")
+        if "max_length" in gen_kwargs and gen_kwargs["max_length"] is None:
+            gen_kwargs.pop("max_length")
+
+        default_synced_gpus = is_deepspeed_zero3_enabled() or is_fsdp_managed_module(self.model)
+        gen_kwargs["synced_gpus"] = gen_kwargs.get("synced_gpus", default_synced_gpus)
+
+        # --- scott: modification starts here ---
+        generation_inputs = inputs.pop("generation_inputs")
+        # If the `decoder_input_ids` was created from `labels`, evict the former, so that the model can freely generate
+        # (otherwise, it would continue generating from the padded `decoder_input_ids`)
+        # if (
+        #     "labels" in generation_inputs
+        #     and "decoder_input_ids" in generation_inputs
+        #     and generation_inputs["labels"].shape == generation_inputs["decoder_input_ids"].shape
+        # ):
+        #     generation_inputs = {
+        #         k: v for k, v in inputs.items() if k not in ("decoder_input_ids", "decoder_attention_mask")
+        #     }        
+        # --- scott: modification ends here ---
+
+        summon_full_params_context = (
+            FullyShardedDataParallel.summon_full_params(self.model)
+            if isinstance(self.model, FullyShardedDataParallel)
+            else contextlib.nullcontext()
+        )
+
+        with summon_full_params_context:
+            generated_tokens = self.model.generate(**generation_inputs, **gen_kwargs)
+            
+        # --- scott: modification starts here ---
+        prompt_len = generation_inputs["attention_mask"].size(1)
+        generated_tokens = generated_tokens[:, prompt_len:]
+        # --- scott: modification ends here ---
+
+        # Temporary hack to ensure the generation config is not initialized for each iteration of the evaluation loop
+        # TODO: remove this hack when the legacy code that initializes generation_config from a model config is
+        # removed in https://github.com/huggingface/transformers/blob/98d88b23f54e5a23e741833f1e973fdf600cc2c5/src/transformers/generation/utils.py#L1183
+        if self.model.generation_config._from_model_config:
+            self.model.generation_config._from_model_config = False
+
+        # Retrieves GenerationConfig from model.generation_config
+        gen_config = self.model.generation_config
+        # in case the batch is shorter than max length, the output should be padded
+        if generated_tokens.shape[-1] < gen_config.max_length:
+            generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_config.max_length)
+        elif gen_config.max_new_tokens is not None and generated_tokens.shape[-1] < gen_config.max_new_tokens + 1:
+            generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_config.max_new_tokens + 1)
+
+        with torch.no_grad():
+            if has_labels:
+                with self.compute_loss_context_manager():
+                    outputs = model(**inputs)
+                if self.label_smoother is not None:
+                    loss = self.label_smoother(outputs, inputs["labels"]).detach().mean()
+                else:
+                    loss = (outputs["loss"] if isinstance(outputs, dict) else outputs[0]).detach().mean()
             else:
-                self._eval_dataloaders = {dataloader_key: dataloader}
+                loss = None
 
-        return dataloader
+        if self.args.prediction_loss_only:
+            return loss, None, None
+
+        if has_labels:
+            labels = inputs["labels"]
+            if labels.shape[-1] < gen_config.max_length:
+                labels = self._pad_tensors_to_max_len(labels, gen_config.max_length)
+            elif gen_config.max_new_tokens is not None and labels.shape[-1] < gen_config.max_new_tokens + 1:
+                labels = self._pad_tensors_to_max_len(labels, gen_config.max_new_tokens + 1)
+        else:
+            labels = None
+
+        return loss, generated_tokens, labels
