@@ -66,8 +66,8 @@ tokenizer = processor.tokenizer
 from peft import LoraConfig, get_peft_model
 
 peft_config = LoraConfig(
-    r=32,
-    lora_alpha=32,
+    r=128,
+    lora_alpha=128,
     lora_dropout=0.1,
     target_modules=[
         # Text tower
@@ -242,21 +242,20 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
     total_num_options = 0
     i = 0
     for pred, label in zip(preds, labels):
+        label = set(c for c in label if c.isalpha())
+        total_num_options += len(label)
         pred_options = set(c for c in pred if c.isalpha() and c.isupper())
         if len(pred_options) != len(pred):
             # invalid -> 0
             metrics_dict["per_question_accuracy"].append(0)
             metrics_dict["per_option_accuracy"].append(0)
             continue
-
         pred = pred_options
-        label = set(c for c in label if c.isalpha())
 
         per_question_accuracy = int(pred == label)
         per_option_accuracy = len(pred & label)
         metrics_dict["per_question_accuracy"].append(per_question_accuracy)
         metrics_dict["per_option_accuracy"].append(per_option_accuracy)
-        total_num_options += len(label)
 
         if i % 100 == 0:
             print("-" * 100)
@@ -281,25 +280,25 @@ output_dir = "outputs/"
 # Configure training arguments using SFTConfig
 training_args = Seq2SeqTrainingArguments(
     # data loading
-    dataloader_num_workers=4,
+    dataloader_num_workers=8,
     dataloader_pin_memory=True,
     remove_unused_columns=False,
     # training schedule / optimization
     num_train_epochs=1,
     # max_steps=30,
-    per_device_train_batch_size=16,
-    gradient_accumulation_steps=1,
+    per_device_train_batch_size=8,
+    gradient_accumulation_steps=4,
     gradient_checkpointing=True,
     warmup_steps=5,
     learning_rate=2e-4,
     max_grad_norm=1.0,
     weight_decay=0.01,
     # eval
-    per_device_eval_batch_size=16,
+    per_device_eval_batch_size=8,
     predict_with_generate=True,
     generation_config=eval_generation_config,
     eval_strategy="steps",
-    eval_steps=64,
+    eval_steps=32,
     eval_on_start=True,
     # Logging / reporting
     output_dir=output_dir,
