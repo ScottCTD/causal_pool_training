@@ -8,12 +8,13 @@ from qwen_vl_utils import process_vision_info
 
 from datasets import Dataset
 import json
+from prompt_utils import build_question_prompt, index_to_letter
 
 def load_causal_pool_dataset(dataset_name, random_seed=42, eval_size=32):
     # train with only counterfactual
     # eval with all question types
     dataset_base_path = f"datasets/{dataset_name}"
-    raw_train = list(jsonlines.open(f"{dataset_base_path}/counterfactual.jsonl"))
+    raw_train = list(jsonlines.open(f"{dataset_base_path}/counterfactual_train.jsonl"))
     
     new_raw = []
     bad_videos = set(
@@ -92,18 +93,6 @@ model.print_trainable_parameters()
 import torch
 
 
-def index_to_letter(index):
-    assert 0 <= index < 26, f"Index must be between 0 and 25, got {index}"
-    return chr(index + ord("A"))
-
-
-def letter_to_index(letter):
-    assert (
-        len(letter) == 1 and letter.isalpha()
-    ), f"Letter must be a single alphabetic character, got {letter}"
-    return ord(letter.upper()) - ord("A")
-
-
 def get_assistant_mask(input_ids):
     # Vectorized search for sequence "<|im_start|>assistant\n" -> [151644, 77091, 198]
     pattern = torch.tensor(
@@ -177,16 +166,10 @@ def train_data_collator(samples):
     for sample in samples:
         video_name = sample["video"]
         video_path = (
-            f"datasets/{DATASET_NAME}/shots/{video_name}/video_{video_name}.mp4"
+            f"datasets/{DATASET_NAME}/shots/{video_name}/video.mp4"
         )
 
-        question = sample["question"]
-        choices = sample["options"]
-
-        question_prompt = f"{question}\n"
-        for i, choice in enumerate(choices):
-            question_prompt += f"{index_to_letter(i)}. {choice}\n"
-        question_prompt += "\nPlease select the correct option(s). Don't write anything else than the option letter(s). Example: AC."
+        question_prompt = build_question_prompt(sample)
 
         ground_truth_indices = sample["ground_truth"]  # List[int] indicies
         ground_truth_answer = "".join(index_to_letter(i) for i in ground_truth_indices)
@@ -275,7 +258,7 @@ eval_generation_config = GenerationConfig(
     do_sample=False,
 )
 
-output_dir = "outputs/"
+output_dir = "outputs_sft/"
 
 # Configure training arguments using SFTConfig
 training_args = Seq2SeqTrainingArguments(
@@ -284,10 +267,10 @@ training_args = Seq2SeqTrainingArguments(
     dataloader_pin_memory=True,
     remove_unused_columns=False,
     # training schedule / optimization
-    num_train_epochs=1,
+    num_train_epochs=5,
     # max_steps=30,
-    per_device_train_batch_size=8,
-    gradient_accumulation_steps=4,
+    per_device_train_batch_size=16,
+    gradient_accumulation_steps=2,
     gradient_checkpointing=True,
     warmup_steps=5,
     learning_rate=2e-4,

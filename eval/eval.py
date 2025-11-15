@@ -11,13 +11,11 @@ This script evaluates a model on a dataset with support for:
 
 import argparse
 import asyncio
-import base64
 import json
 import os
+import random
 import signal
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import Dict, List, Tuple, Any, Optional
 
@@ -34,10 +32,13 @@ from tenacity import (
 )
 from tqdm import tqdm
 
-
-class InvalidPredictionError(ValueError):
-    """Raised when prediction format is invalid (not pure A-Z or has duplicates)."""
-    pass
+from eval_utils import (
+    InvalidPredictionError,
+    normalize_model_name,
+    get_model_hyperparameters,
+    get_metrics,
+    build_prompt,
+)
 
 
 # Create retry condition by combining existing helpers
@@ -49,194 +50,6 @@ _retry_condition = (
 )
 
 
-def normalize_model_name(model_name: str) -> str:
-    """Normalize model name for file naming."""
-    return model_name.split("/")[-1].replace("-", "_").lower()
-
-
-def get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int]:
-    """
-    Returns (exactly correct or not, how many options were correct).
-    
-    Args:
-        entry: Dataset entry with 'ground_truth' field
-        pred: Prediction string (e.g., "AC")
-    
-    Returns:
-        Tuple of (exactly_correct, num_correct_options)
-    
-    Raises:
-        InvalidPredictionError: If prediction format is invalid (not pure A-Z or has duplicates)
-    """
-    pred = pred.strip()
-    
-    if not all(c.isalpha() and c.isupper() for c in pred):
-        raise InvalidPredictionError(f"Prediction contains non-A-Z characters: {pred!r}")
-    
-    selected_options = set(ord(c) - ord("A") for c in pred)
-
-    if len(selected_options) != len(pred):  # duplicate options
-        raise InvalidPredictionError(f"Prediction contains duplicate options: {pred!r}")
-    
-    ground_truth = set(entry["ground_truth"])
-    
-    exactly_correct = int(selected_options == ground_truth)
-    num_correct = len(selected_options & ground_truth)
-    
-    return exactly_correct, num_correct
-
-
-def get_video_duration(video_path: str) -> float:
-    """
-    Get video duration in seconds using ffprobe.
-    
-    Args:
-        video_path: Path to video file
-    
-    Returns:
-        Duration in seconds
-    """
-    try:
-        result = subprocess.run(
-            [
-                "ffprobe",
-                "-v", "error",
-                "-show_entries", "format=duration",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                video_path
-            ],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        return float(result.stdout.strip())
-    except (subprocess.CalledProcessError, ValueError, FileNotFoundError) as e:
-        raise RuntimeError(f"Failed to get video duration for {video_path}: {e}")
-
-
-def cut_video_first_half(video_path: str, output_path: str) -> None:
-    """
-    Cut video to first half using ffmpeg.
-    
-    First tries codec copy (fast), falls back to re-encoding if that fails.
-    
-    Args:
-        video_path: Path to input video file
-        output_path: Path to save cut video
-    """
-    duration = get_video_duration(video_path)
-    half_duration = duration / 2.0
-    
-    # First try codec copy (fast, no re-encoding)
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-i", video_path,
-                "-t", str(half_duration),
-                "-c", "copy",  # Copy codec to avoid re-encoding (faster)
-                "-y",  # Overwrite output file
-                output_path
-            ],
-            capture_output=True,
-            check=True,
-        )
-        return  # Success with codec copy
-    except subprocess.CalledProcessError:
-        # Codec copy failed (e.g., cutting at non-keyframe), fall through to re-encoding
-        pass
-    except FileNotFoundError:
-        raise RuntimeError("ffmpeg not found. Please install ffmpeg to use predictive question type.")
-    
-    # Fall back to re-encoding if codec copy fails (e.g., cutting at non-keyframe)
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-i", video_path,
-                "-t", str(half_duration),
-                "-c:v", "libx264",  # Re-encode video
-                "-c:a", "aac",  # Re-encode audio
-                "-preset", "fast",  # Faster encoding
-                "-y",  # Overwrite output file
-                output_path
-            ],
-            capture_output=True,
-            check=True
-        )
-    except subprocess.CalledProcessError as e:
-        error_msg = e.stderr.decode() if e.stderr else str(e)
-        raise RuntimeError(f"Failed to cut video {video_path}: {error_msg}")
-    except FileNotFoundError:
-        raise RuntimeError("ffmpeg not found. Please install ffmpeg to use predictive question type.")
-
-
-def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".") -> List[Dict[str, Any]]:
-    """
-    Build prompt for a dataset entry.
-    
-    For predictive questions, only the first half of the video is used.
-    
-    Args:
-        entry: Dataset entry
-        dataset_name: Name of the dataset
-        base_dir: Base directory for the project
-    
-    Returns:
-        List of message dictionaries for OpenAI API
-    """
-    video_path = os.path.join(
-        base_dir, "datasets", dataset_name, "shots", entry["video"], f"video_{entry['video']}.mp4"
-    )
-    
-    question_prompt = f"{entry['question']}\n"
-    for i, choice in enumerate(entry["options"]):
-        question_prompt += f"{chr(ord('A') + i)}. {choice}\n"
-    
-    question_prompt += "\nPlease select the correct option(s). Don't write anything else than the option letter(s). Example: AC."
-    
-    # Check if this is a predictive question type
-    question_type = entry.get("metadata", {}).get("question_type", "")
-    is_predictive = question_type == "predictive"
-    
-    # For predictive questions, cut video to first half
-    video_to_encode = video_path
-    temp_video_path = None
-    
-    if is_predictive:
-        # Create temporary file for cut video
-        temp_fd, temp_video_path = tempfile.mkstemp(suffix=".mp4")
-        os.close(temp_fd)
-        try:
-            cut_video_first_half(video_path, temp_video_path)
-            video_to_encode = temp_video_path
-        except Exception as e:
-            # Clean up temp file if cutting fails
-            if temp_video_path and os.path.exists(temp_video_path):
-                os.unlink(temp_video_path)
-            raise RuntimeError(f"Failed to process predictive video: {e}")
-    
-    # Read and encode video
-    try:
-        with open(video_to_encode, "rb") as video_file:
-            video_b64 = base64.b64encode(video_file.read()).decode("utf-8")
-    finally:
-        # Clean up temporary cut video if it was created
-        if temp_video_path and os.path.exists(temp_video_path):
-            os.unlink(temp_video_path)
-    
-    return [{
-        "role": "user",
-        "content": [
-            {
-                "type": "video_url",
-                "video_url": {"url": f"data:video/mp4;base64,{video_b64}"},
-            },
-            {"type": "text", "text": question_prompt},
-        ],
-    }]
-
-
 class AsyncEvaluator:
     """Async evaluator with retry logic."""
     
@@ -245,8 +58,8 @@ class AsyncEvaluator:
         base_url: str,
         model: str,
         api_key: str = "EMPTY",
-        max_tokens: int = 20,
-        temperature: float = 0.8,
+        max_tokens: Optional[int] = None,
+        temperature: Optional[float] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         max_retries: int = 10,
     ):
@@ -257,24 +70,66 @@ class AsyncEvaluator:
             base_url: Base URL for the API
             model: Model name
             api_key: API key (default: "EMPTY")
-            max_tokens: Maximum tokens for generation
-            temperature: Sampling temperature
-            extra_body: Extra body parameters for API
+            max_tokens: Maximum tokens for generation (default: from model config)
+            temperature: Sampling temperature (default: from model config)
+            extra_body: Extra body parameters for API (merged with model defaults)
             max_retries: Maximum number of retries
         """
         self.client = AsyncOpenAI(base_url=base_url, api_key=api_key)
         self.model = model
-        self.max_tokens = max_tokens
-        self.temperature = temperature
-        self.extra_body = extra_body or {
-            "top_k": 20,
-            "top_p": 0.8,
-            "repetition_penalty": 1.0,
-            "presence_penalty": 1.5,
-        }
+        
+        # Get model-specific hyperparameters
+        model_hparams = get_model_hyperparameters(model)
+        
+        # Use provided values or fall back to model defaults
+        self.max_tokens = max_tokens if max_tokens is not None else model_hparams.get("max_tokens")
+        self.temperature = temperature if temperature is not None else model_hparams.get("temperature")
+        
+        # Build extra_body: only include keys that are present in model_hparams or extra_body
+        # Don't include keys that are missing or None
+        extra_body_dict = {}
+        
+        # Add keys from model_hparams if they exist and are not None
+        for key in ["top_k", "top_p", "repetition_penalty", "presence_penalty"]:
+            if key in model_hparams and model_hparams[key] is not None:
+                extra_body_dict[key] = model_hparams[key]
+        
+        # Merge with provided extra_body, only including non-None values
+        if extra_body:
+            for key, value in extra_body.items():
+                if value is not None:
+                    extra_body_dict[key] = value
+        
+        self.extra_body = extra_body_dict if extra_body_dict else None
+        
         self.max_retries = max_retries
         # Track which entries have had their first error printed
         self._first_error_printed = set()
+    
+    def _generate_random_prediction(self, entry: Dict[str, Any]) -> str:
+        """
+        Generate a random prediction for an entry.
+        
+        Randomly selects the same number of options as the ground truth,
+        from the available options.
+        
+        Args:
+            entry: Dataset entry with 'ground_truth' and 'options' fields
+        
+        Returns:
+            Prediction string in valid format (e.g., "AC")
+        """
+        ground_truth = entry["ground_truth"]
+        num_options_to_select = len(ground_truth)
+        num_available_options = len(entry["options"])
+        
+        # Randomly select indices
+        selected_indices = sorted(random.sample(range(num_available_options), num_options_to_select))
+        
+        # Convert to letters (A-Z)
+        prediction = "".join(chr(ord("A") + idx) for idx in selected_indices)
+        
+        return prediction
     
     def _make_print_first_retry_callback(self, entry: Dict[str, Any]):
         """Create a callback that prints error on first retry for this specific entry."""
@@ -314,6 +169,14 @@ class AsyncEvaluator:
             InvalidPredictionError: If prediction format is invalid after max retries
             Other exceptions: Retried up to 10 times
         """
+        # Handle random baseline
+        if self.model == "random":
+            # For random baseline, generate prediction without API call
+            pred = self._generate_random_prediction(entry)
+            # Validate the prediction format (should always be valid, but check anyway)
+            get_metrics(entry, pred)
+            return pred
+        
         # Create retry decorator with entry-specific callback
         @retry(
             stop=stop_after_attempt(10),
@@ -330,13 +193,17 @@ class AsyncEvaluator:
             messages = build_prompt(entry, dataset_name, base_dir)
             
             try:
-                response = await self.client.chat.completions.create(
-                    messages=messages,
-                    model=self.model,
-                    max_tokens=self.max_tokens,
-                    temperature=self.temperature,
-                    extra_body=self.extra_body,
-                )
+                # Build request kwargs, only including extra_body if it has values
+                request_kwargs = {
+                    "messages": messages,
+                    "model": self.model,
+                    "max_tokens": self.max_tokens,
+                    "temperature": self.temperature,
+                }
+                if self.extra_body:
+                    request_kwargs["extra_body"] = self.extra_body
+                
+                response = await self.client.chat.completions.create(**request_kwargs)
                 
                 pred = response.choices[0].message.content
                 if pred is None:
@@ -391,48 +258,42 @@ class AsyncEvaluator:
 
 
 async def evaluate_dataset(
-    dataset_path: str,
+    dataset_paths: List[str],
     evaluator: AsyncEvaluator,
     num_samples: int = 1,
     max_concurrent: int = 10,
     base_dir: str = ".",
     max_entries: Optional[int] = None,
-    exclude_predictive: bool = False,
 ) -> Dict[str, Any]:
     """
     Evaluate entire dataset asynchronously.
     
     Args:
-        dataset_path: Path to JSONL dataset file
+        dataset_paths: List of paths to JSONL dataset files
         evaluator: AsyncEvaluator instance
         num_samples: Number of samples per question
         max_concurrent: Maximum concurrent requests
         base_dir: Base directory for the project
+        max_entries: Maximum number of entries to evaluate (applied after loading all files)
     
     Returns:
         Dictionary with evaluation results and metrics
     """
-    # Extract dataset name from path
-    dataset_name = Path(dataset_path).parent.name
+    # Extract dataset name from first path (all should be in same directory)
+    dataset_name = Path(dataset_paths[0]).parent.name
     
-    # Load dataset
-    entries = list(jsonlines.open(dataset_path))
+    # Load all datasets
+    entries = []
+    for dataset_path in dataset_paths:
+        file_entries = list(jsonlines.open(dataset_path))
+        entries.extend(file_entries)
+        print(f"Loaded {len(file_entries)} entries from {dataset_path}")
+    
+    print(f"Total entries loaded: {len(entries)}")
+    
     if max_entries is not None:
         entries = entries[:max_entries]
         print(f"Limited to {len(entries)} entries (max_entries={max_entries})")
-
-    # Optionally exclude predictive question type
-    if exclude_predictive:
-        before_count = len(entries)
-        entries = [
-            e
-            for e in entries
-            if e.get("metadata", {}).get("question_type", "") != "predictive"
-        ]
-        excluded = before_count - len(entries)
-        print(f"Excluded {excluded} predictive question(s); {len(entries)} remaining.")
-
-    print(f"Loaded {len(entries)} entries from {dataset_path}")
     
     # Create semaphore for concurrency control
     semaphore = asyncio.Semaphore(max_concurrent)
@@ -465,56 +326,36 @@ async def evaluate_dataset(
         result["entry_idx"] = idx
         return result
     
-    # For high concurrency, process in smaller batches to ensure event loop responsiveness
-    # Smaller batches = more frequent opportunities for Ctrl+C to work
-    if max_concurrent > 100:
-        batch_size = 50  # Small batches for very high concurrency
-    elif max_concurrent > 50:
-        batch_size = max_concurrent
-    else:
-        batch_size = len(entries)  # Single batch for low concurrency
+    # Create all tasks at once - semaphore will control concurrency
+    tasks = [
+        asyncio.create_task(evaluate_with_idx(idx, entry))
+        for idx, entry in enumerate(entries)
+    ]
     
     results = []
-    all_tasks = []
     
     with tqdm(total=len(entries), desc="Evaluating") as pbar:
         try:
-            for batch_start in range(0, len(entries), batch_size):
-                batch_end = min(batch_start + batch_size, len(entries))
-                batch_entries = entries[batch_start:batch_end]
-                
-                # Create tasks for this batch
-                tasks = [
-                    asyncio.create_task(evaluate_with_idx(batch_start + idx, entry))
-                    for idx, entry in enumerate(batch_entries)
-                ]
-                all_tasks.extend(tasks)
-                
-                # Wait for batch to complete with gather (allows proper cancellation)
-                batch_results = await asyncio.gather(*tasks, return_exceptions=True)
-                
-                # Process results and handle exceptions
-                for result in batch_results:
-                    if isinstance(result, Exception):
-                        # This shouldn't happen due to exception handling in evaluate_with_semaphore
-                        # but handle it just in case
-                        print(f"Unexpected exception in batch: {result}")
-                    else:
-                        results.append(result)
+            # Process tasks as they complete
+            for coro in asyncio.as_completed(tasks):
+                try:
+                    result = await coro
+                    results.append(result)
+                except Exception as e:
+                    # This shouldn't happen due to exception handling in evaluate_with_semaphore
+                    # but handle it just in case
+                    print(f"Unexpected exception: {e}")
+                finally:
                     pbar.update(1)
-                
-                # Yield control to event loop briefly between batches
-                # This ensures Ctrl+C can be processed
-                await asyncio.sleep(0)
                 
         except KeyboardInterrupt:
             print("\n\nInterrupted! Cancelling remaining tasks...")
             # Cancel all pending tasks
-            for task in all_tasks:
+            for task in tasks:
                 if not task.done():
                     task.cancel()
             # Wait for cancellations to complete
-            await asyncio.gather(*all_tasks, return_exceptions=True)
+            await asyncio.gather(*tasks, return_exceptions=True)
             print(f"Cancelled tasks. Saving {len(results)} partial results...")
             raise
     
@@ -688,7 +529,7 @@ async def evaluate_dataset(
     return {
         "model": evaluator.model,
         "dataset": dataset_name,
-        "dataset_path": dataset_path,
+        "dataset_paths": dataset_paths,
         "num_samples": num_samples,
         "total_questions": total_questions,
         "total_samples": total_samples,
@@ -751,19 +592,19 @@ async def main():
         "--max-concurrent",
         type=int,
         default=10,
-        help="Maximum concurrent requests (default: 10). High values (128, 512) are now supported with automatic batching.",
+        help="Maximum concurrent requests (default: 10)",
     )
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=20,
-        help="Maximum tokens for generation (default: 20)",
+        default=None,
+        help="Maximum tokens for generation (default: from model config)",
     )
     parser.add_argument(
         "--temperature",
         type=float,
-        default=0.8,
-        help="Sampling temperature (default: 0.8)",
+        default=None,
+        help="Sampling temperature (default: from model config)",
     )
     parser.add_argument(
         "--base-dir",
@@ -778,18 +619,44 @@ async def main():
         help="Maximum number of entries to evaluate (for testing, default: all)",
     )
     parser.add_argument(
-        "--exclude-predictive",
+        "--include-predictive",
         action="store_true",
-        help="Exclude questions with metadata.question_type == 'predictive'",
+        help="Include predictive.jsonl dataset (default: False, only loads counterfactual_test.jsonl and descriptive.jsonl)",
     )
     
     args = parser.parse_args()
     
-    # Build dataset path
-    dataset_path = os.path.join(args.base_dir, "datasets", args.dataset, f"{args.dataset}.jsonl")
+    # Build dataset paths - always load counterfactual_test and descriptive
+    dataset_dir = os.path.join(args.base_dir, "datasets", args.dataset)
+    dataset_paths = [
+        os.path.join(dataset_dir, "counterfactual_test.jsonl"),
+        os.path.join(dataset_dir, "descriptive.jsonl"),
+    ]
     
-    if not os.path.exists(dataset_path):
-        raise FileNotFoundError(f"Dataset not found: {dataset_path}")
+    # Optionally include predictive
+    if args.include_predictive:
+        dataset_paths.append(os.path.join(dataset_dir, "predictive.jsonl"))
+    
+    # Verify all paths exist
+    for dataset_path in dataset_paths:
+        if not os.path.exists(dataset_path):
+            raise FileNotFoundError(f"Dataset file not found: {dataset_path}")
+    
+    print(f"Loading datasets: {[Path(p).name for p in dataset_paths]}")
+    
+    # Handle random baseline
+    if args.model == "random":
+        # For random baseline, we don't need API or hyperparameters
+        print("Using random baseline - predictions will be randomly generated")
+        # Set a seed for reproducibility (optional, but helpful)
+        random.seed(42)
+    else:
+        # Get model-specific hyperparameters for display
+        model_hparams = get_model_hyperparameters(args.model)
+        
+        # Resolve hyperparameters: use provided values or model defaults
+        max_tokens = args.max_tokens if args.max_tokens is not None else model_hparams.get("max_tokens")
+        temperature = args.temperature if args.temperature is not None else model_hparams.get("temperature")
     
     # Create evaluator
     evaluator = AsyncEvaluator(
@@ -805,25 +672,38 @@ async def main():
     print(f"  Dataset: {args.dataset}")
     print(f"  Model: {args.model}")
     print(f"  Samples per question: {args.num_samples}")
-    print(f"  Max concurrent: {args.max_concurrent}")
+    if args.model != "random":
+        print(f"  Max concurrent: {args.max_concurrent}")
+        print(f"  Hyperparameters:")
+        model_hparams = get_model_hyperparameters(args.model)
+        max_tokens = args.max_tokens if args.max_tokens is not None else model_hparams.get("max_tokens")
+        temperature = args.temperature if args.temperature is not None else model_hparams.get("temperature")
+        if max_tokens is not None:
+            print(f"    max_tokens: {max_tokens}" + (" (from model config)" if args.max_tokens is None else " (override)"))
+        if temperature is not None:
+            print(f"    temperature: {temperature}" + (" (from model config)" if args.temperature is None else " (override)"))
+        # Only print sampling parameters that exist in model config
+        for key in ["top_k", "top_p", "repetition_penalty", "presence_penalty"]:
+            if key in model_hparams and model_hparams[key] is not None:
+                print(f"    {key}: {model_hparams[key]} (from model config)")
+    else:
+        print(f"  Max concurrent: {args.max_concurrent} (not used for random baseline)")
     
-    # Warn about very high concurrency
-    if args.max_concurrent > 100:
+    # Warn about very high concurrency (only for non-random models)
+    if args.model != "random" and args.max_concurrent > 100:
         print(f"\n⚠️  WARNING: Very high concurrency ({args.max_concurrent}) may cause:")
         print("   - Memory issues")
         print("   - Connection pool exhaustion")
-        print("   Consider using a lower value (e.g., 50-100) for better stability.")
-        print("   Note: Processing will use smaller batches (50) to maintain responsiveness.\n")
+        print("   Consider using a lower value (e.g., 50-100) for better stability.\n")
     
     try:
         results = await evaluate_dataset(
-            dataset_path=dataset_path,
+            dataset_paths=dataset_paths,
             evaluator=evaluator,
             num_samples=args.num_samples,
             max_concurrent=args.max_concurrent,
             base_dir=args.base_dir,
             max_entries=args.max_entries,
-            exclude_predictive=args.exclude_predictive,
         )
         
         # Print summary

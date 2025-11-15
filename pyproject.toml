@@ -23,6 +23,8 @@ dependencies = [
     "trl[peft]>=0.25.1",
     "wandb>=0.23.0",
     "flash-attn",
+    "matplotlib>=3.10.7",
+    "nvitop>=1.6.0",
 ]
 
 [project.optional-dependencies]
