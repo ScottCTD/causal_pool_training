@@ -1,48 +1,12 @@
-import random
+import os.path as osp
 from collections import defaultdict
 from typing import Dict
 
-import jsonlines
 import numpy as np
-from qwen_vl_utils import process_vision_info
-
-from datasets import Dataset
-import json
-from prompt_utils import build_question_prompt, index_to_letter
-
-def load_causal_pool_dataset(dataset_name, random_seed=42, eval_size=32):
-    # train with only counterfactual
-    # eval with all question types
-    dataset_base_path = f"datasets/{dataset_name}"
-    raw_train = list(jsonlines.open(f"{dataset_base_path}/counterfactual_train.jsonl"))
-    
-    new_raw = []
-    bad_videos = set(
-        e["video"] for e in json.load(open(f"{dataset_base_path}/bad_videos.json"))["bad_videos"]
-    )
-    for entry in raw_train:
-        if entry["video"] not in bad_videos:
-            new_raw.append(entry)
-    raw_train = new_raw
-
-    train_dataset = raw_train[: -eval_size]
-    random.seed(random_seed)
-    random.shuffle(train_dataset)
-
-    eval_dataset = raw_train[-eval_size :]
-
-    train_dataset = Dataset.from_list(train_dataset)
-    eval_dataset = Dataset.from_list(eval_dataset)
-
-    return train_dataset, eval_dataset
-
-
-DATASET_NAME = "1k_simple"
-train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=320)
-
-
 import torch
 from custom_trainer import CausalPoolTrainer
+from peft import LoraConfig, get_peft_model
+from qwen_vl_utils import process_vision_info
 from transformers import (
     AutoProcessor,
     EvalPrediction,
@@ -50,6 +14,12 @@ from transformers import (
     Qwen3VLForConditionalGeneration,
     Seq2SeqTrainingArguments,
 )
+
+from causal_pool.data.dataset_utils import load_causal_pool_dataset
+from causal_pool.prompt_utils import build_question_prompt, index_to_letter
+
+DATASET_NAME = "1k_simple"
+train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=320)
 
 model_name = "Qwen/Qwen3-VL-4B-Instruct"
 
@@ -60,11 +30,10 @@ model = Qwen3VLForConditionalGeneration.from_pretrained(
     attn_implementation="flash_attention_2",
     local_files_only=True,
 )
-processor = AutoProcessor.from_pretrained(model_name, local_files_only=True, use_fast=True)
+processor = AutoProcessor.from_pretrained(
+    model_name, local_files_only=True, use_fast=True
+)
 tokenizer = processor.tokenizer
-
-
-from peft import LoraConfig, get_peft_model
 
 peft_config = LoraConfig(
     r=128,
@@ -87,10 +56,8 @@ peft_config = LoraConfig(
     ],
 )
 model = get_peft_model(model, peft_config)
-
+print(model)
 model.print_trainable_parameters()
-
-import torch
 
 
 def get_assistant_mask(input_ids):
@@ -126,7 +93,10 @@ def get_assistant_mask(input_ids):
 
 def get_model_inputs(conversations, add_generation_prompt):
     text = processor.apply_chat_template(
-        conversations, tokenize=False, add_generation_prompt=add_generation_prompt, padding=True
+        conversations,
+        tokenize=False,
+        add_generation_prompt=add_generation_prompt,
+        padding=True,
     )
     images, videos, video_kwargs = process_vision_info(
         conversations,
@@ -154,10 +124,9 @@ def get_model_inputs(conversations, add_generation_prompt):
         truncation=False,
         max_length=None,
         padding=True,
-        padding_side="left", 
+        padding_side="left",
         **video_kwargs,
     )
-
     return inputs
 
 
@@ -165,8 +134,8 @@ def train_data_collator(samples):
     conversations = []
     for sample in samples:
         video_name = sample["video"]
-        video_path = (
-            f"datasets/{DATASET_NAME}/shots/{video_name}/video.mp4"
+        video_path = osp.join(
+            "datasets", DATASET_NAME, "shots", video_name, "video.mp4"
         )
 
         question_prompt = build_question_prompt(sample)
@@ -174,6 +143,7 @@ def train_data_collator(samples):
         ground_truth_indices = sample["ground_truth"]  # List[int] indicies
         ground_truth_answer = "".join(index_to_letter(i) for i in ground_truth_indices)
 
+        # TODO: further clarify min/max/total pixels and video tokens
         conversation = [
             {
                 "role": "user",
@@ -203,9 +173,12 @@ def train_data_collator(samples):
     assistant_mask = get_assistant_mask(input_ids)
     labels = inputs.input_ids.clone()
     labels[~assistant_mask] = -100
-    
+
     # construct generation inputs
-    generation_inputs = get_model_inputs([c[:-1] for c in conversations], add_generation_prompt=True)
+    # TODO: efficiency boost by only encode the video once
+    generation_inputs = get_model_inputs(
+        [c[:-1] for c in conversations], add_generation_prompt=True
+    )
 
     return {
         **inputs,
@@ -236,6 +209,7 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
         pred = pred_options
 
         per_question_accuracy = int(pred == label)
+        # note: this doesn't penalize model outputting all options available
         per_option_accuracy = len(pred & label)
         metrics_dict["per_question_accuracy"].append(per_question_accuracy)
         metrics_dict["per_option_accuracy"].append(per_option_accuracy)
@@ -249,7 +223,9 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
 
     return {
         "per_question_accuracy": float(np.mean(metrics_dict["per_question_accuracy"])),
-        "per_option_accuracy": float(np.sum(metrics_dict["per_option_accuracy"]) / total_num_options),
+        "per_option_accuracy": float(
+            np.sum(metrics_dict["per_option_accuracy"]) / total_num_options
+        ),
     }
 
 
@@ -257,8 +233,6 @@ eval_generation_config = GenerationConfig(
     max_length=8,
     do_sample=False,
 )
-
-output_dir = "outputs_sft/"
 
 # Configure training arguments using SFTConfig
 training_args = Seq2SeqTrainingArguments(
@@ -284,7 +258,7 @@ training_args = Seq2SeqTrainingArguments(
     eval_steps=32,
     eval_on_start=True,
     # Logging / reporting
-    output_dir=output_dir,
+    output_dir="outputs_sft",
     logging_steps=1,
     report_to="wandb",
     # model saving
