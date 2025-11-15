@@ -14,6 +14,7 @@ import subprocess
 import tempfile
 from typing import Dict, List, Tuple, Any
 from causal_pool.prompt_utils import build_question_prompt
+from causal_pool.utils import normalize_model_name
 
 
 class InvalidPredictionError(ValueError):
@@ -57,11 +58,6 @@ DEFAULT_HYPERPARAMETERS = {
     "repetition_penalty": 1.0,
     "presence_penalty": 1.5,
 }
-
-
-def normalize_model_name(model_name: str) -> str:
-    """Normalize model name for file naming."""
-    return model_name.split("/")[-1].replace("-", "_").lower()
 
 
 def get_model_hyperparameters(model_name: str) -> Dict[str, Any]:

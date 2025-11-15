@@ -241,7 +241,7 @@ training_args = Seq2SeqTrainingArguments(
     dataloader_pin_memory=True,
     remove_unused_columns=False,
     # training schedule / optimization
-    num_train_epochs=5,
+    num_train_epochs=30,
     # max_steps=30,
     per_device_train_batch_size=16,
     gradient_accumulation_steps=2,

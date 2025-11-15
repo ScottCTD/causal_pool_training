@@ -32,13 +32,14 @@ from tenacity import (
 )
 from tqdm import tqdm
 
-from eval_utils import (
+from causal_pool.eval.eval_utils import (
     InvalidPredictionError,
-    normalize_model_name,
     get_model_hyperparameters,
     get_metrics,
     build_prompt,
 )
+from causal_pool.data.dataset_utils import gather_test_dataset
+from causal_pool.utils import normalize_model_name
 
 
 # Create retry condition by combining existing helpers
@@ -258,7 +259,8 @@ class AsyncEvaluator:
 
 
 async def evaluate_dataset(
-    dataset_paths: List[str],
+    entries: List[Dict[str, Any]],
+    dataset_name: str,
     evaluator: AsyncEvaluator,
     num_samples: int = 1,
     max_concurrent: int = 10,
@@ -269,7 +271,8 @@ async def evaluate_dataset(
     Evaluate entire dataset asynchronously.
     
     Args:
-        dataset_paths: List of paths to JSONL dataset files
+        entries: List of dataset entries to evaluate
+        dataset_name: Name of the dataset
         evaluator: AsyncEvaluator instance
         num_samples: Number of samples per question
         max_concurrent: Maximum concurrent requests
@@ -279,16 +282,6 @@ async def evaluate_dataset(
     Returns:
         Dictionary with evaluation results and metrics
     """
-    # Extract dataset name from first path (all should be in same directory)
-    dataset_name = Path(dataset_paths[0]).parent.name
-    
-    # Load all datasets
-    entries = []
-    for dataset_path in dataset_paths:
-        file_entries = list(jsonlines.open(dataset_path))
-        entries.extend(file_entries)
-        print(f"Loaded {len(file_entries)} entries from {dataset_path}")
-    
     print(f"Total entries loaded: {len(entries)}")
     
     if max_entries is not None:
@@ -529,7 +522,6 @@ async def evaluate_dataset(
     return {
         "model": evaluator.model,
         "dataset": dataset_name,
-        "dataset_paths": dataset_paths,
         "num_samples": num_samples,
         "total_questions": total_questions,
         "total_samples": total_samples,
@@ -559,90 +551,143 @@ async def main():
     
     parser = argparse.ArgumentParser(description="Async evaluation script for causal pool dataset")
     parser.add_argument(
-        "--dataset",
+        "-d", "--dataset",
         type=str,
         required=True,
         help="Dataset name (e.g., '1k_simple')",
     )
     parser.add_argument(
-        "--base-url",
+        "-u", "--base-url",
         type=str,
         default="http://trig0002:8000/v1",
         help="Base URL for the API",
     )
     parser.add_argument(
-        "--model",
+        "-m", "--model",
         type=str,
         required=True,
         help="Model name (e.g., 'Qwen/Qwen3-VL-4B-Instruct')",
     )
     parser.add_argument(
-        "--api-key",
+        "-k", "--api-key",
         type=str,
         default="EMPTY",
         help="API key (default: 'EMPTY')",
     )
     parser.add_argument(
-        "--num-samples",
+        "-n", "--num-samples",
         type=int,
         default=1,
         help="Number of samples per question (default: 1)",
     )
     parser.add_argument(
-        "--max-concurrent",
+        "-c", "--max-concurrent",
         type=int,
         default=10,
         help="Maximum concurrent requests (default: 10)",
     )
     parser.add_argument(
-        "--max-tokens",
+        "-t", "--max-tokens",
         type=int,
         default=None,
         help="Maximum tokens for generation (default: from model config)",
     )
     parser.add_argument(
-        "--temperature",
+        "-T", "--temperature",
         type=float,
         default=None,
         help="Sampling temperature (default: from model config)",
     )
     parser.add_argument(
-        "--base-dir",
+        "-b", "--base-dir",
         type=str,
         default=".",
         help="Base directory for the project (default: current directory)",
     )
     parser.add_argument(
-        "--max-entries",
+        "-e", "--max-entries",
         type=int,
         default=None,
         help="Maximum number of entries to evaluate (for testing, default: all)",
     )
     parser.add_argument(
-        "--include-predictive",
+        "-p", "--include-predictive",
         action="store_true",
         help="Include predictive.jsonl dataset (default: False, only loads counterfactual_test.jsonl and descriptive.jsonl)",
+    )
+    parser.add_argument(
+        "-C", "--counterfactual-test-size",
+        type=int,
+        default=None,
+        help="Number of entries to load from counterfactual_test.jsonl (default: all)",
+    )
+    parser.add_argument(
+        "-D", "--descriptive-size",
+        type=int,
+        default=None,
+        help="Number of entries to load from descriptive.jsonl (default: all)",
+    )
+    parser.add_argument(
+        "-P", "--predictive-size",
+        type=int,
+        default=None,
+        help="Number of entries to load from predictive.jsonl (default: all, only used if --include-predictive is set)",
     )
     
     args = parser.parse_args()
     
-    # Build dataset paths - always load counterfactual_test and descriptive
-    dataset_dir = os.path.join(args.base_dir, "datasets", args.dataset)
-    dataset_paths = [
-        os.path.join(dataset_dir, "counterfactual_test.jsonl"),
-        os.path.join(dataset_dir, "descriptive.jsonl"),
-    ]
+    # Build sizes dict for gather_test_dataset
+    # Always include counterfactual_test and descriptive
+    sizes = {}
     
-    # Optionally include predictive
+    # Check if files exist and get sizes
+    dataset_splits_dir = os.path.join(args.base_dir, "datasets", args.dataset, "splits")
+    
+    # Counterfactual test
+    counterfactual_test_path = os.path.join(dataset_splits_dir, "counterfactual_test.jsonl")
+    if not os.path.exists(counterfactual_test_path):
+        raise FileNotFoundError(f"Dataset file not found: {counterfactual_test_path}")
+    if args.counterfactual_test_size is None:
+        # Load all entries to determine size
+        counterfactual_test_size = len(list(jsonlines.open(counterfactual_test_path)))
+    else:
+        counterfactual_test_size = args.counterfactual_test_size
+    sizes["counterfactual_test"] = counterfactual_test_size
+    
+    # Descriptive
+    descriptive_path = os.path.join(dataset_splits_dir, "descriptive.jsonl")
+    if not os.path.exists(descriptive_path):
+        raise FileNotFoundError(f"Dataset file not found: {descriptive_path}")
+    if args.descriptive_size is None:
+        descriptive_size = len(list(jsonlines.open(descriptive_path)))
+    else:
+        descriptive_size = args.descriptive_size
+    sizes["descriptive"] = descriptive_size
+    
+    # Predictive (optional)
     if args.include_predictive:
-        dataset_paths.append(os.path.join(dataset_dir, "predictive.jsonl"))
+        predictive_path = os.path.join(dataset_splits_dir, "predictive.jsonl")
+        if not os.path.exists(predictive_path):
+            raise FileNotFoundError(f"Dataset file not found: {predictive_path}")
+        if args.predictive_size is None:
+            predictive_size = len(list(jsonlines.open(predictive_path)))
+        else:
+            predictive_size = args.predictive_size
+        sizes["predictive"] = predictive_size
     
-    # Verify all paths exist
-    for dataset_path in dataset_paths:
-        if not os.path.exists(dataset_path):
-            raise FileNotFoundError(f"Dataset file not found: {dataset_path}")
+    # Load dataset using gather_test_dataset
+    # Note: gather_test_dataset uses relative paths, so we need to change to base_dir
+    original_cwd = os.getcwd()
+    try:
+        os.chdir(args.base_dir)
+        print(f"Loading datasets with sizes: {sizes}")
+        dataset = gather_test_dataset(args.dataset, sizes, random_seed=42)
+    finally:
+        os.chdir(original_cwd)
     
-    print(f"Loading datasets: {[Path(p).name for p in dataset_paths]}")
+    # Convert Dataset to list of entries
+    entries = [entry for entry in dataset]
+    print(f"Loaded {len(entries)} total entries")
     
     # Handle random baseline
     if args.model == "random":
@@ -698,7 +743,8 @@ async def main():
     
     try:
         results = await evaluate_dataset(
-            dataset_paths=dataset_paths,
+            entries=entries,
+            dataset_name=args.dataset,
             evaluator=evaluator,
             num_samples=args.num_samples,
             max_concurrent=args.max_concurrent,
@@ -752,7 +798,7 @@ async def main():
         normalized_model = normalize_model_name(args.model)
         output_path = os.path.join(
             args.base_dir,
-            "datasets",
+            "results",
             args.dataset,
             f"eval_{normalized_model}.json",
         )
