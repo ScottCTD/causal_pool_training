@@ -94,7 +94,7 @@ python scripts/auto_eval.py \
   --max-concurrent 256 \
   # --max-tokens 10 \
   --port 8000 \
-#  --max-entries 10 \
+  --max-entries 10 \
 
 # Job will terminate automatically after eval completes (or on error)
 

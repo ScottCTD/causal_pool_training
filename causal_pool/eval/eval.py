@@ -56,7 +56,7 @@ _retry_condition = (
 )
 
 
-def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int]:
+def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int, str]:
     """
     Validate prediction format and calculate metrics using metrics.py functions.
     
@@ -65,9 +65,10 @@ def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int
         pred: Prediction string (e.g., "AC")
     
     Returns:
-        Tuple of (exactly_correct, num_correct_options)
+        Tuple of (exactly_correct, num_correct_options, cleaned_pred)
         - exactly_correct: 1 if prediction exactly matches ground truth, 0 otherwise
         - num_correct_options: Number of correct options (count, not fraction)
+        - cleaned_pred: The cleaned and validated prediction string
     
     Raises:
         InvalidPredictionError: If prediction format is invalid (not pure A-Z or has duplicates)
@@ -79,6 +80,9 @@ def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int
     pred = pred.strip()
     
     # Validate prediction format
+    if not pred:
+        raise InvalidPredictionError(f"Prediction is empty: {pred!r}")
+    
     if not all(c.isalpha() and c.isupper() for c in pred):
         raise InvalidPredictionError(f"Prediction contains non-A-Z characters: {pred!r}")
     
@@ -128,7 +132,7 @@ def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int
     # using calculate_per_option_accuracy from metrics.py
     num_correct_options = len(pred_set & ground_truth_set)
     
-    return exactly_correct, num_correct_options
+    return exactly_correct, num_correct_options, pred
 
 
 class AsyncEvaluator:
@@ -260,7 +264,7 @@ class AsyncEvaluator:
             # For random baseline, generate prediction without API call
             pred = self._generate_random_prediction(entry)
             # Validate the prediction format (should always be valid, but check anyway)
-            validate_and_get_metrics(entry, pred)
+            _ = validate_and_get_metrics(entry, pred)
             return pred
         
         # Create retry decorator with entry-specific callback
@@ -299,7 +303,7 @@ class AsyncEvaluator:
                 
                 # Validate prediction format - this will raise InvalidPredictionError if invalid
                 # which will trigger a retry
-                validate_and_get_metrics(entry, pred)
+                _ = validate_and_get_metrics(entry, pred)
                 
                 return pred
             
@@ -533,10 +537,11 @@ async def evaluate_dataset(
         
         for idx, pred in enumerate(predictions):
             try:
-                exactly_correct, num_correct = validate_and_get_metrics(entry, pred)
+                exactly_correct, num_correct, pred_cleaned = validate_and_get_metrics(entry, pred)
                 # Also calculate per-option accuracy using metrics.py
+                # Use the cleaned prediction from validate_and_get_metrics
                 ground_truth_str = "".join(sorted(ground_truth))
-                pred_sorted = "".join(sorted(pred))
+                pred_sorted = "".join(sorted(pred_cleaned))
                 per_option_acc = calculate_per_option_accuracy(num_options, ground_truth_str, pred_sorted)
             except InvalidPredictionError as e:
                 # This shouldn't happen since we validate in evaluate_entry,
