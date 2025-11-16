@@ -7,6 +7,7 @@ visualizations showing per-category metrics (per-question and per-option accurac
 for each model.
 """
 
+import argparse
 import json
 import glob
 import os
@@ -71,7 +72,12 @@ def extract_category_metrics(results: Dict[str, Dict]) -> Tuple[Dict[str, List],
         all_categories.update(per_question_type.keys())
     
     categories = sorted(all_categories)
-    model_names = sorted(results.keys())
+    # Sort model names, but put "random" first as baseline
+    all_model_names = sorted(results.keys())
+    if "random" in all_model_names:
+        model_names = ["random"] + [m for m in all_model_names if m != "random"]
+    else:
+        model_names = all_model_names
     
     per_question_metrics = {cat: [] for cat in categories}
     per_option_metrics = {cat: [] for cat in categories}
@@ -216,11 +222,82 @@ def plot_category_metrics(
     print(f"Plot saved to {per_option_path}")
 
 
-def main():
-    """Main function."""
+def parse_args():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Plot per-category per-question and per-option accuracy for all models.',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Use default paths (results/1k_simple/)
+  python plot_category_metrics.py
+
+  # Specify dataset name (uses results/<dataset>/)
+  python plot_category_metrics.py -d ds1
+
+  # Specify custom results directory (overrides dataset)
+  python plot_category_metrics.py -r results/ds1
+
+  # Specify custom output path
+  python plot_category_metrics.py -d ds1 -o plots/my_metrics.png
+
+  # Skip plot generation (only print tables)
+  python plot_category_metrics.py -np
+
+  # Skip table printing (only generate plots)
+  python plot_category_metrics.py -nt
+        """
+    )
+    
     # Get the project root directory (assuming script is run from project root)
     project_root = Path(__file__).parent.parent
-    results_dir = project_root / 'results' / '1k_simple'
+    
+    parser.add_argument(
+        '--dataset', '-d',
+        type=str,
+        default='1k_simple',
+        help='Dataset name (results/<dataset>/ will be used, default: 1k_simple)'
+    )
+    
+    parser.add_argument(
+        '--results-dir', '-r',
+        type=str,
+        default=None,
+        help='Full path to directory containing eval*.json files (overrides --dataset if specified)'
+    )
+    
+    parser.add_argument(
+        '--output', '-o',
+        type=str,
+        default=None,
+        help='Output path for plots (default: <results_dir>/category_metrics_plot.png)'
+    )
+    
+    parser.add_argument(
+        '--no-plots', '-np',
+        action='store_true',
+        help='Skip plot generation (only print summary tables)'
+    )
+    
+    parser.add_argument(
+        '--no-tables', '-nt',
+        action='store_true',
+        help='Skip table printing (only generate plots)'
+    )
+    
+    return parser.parse_args()
+
+
+def main():
+    """Main function."""
+    args = parse_args()
+    
+    # Determine results directory: use --results-dir if specified, otherwise use --dataset
+    project_root = Path(__file__).parent.parent
+    if args.results_dir:
+        results_dir = Path(args.results_dir)
+    else:
+        results_dir = project_root / 'results' / args.dataset
     
     if not results_dir.exists():
         raise FileNotFoundError(f"Results directory not found: {results_dir}")
@@ -240,52 +317,60 @@ def main():
     
     print(f"Found {len(categories)} categories: {', '.join(categories)}")
     
-    # Save output to the same results directory
-    output_path = results_dir / 'category_metrics_plot.png'
-    
-    if HAS_MATPLOTLIB:
-        print("\nGenerating plots...")
-        plot_category_metrics(
-            per_question_metrics,
-            per_option_metrics,
-            categories,
-            model_names,
-            str(output_path)
-        )
+    # Determine output path
+    if args.output:
+        output_path = Path(args.output)
     else:
-        print("\nSkipping plot generation (matplotlib not available)")
+        output_path = results_dir / 'category_metrics_plot.png'
     
-    # Print summary table
-    col_width = max(25, max(len(m) for m in model_names) + 2)
-    total_width = 30 + len(model_names) * col_width
+    # Generate plots if requested and matplotlib is available
+    if not args.no_plots:
+        if HAS_MATPLOTLIB:
+            print("\nGenerating plots...")
+            plot_category_metrics(
+                per_question_metrics,
+                per_option_metrics,
+                categories,
+                model_names,
+                str(output_path)
+            )
+        else:
+            print("\nSkipping plot generation (matplotlib not available)")
+    else:
+        print("\nSkipping plot generation (--no-plots flag set)")
     
-    print("\n" + "="*total_width)
-    print("Summary Table: Per-Category Per-Question Accuracy")
-    print("="*total_width)
-    print(f"{'Category':<30}", end="")
-    for model_name in model_names:
-        print(f"{model_name:<{col_width}}", end="")
-    print()
-    print("-"*total_width)
-    for category in categories:
-        print(f"{category:<30}", end="")
-        for val in per_question_metrics[category]:
-            print(f"{val:<{col_width}.4f}", end="")
+    # Print summary tables if requested
+    if not args.no_tables:
+        col_width = max(25, max(len(m) for m in model_names) + 2)
+        total_width = 30 + len(model_names) * col_width
+        
+        print("\n" + "="*total_width)
+        print("Summary Table: Per-Category Per-Question Accuracy")
+        print("="*total_width)
+        print(f"{'Category':<30}", end="")
+        for model_name in model_names:
+            print(f"{model_name:<{col_width}}", end="")
         print()
-    
-    print("\n" + "="*total_width)
-    print("Summary Table: Per-Category Per-Option Accuracy")
-    print("="*total_width)
-    print(f"{'Category':<30}", end="")
-    for model_name in model_names:
-        print(f"{model_name:<{col_width}}", end="")
-    print()
-    print("-"*total_width)
-    for category in categories:
-        print(f"{category:<30}", end="")
-        for val in per_option_metrics[category]:
-            print(f"{val:<{col_width}.4f}", end="")
+        print("-"*total_width)
+        for category in categories:
+            print(f"{category:<30}", end="")
+            for val in per_question_metrics[category]:
+                print(f"{val:<{col_width}.4f}", end="")
+            print()
+        
+        print("\n" + "="*total_width)
+        print("Summary Table: Per-Category Per-Option Accuracy")
+        print("="*total_width)
+        print(f"{'Category':<30}", end="")
+        for model_name in model_names:
+            print(f"{model_name:<{col_width}}", end="")
         print()
+        print("-"*total_width)
+        for category in categories:
+            print(f"{category:<30}", end="")
+            for val in per_option_metrics[category]:
+                print(f"{val:<{col_width}.4f}", end="")
+            print()
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ This script:
 
 import argparse
 import os
+import socket
 import subprocess
 import sys
 import time
@@ -90,7 +91,7 @@ MODEL_PRESETS: Dict[str, Dict[str, any]] = {
             "--max-num-batched-tokens", "8192",
             "--enforce-eager",
         ],
-        "model_path": "outputs_sft/checkpoint-810/merged/",
+        "model_path": "outputs/sft/checkpoint-576/merged",
     },
 }
 
@@ -100,52 +101,95 @@ def log(message: str, prefix: str = "[AUTO-EVAL]"):
     print(f"{prefix} {message}", flush=True)
 
 
-def pick_idle_gpu() -> int:
+def pick_idle_gpu(base_dir: str) -> int:
     """
-    Select the most idle GPU by checking utilization and memory usage.
+    Select the most idle GPU by checking utilization and memory usage via nvidia-smi.
+    
+    Uses nvidia-smi to query GPU utilization and selects the GPU with lowest utilization
+    and memory usage. If CUDA_VISIBLE_DEVICES is set by SLURM, respects it.
+    
+    Args:
+        base_dir: Base directory for the project (unused, kept for compatibility)
     
     Returns:
-        GPU index (0-3) of the most idle GPU
+        GPU index
     """
+    # Get actual hostname (not SLURM_NODELIST which might be a range)
+    hostname = socket.gethostname()
+    
     log("Checking GPU status via nvidia-smi...")
+    log(f"Hostname: {hostname}")
+    
+    # IMPORTANT: We completely ignore CUDA_VISIBLE_DEVICES set by SLURM
+    # We query all GPUs via nvidia-smi and pick the most idle one
+    # Since the user controls the delay between submissions, we can safely pick any idle GPU
+    if os.environ.get("CUDA_VISIBLE_DEVICES"):
+        log(f"CUDA_VISIBLE_DEVICES={os.environ.get('CUDA_VISIBLE_DEVICES')} (ignored - will pick most idle GPU)")
+    
+    # Query nvidia-smi for GPU utilization info
+    gpu_utilization = {}  # GPU index -> (utilization, memory_used)
     try:
+        # Create a clean environment for nvidia-smi without CUDA_VISIBLE_DEVICES
+        # to see all GPUs on the node
+        nvidia_smi_env = {}
+        for key, value in os.environ.items():
+            if key != "CUDA_VISIBLE_DEVICES":
+                nvidia_smi_env[key] = value
+        
+        log("Querying nvidia-smi for GPU utilization...")
+        
         result = subprocess.run(
             ["nvidia-smi", "--query-gpu=index,utilization.gpu,memory.used", "--format=csv,noheader,nounits"],
             capture_output=True,
             text=True,
             check=True,
+            env=nvidia_smi_env,
         )
         
-        gpus = []
+        # Print full nvidia-smi output for debugging
+        log("nvidia-smi output:")
+        for line in result.stdout.strip().split("\n"):
+            if line.strip():
+                log(f"  {line}")
+        
+        # Parse GPU utilization info
         for line in result.stdout.strip().split("\n"):
             if not line.strip():
                 continue
             parts = line.split(", ")
             if len(parts) >= 3:
-                gpu_idx = int(parts[0].strip())
-                utilization = int(parts[1].strip())
-                memory_used = int(parts[2].strip())
-                gpus.append((gpu_idx, utilization, memory_used))
+                try:
+                    gpu_idx = int(parts[0].strip())
+                    utilization = int(parts[1].strip())
+                    memory_used = int(parts[2].strip())
+                    gpu_utilization[gpu_idx] = (utilization, memory_used)
+                except ValueError:
+                    continue
         
-        if not gpus:
-            log("WARNING: No GPUs found via nvidia-smi, defaulting to GPU 0", prefix="[AUTO-EVAL] [WARN]")
-            return 0
+        log(f"nvidia-smi found {len(gpu_utilization)} GPU(s): {sorted(gpu_utilization.keys())}")
         
-        # Sort by utilization (ascending), then by memory used (ascending)
-        gpus.sort(key=lambda x: (x[1], x[2]))
-        selected_gpu = gpus[0][0]
-        
-        log(f"Selected GPU {selected_gpu} (utilization: {gpus[0][1]}%, memory: {gpus[0][2]} MB)")
-        return selected_gpu
-        
-    except subprocess.CalledProcessError as e:
+    except (subprocess.CalledProcessError, Exception) as e:
         log(f"ERROR: Failed to query nvidia-smi: {e}", prefix="[AUTO-EVAL] [ERROR]")
-        log("Defaulting to GPU 0", prefix="[AUTO-EVAL] [WARN]")
+        log("Using GPU 0 as fallback (nvidia-smi query failed)", prefix="[AUTO-EVAL] [ERROR]")
         return 0
-    except Exception as e:
-        log(f"ERROR: Unexpected error selecting GPU: {e}", prefix="[AUTO-EVAL] [ERROR]")
-        log("Defaulting to GPU 0", prefix="[AUTO-EVAL] [WARN]")
+    
+    if not gpu_utilization:
+        log("ERROR: No GPUs found via nvidia-smi, using GPU 0 as fallback", prefix="[AUTO-EVAL] [ERROR]")
         return 0
+    
+    # Note: We don't filter by CUDA_VISIBLE_DEVICES - we pick the most idle GPU on the node
+    # The user controls the delay between submissions to prevent conflicts
+    
+    # Sort by utilization (ascending), then by memory used (ascending)
+    available_gpus = [(gpu_idx, util_info[0], util_info[1]) for gpu_idx, util_info in gpu_utilization.items()]
+    available_gpus.sort(key=lambda x: (x[1], x[2]))
+    
+    selected_gpu = available_gpus[0][0]
+    log(f"Selected most idle GPU: GPU {selected_gpu} (utilization: {available_gpus[0][1]}%, memory: {available_gpus[0][2]} MB)")
+    if len(available_gpus) > 1:
+        log(f"All GPUs considered (sorted by idle): {[(g, u, m) for g, u, m in available_gpus[:3]]}")
+    
+    return selected_gpu
 
 
 def wait_for_server(base_url: str, timeout: int = 600, interval: int = 5) -> bool:
@@ -431,10 +475,26 @@ Examples:
         sys.exit(1)
     log("Prerequisites check passed")
     
-    # Select GPU
-    selected_gpu = pick_idle_gpu()
+    # Select GPU using nvidia-smi to find the most idle GPU
+    # We completely ignore CUDA_VISIBLE_DEVICES set by SLURM
+    log("=" * 60)
+    log("GPU Selection")
+    log("=" * 60)
+    is_slurm = "SLURM_JOB_ID" in os.environ
+    if is_slurm:
+        log("Running under SLURM")
+    else:
+        log("Running manually (not under SLURM)")
+    
+    # Check if SLURM set CUDA_VISIBLE_DEVICES (we'll ignore it and pick the most idle GPU)
+    cuda_visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+    if cuda_visible:
+        log(f"CUDA_VISIBLE_DEVICES={cuda_visible} (set by SLURM, but will be ignored)")
+    
+    selected_gpu = pick_idle_gpu(base_dir)
     os.environ["CUDA_VISIBLE_DEVICES"] = str(selected_gpu)
-    log(f"Set CUDA_VISIBLE_DEVICES={selected_gpu}")
+    log(f"Final GPU selection: GPU {selected_gpu}, CUDA_VISIBLE_DEVICES={selected_gpu}")
+    log("=" * 60)
     
     # Build vLLM command
     log("Building vLLM server command...")

@@ -22,15 +22,15 @@ from causal_pool.metrics import (
     calculate_per_option_accuracy,
 )
 
-DATASET_NAME = "1k_simple"
-train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=320)
+DATASET_NAME = "ds1"
+train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=640)
 
 model_name = "Qwen/Qwen3-VL-4B-Instruct"
 
 model = Qwen3VLForConditionalGeneration.from_pretrained(
     model_name,
     dtype="bfloat16",
-    device_map="auto",
+    # device_map="auto",
     attn_implementation="flash_attention_2",
     local_files_only=True,
 )
@@ -42,7 +42,7 @@ tokenizer = processor.tokenizer
 peft_config = LoraConfig(
     r=128,
     lora_alpha=128,
-    lora_dropout=0.1,
+    lora_dropout=0.2,
     target_modules=[
         # Text tower
         "q_proj",
@@ -201,11 +201,17 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
     metrics_dict = defaultdict(list)
 
     for i, (pred, label) in enumerate(zip(preds, labels)):
+        label = label.strip()
         # this shortcut only works on single GPU case
         num_options = len(eval_dataset[i]["options"])
 
-        per_question_accuracy = calculate_per_question_accuracy(label, pred)
-        per_option_accuracy = calculate_per_option_accuracy(num_options, label, pred)
+        try:
+            per_question_accuracy = calculate_per_question_accuracy(label, pred)
+            per_option_accuracy = calculate_per_option_accuracy(num_options, label, pred)
+        except Exception as e:
+            print(f"Error calculating metrics for sample {i}: {e}")
+            per_question_accuracy = 0
+            per_option_accuracy = 0
         metrics_dict["per_question_accuracy"].append(per_question_accuracy)
         metrics_dict["per_option_accuracy"].append(per_option_accuracy)
 
@@ -229,33 +235,40 @@ eval_generation_config = GenerationConfig(
 # Configure training arguments using SFTConfig
 training_args = Seq2SeqTrainingArguments(
     # data loading
-    dataloader_num_workers=8,
+    dataloader_num_workers=16,
     dataloader_pin_memory=True,
+    dataloader_persistent_workers=True,
     remove_unused_columns=False,
     # training schedule / optimization
-    num_train_epochs=30,
+    num_train_epochs=1,
     # max_steps=30,
     per_device_train_batch_size=16,
     gradient_accumulation_steps=2,
+    lr_scheduler_type="cosine",
     gradient_checkpointing=True,
-    warmup_steps=5,
-    learning_rate=2e-4,
+    gradient_checkpointing_kwargs={"use_reentrant": False},
+    warmup_steps=50,
+    learning_rate=1e-4,
     max_grad_norm=1.0,
-    weight_decay=0.01,
+    weight_decay=0.05,
+    label_smoothing_factor=0.00,
+    bf16=True,
     # eval
-    per_device_eval_batch_size=8,
+    per_device_eval_batch_size=16,
     predict_with_generate=True,
     generation_config=eval_generation_config,
     eval_strategy="steps",
     eval_steps=32,
     eval_on_start=True,
+    load_best_model_at_end=True,
+    metric_for_best_model="per_question_accuracy",
     # Logging / reporting
-    output_dir="outputs_sft",
+    output_dir="outputs/sft/",
     logging_steps=1,
     report_to="wandb",
     # model saving
     save_strategy="steps",
-    save_steps=1000,
+    save_steps=32,
     save_total_limit=5,
 )
 

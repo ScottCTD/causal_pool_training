@@ -3,7 +3,7 @@ from collections import defaultdict
 import random
 
 DATASET_DIR = "datasets"
-DATASET_NAME = "1k_simple"
+DATASET_NAME = "ds1"
 
 raw = list(jsonlines.open(f"{DATASET_DIR}/{DATASET_NAME}/raw_qa.jsonl"))
 

@@ -157,7 +157,7 @@ def cut_video_first_half(video_path: str, output_path: str) -> None:
         raise RuntimeError("ffmpeg not found. Please install ffmpeg to use predictive question type.")
 
 
-def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".") -> List[Dict[str, Any]]:
+def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".", additional_suffix: str = None) -> List[Dict[str, Any]]:
     """
     Build prompt for a dataset entry.
     
@@ -167,6 +167,7 @@ def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".") 
         entry: Dataset entry
         dataset_name: Name of the dataset
         base_dir: Base directory for the project
+        additional_suffix: Optional additional text to add before the final instruction
     
     Returns:
         List of message dictionaries for OpenAI API
@@ -190,7 +191,7 @@ def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".") 
         else:
             raise FileNotFoundError(f"Video not found: {video_path}")
     
-    question_prompt = build_question_prompt(entry)
+    question_prompt = build_question_prompt(entry, additional_suffix=additional_suffix)
     
     # Read and encode video
     with open(video_path, "rb") as video_file:

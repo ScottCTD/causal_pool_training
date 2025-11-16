@@ -10,8 +10,10 @@ import argparse
 import json
 import os
 import subprocess
+from multiprocessing import Pool
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
+from tqdm import tqdm
 
 
 def get_video_frame_count(video_path: str) -> Tuple[int, str]:
@@ -58,7 +60,34 @@ def get_video_frame_count(video_path: str) -> Tuple[int, str]:
         return -1, "ffprobe not found"
 
 
-def find_bad_videos(dataset_name: str, base_dir: str = ".", min_frames: int = 2) -> List[Dict]:
+def check_single_video(args_tuple: Tuple[str, str, int]) -> Optional[Dict]:
+    """
+    Worker function to check a single video.
+    
+    Args:
+        args_tuple: Tuple of (shot_dir, shots_dir, min_frames)
+    
+    Returns:
+        Dictionary with video information if bad, None otherwise
+    """
+    shot_dir, shots_dir, min_frames = args_tuple
+    video_name = shot_dir
+    video_path = os.path.join(shots_dir, shot_dir, "video.mp4")
+    
+    frame_count, error_msg = get_video_frame_count(video_path)
+    
+    if frame_count < min_frames:
+        return {
+            "video": video_name,
+            "video_path": video_path,
+            "frame_count": frame_count,
+            "error": error_msg,
+            "status": "missing" if frame_count == -1 and "not found" in error_msg.lower() else "insufficient_frames"
+        }
+    return None
+
+
+def find_bad_videos(dataset_name: str, base_dir: str = ".", min_frames: int = 2, num_processes: int = 32) -> List[Dict]:
     """
     Find all videos with insufficient frames.
     
@@ -66,6 +95,7 @@ def find_bad_videos(dataset_name: str, base_dir: str = ".", min_frames: int = 2)
         dataset_name: Name of the dataset (e.g., '1k_simple')
         base_dir: Base directory for the project
         min_frames: Minimum number of frames required (default: 2)
+        num_processes: Number of parallel processes to use (default: 32)
     
     Returns:
         List of dictionaries with video information and issues
@@ -76,27 +106,25 @@ def find_bad_videos(dataset_name: str, base_dir: str = ".", min_frames: int = 2)
     if not os.path.exists(shots_dir):
         raise FileNotFoundError(f"Shots directory not found: {shots_dir}")
     
-    bad_videos = []
-    
     # Scan all shot directories
     shot_dirs = sorted([d for d in os.listdir(shots_dir) if os.path.isdir(os.path.join(shots_dir, d))])
     
-    print(f"Scanning {len(shot_dirs)} video directories...")
+    print(f"Scanning {len(shot_dirs)} video directories with {num_processes} processes...")
     
-    for shot_dir in shot_dirs:
-        video_name = shot_dir
-        video_path = os.path.join(shots_dir, shot_dir, f"video.mp4")
-        
-        frame_count, error_msg = get_video_frame_count(video_path)
-        
-        if frame_count < min_frames:
-            bad_videos.append({
-                "video": video_name,
-                "video_path": video_path,
-                "frame_count": frame_count,
-                "error": error_msg,
-                "status": "missing" if frame_count == -1 and "not found" in error_msg.lower() else "insufficient_frames"
-            })
+    # Prepare arguments for worker function
+    work_items = [(shot_dir, shots_dir, min_frames) for shot_dir in shot_dirs]
+    
+    # Process videos in parallel
+    bad_videos = []
+    with Pool(processes=num_processes) as pool:
+        results = list(tqdm(
+            pool.imap(check_single_video, work_items),
+            total=len(work_items),
+            desc="Checking videos"
+        ))
+    
+    # Filter out None results (good videos)
+    bad_videos = [r for r in results if r is not None]
     
     return bad_videos
 
@@ -134,6 +162,12 @@ def main():
         action="store_true",
         help="Only print summary, not individual video details",
     )
+    parser.add_argument(
+        "--processes",
+        type=int,
+        default=32,
+        help="Number of parallel processes to use (default: 32)",
+    )
     
     args = parser.parse_args()
     
@@ -144,9 +178,10 @@ def main():
     
     print(f"Finding bad videos in dataset: {args.dataset}")
     print(f"Minimum frames required: {args.min_frames}")
+    print(f"Using {args.processes} parallel processes")
     print()
     
-    bad_videos = find_bad_videos(args.dataset, args.base_dir, args.min_frames)
+    bad_videos = find_bad_videos(args.dataset, args.base_dir, args.min_frames, args.processes)
     
     # Group by status
     missing = [v for v in bad_videos if v["status"] == "missing"]

@@ -56,6 +56,31 @@ _retry_condition = (
 )
 
 
+def _num_correct_options_from_entry(entry: Dict[str, Any]) -> int:
+    """
+    Infer the number of correct options from an entry's ground_truth field.
+
+    Handles ground_truth represented as:
+    - list/set/tuple of indices or letters
+    - single int index
+    - string of letters
+    """
+    ground_truth = entry.get("ground_truth")
+
+    if isinstance(ground_truth, (list, set, tuple)):
+        return len(ground_truth)
+    if isinstance(ground_truth, int):
+        return 1
+    if isinstance(ground_truth, str):
+        return len(ground_truth)
+
+    try:
+        return len(ground_truth)
+    except TypeError:
+        # Fallback for unexpected types
+        return 1
+
+
 def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int, str]:
     """
     Validate prediction format and calculate metrics using metrics.py functions.
@@ -133,6 +158,39 @@ def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int
     num_correct_options = len(pred_set & ground_truth_set)
     
     return exactly_correct, num_correct_options, pred
+
+
+def sanitize_prompt(prompt: List[Dict[str, Any]], video_id: str) -> List[Dict[str, Any]]:
+    """
+    Create a sanitized version of the prompt with video binary data removed.
+    
+    Replaces base64-encoded video data with a reference to the video file.
+    
+    Args:
+        prompt: Original prompt (list of message dictionaries)
+        video_id: Video identifier for reference
+    
+    Returns:
+        Sanitized prompt with video binary data replaced by reference
+    """
+    sanitized_prompt = []
+    for message in prompt:
+        sanitized_message = message.copy()
+        if "content" in sanitized_message:
+            sanitized_content = []
+            for item in sanitized_message["content"]:
+                if item.get("type") == "video_url":
+                    # Replace base64 video data with a reference
+                    sanitized_content.append({
+                        "type": "video_url",
+                        "video_url": {"url": f"<video_reference:{video_id}>"},
+                    })
+                else:
+                    # Keep other content as-is (e.g., text)
+                    sanitized_content.append(item)
+            sanitized_message["content"] = sanitized_content
+        sanitized_prompt.append(sanitized_message)
+    return sanitized_prompt
 
 
 class AsyncEvaluator:
@@ -239,7 +297,7 @@ class AsyncEvaluator:
         entry: Dict[str, Any],
         dataset_name: str,
         base_dir: str = ".",
-    ) -> str:
+    ) -> Dict[str, Any]:
         """
         Evaluate a single entry with retry logic.
         
@@ -252,20 +310,38 @@ class AsyncEvaluator:
             base_dir: Base directory for the project
         
         Returns:
-            Prediction string (guaranteed to be valid format: pure A-Z, no duplicates)
+            Dictionary with keys:
+            - 'prediction': Prediction string (guaranteed to be valid format: pure A-Z, no duplicates)
+            - 'prompt': List of message dictionaries (the exact prompt sent to the model)
+            - 'response': Raw response string from the model (None for random baseline)
         
         Raises:
             BadRequestError: If the video file is invalid/corrupted (not retried)
             InvalidPredictionError: If prediction format is invalid after max retries
             Other exceptions: Retried up to 10 times
         """
+        # Build prompt (needed for both random and API-based evaluation)
+        # Add an explicit hint about the number of correct options
+        num_correct = _num_correct_options_from_entry(entry)
+        hint_text = f"Hint: There are exactly {num_correct} correct options."
+        messages = build_prompt(
+            entry,
+            dataset_name,
+            base_dir,
+            additional_suffix=hint_text,
+        )
+        
         # Handle random baseline
         if self.model == "random":
             # For random baseline, generate prediction without API call
             pred = self._generate_random_prediction(entry)
             # Validate the prediction format (should always be valid, but check anyway)
-            _ = validate_and_get_metrics(entry, pred)
-            return pred
+            _, _, cleaned_pred = validate_and_get_metrics(entry, pred)
+            return {
+                'prediction': cleaned_pred,
+                'prompt': messages,
+                'response': None,  # No API response for random baseline
+            }
         
         # Create retry decorator with entry-specific callback
         @retry(
@@ -280,8 +356,6 @@ class AsyncEvaluator:
             reraise=True,
         )
         async def _evaluate_with_retry():
-            messages = build_prompt(entry, dataset_name, base_dir)
-            
             try:
                 # Build request kwargs, only including extra_body if it has values
                 request_kwargs = {
@@ -295,17 +369,21 @@ class AsyncEvaluator:
                 
                 response = await self.client.chat.completions.create(**request_kwargs)
                 
-                pred = response.choices[0].message.content
-                if pred is None:
+                raw_response = response.choices[0].message.content
+                if raw_response is None:
                     raise ValueError("Empty response from model")
                 
-                pred = pred.strip()
+                pred = raw_response.strip()
+                # Validate and clean prediction format - this will raise
+                # InvalidPredictionError if invalid, which will trigger a retry
+                _, _, cleaned_pred = validate_and_get_metrics(entry, pred)
                 
-                # Validate prediction format - this will raise InvalidPredictionError if invalid
-                # which will trigger a retry
-                _ = validate_and_get_metrics(entry, pred)
-                
-                return pred
+                return {
+                    # Store the cleaned prediction (letters only) for downstream metrics/logging
+                    'prediction': cleaned_pred,
+                    'prompt': messages,
+                    'response': raw_response,  # Include original response before stripping
+                }
             
             except BadRequestError as e:
                 # BadRequestError (400) indicates invalid input - don't retry, just raise
@@ -327,7 +405,7 @@ class AsyncEvaluator:
         dataset_name: str,
         num_samples: int,
         base_dir: str = ".",
-    ) -> List[str]:
+    ) -> List[Dict[str, Any]]:
         """
         Evaluate an entry multiple times (sampling).
         
@@ -338,7 +416,10 @@ class AsyncEvaluator:
             base_dir: Base directory for the project
         
         Returns:
-            List of predictions
+            List of dictionaries, each with keys:
+            - 'prediction': Prediction string
+            - 'prompt': List of message dictionaries (the exact prompt sent to the model)
+            - 'response': Raw response string from the model (None for random baseline)
         """
         tasks = [
             self.evaluate_entry(entry, dataset_name, base_dir)
@@ -473,14 +554,20 @@ async def evaluate_dataset(
         question_type = entry.get("metadata", {}).get("question_type", "unknown")
         
         if error:
+            # For errored entries, record a consistent structure with empty per-sample fields
             detailed_results.append({
                 "entry_idx": entry_idx,
                 "video": entry.get("video"),
-                "question": entry.get("question"),
                 "question_type": question_type,
-                "error": error,
+                "ground_truth": entry.get("ground_truth"),
                 "predictions": [],
-                "metrics": None,
+                "prompts": [],
+                "responses": [],
+                "sample_metrics": [],
+                "question_has_exact_match": False,
+                "question_total_correct_options": 0,
+                "first_sample_correct": False,
+                "error": error,
             })
             # Still track question type stats even for errors (count as total)
             if question_type not in question_type_stats:
@@ -530,12 +617,32 @@ async def evaluate_dataset(
         question_type_stats[question_type]["total"] += 1
         
         # Calculate metrics for each prediction
+        # predictions is now a list of dicts with keys: 'prediction', 'prompt', 'response'
         sample_metrics = []
         question_has_exact_match = False
         question_total_correct = 0
         first_sample_correct = False
         
-        for idx, pred in enumerate(predictions):
+        # Extract prompt from first sample (should be the same for all samples)
+        # Store prompts and responses for each sample
+        sample_prompts = []
+        sample_responses = []
+        prediction_strings = []
+        
+        for idx, pred_dict in enumerate(predictions):
+            # Extract prediction string from dictionary
+            pred = pred_dict['prediction']
+            prompt = pred_dict['prompt']
+            response = pred_dict['response']
+            
+            # Sanitize prompt to remove video binary data before storing
+            video_id = entry.get("video", "unknown")
+            sanitized_prompt = sanitize_prompt(prompt, video_id)
+            
+            # Store sanitized prompt and response for this sample
+            sample_prompts.append(sanitized_prompt)
+            sample_responses.append(response)
+            
             try:
                 exactly_correct, num_correct, pred_cleaned = validate_and_get_metrics(entry, pred)
                 # Also calculate per-option accuracy using metrics.py
@@ -551,8 +658,10 @@ async def evaluate_dataset(
                 exactly_correct, num_correct = 0, 0
                 per_option_acc = 0.0
             
+            # Use the cleaned prediction for all logging/metrics
+            prediction_strings.append(pred_cleaned)
             sample_metrics.append({
-                "prediction": pred,
+                "prediction": pred_cleaned,
                 "exactly_correct": exactly_correct,
                 "num_correct_options": num_correct,
                 "per_option_accuracy": per_option_acc,
@@ -588,10 +697,11 @@ async def evaluate_dataset(
         detailed_results.append({
             "entry_idx": entry_idx,
             "video": entry.get("video"),
-            "question": entry.get("question"),
             "question_type": question_type,
             "ground_truth": entry["ground_truth"],
-            "predictions": predictions,
+            "predictions": prediction_strings,  # Keep as list of strings for backward compatibility
+            "prompts": sample_prompts,  # List of prompts (one per sample)
+            "responses": sample_responses,  # List of responses (one per sample)
             "sample_metrics": sample_metrics,
             "question_has_exact_match": question_has_exact_match,
             "question_total_correct_options": question_total_correct,
@@ -942,4 +1052,3 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
-
