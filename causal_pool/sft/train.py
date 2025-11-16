@@ -17,6 +17,10 @@ from transformers import (
 
 from causal_pool.data.dataset_utils import load_causal_pool_dataset
 from causal_pool.prompt_utils import build_question_prompt, index_to_letter
+from causal_pool.metrics import (
+    calculate_per_question_accuracy,
+    calculate_per_option_accuracy,
+)
 
 DATASET_NAME = "1k_simple"
 train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=320)
@@ -195,22 +199,13 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
     labels = tokenizer.batch_decode(label_ids, skip_special_tokens=True)
 
     metrics_dict = defaultdict(list)
-    total_num_options = 0
-    i = 0
-    for pred, label in zip(preds, labels):
-        label = set(c for c in label if c.isalpha())
-        total_num_options += len(label)
-        pred_options = set(c for c in pred if c.isalpha() and c.isupper())
-        if len(pred_options) != len(pred):
-            # invalid -> 0
-            metrics_dict["per_question_accuracy"].append(0)
-            metrics_dict["per_option_accuracy"].append(0)
-            continue
-        pred = pred_options
 
-        per_question_accuracy = int(pred == label)
-        # note: this doesn't penalize model outputting all options available
-        per_option_accuracy = len(pred & label)
+    for i, (pred, label) in enumerate(zip(preds, labels)):
+        # this shortcut only works on single GPU case
+        num_options = len(eval_dataset[i]["options"])
+
+        per_question_accuracy = calculate_per_question_accuracy(label, pred)
+        per_option_accuracy = calculate_per_option_accuracy(num_options, label, pred)
         metrics_dict["per_question_accuracy"].append(per_question_accuracy)
         metrics_dict["per_option_accuracy"].append(per_option_accuracy)
 
@@ -219,13 +214,10 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
             print(f"Pred: {pred}")
             print(f"Label: {label}")
             print(f"PQA={per_question_accuracy:.4f} | POA={per_option_accuracy:.4f} ")
-        i += 1
 
     return {
         "per_question_accuracy": float(np.mean(metrics_dict["per_question_accuracy"])),
-        "per_option_accuracy": float(
-            np.sum(metrics_dict["per_option_accuracy"]) / total_num_options
-        ),
+        "per_option_accuracy": float(np.mean(metrics_dict["per_option_accuracy"])),
     }
 
 

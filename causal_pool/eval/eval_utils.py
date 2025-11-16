@@ -2,7 +2,7 @@
 Utility functions for evaluation script.
 
 This module contains:
-- Video processing utilities (duration, cutting)
+- Video processing utilities (duration, cutting - for pre-processing scripts)
 - Model configuration utilities (hyperparameters, normalization)
 - Evaluation utilities (metrics calculation, prediction validation)
 - Prompt building utilities
@@ -11,7 +11,6 @@ This module contains:
 import base64
 import os
 import subprocess
-import tempfile
 from typing import Dict, List, Tuple, Any
 from causal_pool.prompt_utils import build_question_prompt
 from causal_pool.utils import normalize_model_name
@@ -71,41 +70,6 @@ def get_model_hyperparameters(model_name: str) -> Dict[str, Any]:
         Dictionary of hyperparameters
     """
     return MODEL_HYPERPARAMETERS.get(model_name, DEFAULT_HYPERPARAMETERS).copy()
-
-
-def get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int]:
-    """
-    Returns (exactly correct or not, how many options were correct).
-    
-    Args:
-        entry: Dataset entry with 'ground_truth' field
-        pred: Prediction string (e.g., "AC")
-    
-    Returns:
-        Tuple of (exactly_correct, num_correct_options)
-    
-    Raises:
-        InvalidPredictionError: If prediction format is invalid (not pure A-Z or has duplicates)
-    """
-    if (idx := pred.rfind("</think>")) != -1:
-        pred = pred[idx + len("</think>"):]
-    
-    pred = pred.strip()
-    
-    if not all(c.isalpha() and c.isupper() for c in pred):
-        raise InvalidPredictionError(f"Prediction contains non-A-Z characters: {pred!r}")
-    
-    selected_options = set(ord(c) - ord("A") for c in pred)
-
-    if len(selected_options) != len(pred):  # duplicate options
-        raise InvalidPredictionError(f"Prediction contains duplicate options: {pred!r}")
-    
-    ground_truth = set(entry["ground_truth"])
-    
-    exactly_correct = int(selected_options == ground_truth)
-    num_correct = len(selected_options & ground_truth)
-    
-    return exactly_correct, num_correct
 
 
 def get_video_duration(video_path: str) -> float:
@@ -197,7 +161,7 @@ def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".") 
     """
     Build prompt for a dataset entry.
     
-    For predictive questions, only the first half of the video is used.
+    For predictive questions, uses pre-cut video_half.mp4 instead of video.mp4.
     
     Args:
         entry: Dataset entry
@@ -207,41 +171,30 @@ def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".") 
     Returns:
         List of message dictionaries for OpenAI API
     """
-    video_path = os.path.join(
-        base_dir, "datasets", dataset_name, "shots", entry["video"], f"video.mp4"
-    )
-    
-    question_prompt = build_question_prompt(entry)
-
     # Check if this is a predictive question type
     question_type = entry.get("metadata", {}).get("question_type", "")
     is_predictive = question_type == "predictive"
     
-    # For predictive questions, cut video to first half
-    video_to_encode = video_path
-    temp_video_path = None
+    # For predictive questions, use pre-cut video_half.mp4
+    video_filename = "video_half.mp4" if is_predictive else "video.mp4"
+    video_path = os.path.join(
+        base_dir, "datasets", dataset_name, "shots", entry["video"], video_filename
+    )
     
-    if is_predictive:
-        # Create temporary file for cut video
-        temp_fd, temp_video_path = tempfile.mkstemp(suffix=".mp4")
-        os.close(temp_fd)
-        try:
-            cut_video_first_half(video_path, temp_video_path)
-            video_to_encode = temp_video_path
-        except Exception as e:
-            # Clean up temp file if cutting fails
-            if temp_video_path and os.path.exists(temp_video_path):
-                os.unlink(temp_video_path)
-            raise RuntimeError(f"Failed to process predictive video: {e}")
+    if not os.path.exists(video_path):
+        if is_predictive:
+            raise FileNotFoundError(
+                f"Pre-cut video not found: {video_path}. "
+                f"Please run scripts/precut_test_videos.py to create video_half.mp4 files."
+            )
+        else:
+            raise FileNotFoundError(f"Video not found: {video_path}")
+    
+    question_prompt = build_question_prompt(entry)
     
     # Read and encode video
-    try:
-        with open(video_to_encode, "rb") as video_file:
-            video_b64 = base64.b64encode(video_file.read()).decode("utf-8")
-    finally:
-        # Clean up temporary cut video if it was created
-        if temp_video_path and os.path.exists(temp_video_path):
-            os.unlink(temp_video_path)
+    with open(video_path, "rb") as video_file:
+        video_b64 = base64.b64encode(video_file.read()).decode("utf-8")
     
     return [{
         "role": "user",

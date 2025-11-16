@@ -11,6 +11,7 @@ This script evaluates a model on a dataset with support for:
 
 import argparse
 import asyncio
+import itertools
 import json
 import os
 import random
@@ -35,11 +36,15 @@ from tqdm import tqdm
 from causal_pool.eval.eval_utils import (
     InvalidPredictionError,
     get_model_hyperparameters,
-    get_metrics,
     build_prompt,
+)
+from causal_pool.metrics import (
+    calculate_per_question_accuracy,
+    calculate_per_option_accuracy,
 )
 from causal_pool.data.dataset_utils import gather_test_dataset
 from causal_pool.utils import normalize_model_name
+from causal_pool.prompt_utils import index_to_letter
 
 
 # Create retry condition by combining existing helpers
@@ -49,6 +54,81 @@ _retry_condition = (
     retry_if_exception_type((InvalidPredictionError, APIError, APIConnectionError, APITimeoutError))
     | retry_if_not_exception_type((BadRequestError, ValueError))
 )
+
+
+def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int]:
+    """
+    Validate prediction format and calculate metrics using metrics.py functions.
+    
+    Args:
+        entry: Dataset entry with 'ground_truth' and 'options' fields
+        pred: Prediction string (e.g., "AC")
+    
+    Returns:
+        Tuple of (exactly_correct, num_correct_options)
+        - exactly_correct: 1 if prediction exactly matches ground truth, 0 otherwise
+        - num_correct_options: Number of correct options (count, not fraction)
+    
+    Raises:
+        InvalidPredictionError: If prediction format is invalid (not pure A-Z or has duplicates)
+    """
+    # Clean up prediction (remove any trailing reasoning tags)
+    if (idx := pred.rfind("</think>")) != -1:
+        pred = pred[idx + len("</think>"):]
+    
+    pred = pred.strip()
+    
+    # Validate prediction format
+    if not all(c.isalpha() and c.isupper() for c in pred):
+        raise InvalidPredictionError(f"Prediction contains non-A-Z characters: {pred!r}")
+    
+    if len(set(pred)) != len(pred):  # duplicate options
+        raise InvalidPredictionError(f"Prediction contains duplicate options: {pred!r}")
+    
+    # Get ground truth and number of options
+    ground_truth = entry["ground_truth"]
+    num_options = len(entry["options"])
+    
+    # Convert ground_truth to string if it's a set or list
+    # Handle both integer indices (e.g., [0, 1]) and string letters (e.g., ["A", "B"])
+    if isinstance(ground_truth, (set, list)):
+        if ground_truth:
+            # Check if first element is an integer (indices) or string (letters)
+            if isinstance(next(iter(ground_truth)), int):
+                # Convert integer indices to letters
+                ground_truth_str = "".join(sorted(index_to_letter(i) for i in ground_truth))
+                ground_truth_set = set(index_to_letter(i) for i in ground_truth)
+            else:
+                # Already strings, just join them
+                ground_truth_str = "".join(sorted(ground_truth))
+                ground_truth_set = set(ground_truth) if isinstance(ground_truth, set) else set(ground_truth)
+        else:
+            # Empty list/set
+            ground_truth_str = ""
+            ground_truth_set = set()
+    elif isinstance(ground_truth, int):
+        # Single integer index
+        ground_truth_str = index_to_letter(ground_truth)
+        ground_truth_set = {ground_truth_str}
+    else:
+        # Already a string
+        ground_truth_str = ground_truth
+        ground_truth_set = set(ground_truth_str)
+    
+    # Sort prediction for comparison (metrics.py compares strings)
+    pred_sorted = "".join(sorted(pred))
+    pred_set = set(pred)
+    
+    # Calculate per-question accuracy (exactly correct) using metrics.py
+    exactly_correct = calculate_per_question_accuracy(ground_truth_str, pred_sorted)
+    
+    # Return count of correctly selected options (intersection size)
+    # This is used for detailed results tracking
+    # Note: Per-option accuracy fraction is calculated separately in the evaluation loop
+    # using calculate_per_option_accuracy from metrics.py
+    num_correct_options = len(pred_set & ground_truth_set)
+    
+    return exactly_correct, num_correct_options
 
 
 class AsyncEvaluator:
@@ -111,24 +191,29 @@ class AsyncEvaluator:
         """
         Generate a random prediction for an entry.
         
-        Randomly selects the same number of options as the ground truth,
-        from the available options.
+        Randomly selects uniformly from the power set of all possible option combinations.
+        This includes all possible subsets: empty set, single options, pairs, triplets, etc.
         
         Args:
             entry: Dataset entry with 'ground_truth' and 'options' fields
         
         Returns:
-            Prediction string in valid format (e.g., "AC")
+            Prediction string in valid format (e.g., "AC" or "" for empty set)
         """
-        ground_truth = entry["ground_truth"]
-        num_options_to_select = len(ground_truth)
         num_available_options = len(entry["options"])
         
-        # Randomly select indices
-        selected_indices = sorted(random.sample(range(num_available_options), num_options_to_select))
+        # Generate all possible combinations (power set)
+        # For n options, we have 2^n possible combinations
+        all_combinations = []
+        for r in range(num_available_options + 1):  # r from 0 to n (inclusive)
+            for combo in itertools.combinations(range(num_available_options), r):
+                all_combinations.append(combo)
         
-        # Convert to letters (A-Z)
-        prediction = "".join(chr(ord("A") + idx) for idx in selected_indices)
+        # Randomly select one combination from the power set
+        selected_indices = random.choice(all_combinations)
+        
+        # Convert to letters (A-Z), sorted for consistency
+        prediction = "".join(chr(ord("A") + idx) for idx in sorted(selected_indices))
         
         return prediction
     
@@ -175,7 +260,7 @@ class AsyncEvaluator:
             # For random baseline, generate prediction without API call
             pred = self._generate_random_prediction(entry)
             # Validate the prediction format (should always be valid, but check anyway)
-            get_metrics(entry, pred)
+            validate_and_get_metrics(entry, pred)
             return pred
         
         # Create retry decorator with entry-specific callback
@@ -214,7 +299,7 @@ class AsyncEvaluator:
                 
                 # Validate prediction format - this will raise InvalidPredictionError if invalid
                 # which will trigger a retry
-                get_metrics(entry, pred)
+                validate_and_get_metrics(entry, pred)
                 
                 return pred
             
@@ -363,12 +448,13 @@ async def evaluate_dataset(
     question_exactly_correct = 0  # @k (where k=num_samples): any sample correct
     question_first_sample_correct = 0  # @1: first sample only
     
-    # Per-option metrics: aggregate across all samples
-    total_correct_options = 0
-    total_ground_truth_options = 0
+    # Per-option metrics: aggregate across all samples using metrics.py
+    # Accumulate per-option accuracy fractions (from calculate_per_option_accuracy)
+    total_per_option_acc = 0.0
+    total_samples_for_per_option = 0
     
     # Per-question-type metrics
-    question_type_stats = {}  # question_type -> {total, exactly_correct, first_sample_correct, correct_options, ground_truth_options}
+    question_type_stats = {}  # question_type -> {total, exactly_correct, first_sample_correct, per_option_acc_sum, per_option_samples}
     
     # Detailed results
     detailed_results = []
@@ -398,14 +484,35 @@ async def evaluate_dataset(
                     "total": 0,
                     "exactly_correct": 0,
                     "first_sample_correct": 0,
-                    "correct_options": 0,
-                    "ground_truth_options": 0,
+                    "per_option_acc_sum": 0.0,
+                    "per_option_samples": 0,
                 }
             question_type_stats[question_type]["total"] += 1
             continue
         
-        ground_truth = set(entry["ground_truth"])
-        total_ground_truth_options += len(ground_truth) * num_samples
+        # Normalize ground_truth to a set of strings (letters)
+        # Handle both integer indices (e.g., [0, 1]) and string letters (e.g., ["A", "B"])
+        raw_ground_truth = entry["ground_truth"]
+        if isinstance(raw_ground_truth, (set, list)):
+            if raw_ground_truth:
+                # Check if first element is an integer (indices) or string (letters)
+                if isinstance(next(iter(raw_ground_truth)), int):
+                    # Convert integer indices to letters
+                    ground_truth = set(index_to_letter(i) for i in raw_ground_truth)
+                else:
+                    # Already strings
+                    ground_truth = set(raw_ground_truth)
+            else:
+                # Empty list/set
+                ground_truth = set()
+        else:
+            # Single value (string or int)
+            if isinstance(raw_ground_truth, int):
+                ground_truth = {index_to_letter(raw_ground_truth)}
+            else:
+                ground_truth = set(raw_ground_truth)
+        
+        num_options = len(entry["options"])
         
         # Initialize question type stats if needed
         if question_type not in question_type_stats:
@@ -413,11 +520,10 @@ async def evaluate_dataset(
                 "total": 0,
                 "exactly_correct": 0,
                 "first_sample_correct": 0,
-                "correct_options": 0,
-                "ground_truth_options": 0,
+                "per_option_acc_sum": 0.0,
+                "per_option_samples": 0,
             }
         question_type_stats[question_type]["total"] += 1
-        question_type_stats[question_type]["ground_truth_options"] += len(ground_truth) * num_samples
         
         # Calculate metrics for each prediction
         sample_metrics = []
@@ -427,18 +533,24 @@ async def evaluate_dataset(
         
         for idx, pred in enumerate(predictions):
             try:
-                exactly_correct, num_correct = get_metrics(entry, pred)
+                exactly_correct, num_correct = validate_and_get_metrics(entry, pred)
+                # Also calculate per-option accuracy using metrics.py
+                ground_truth_str = "".join(sorted(ground_truth))
+                pred_sorted = "".join(sorted(pred))
+                per_option_acc = calculate_per_option_accuracy(num_options, ground_truth_str, pred_sorted)
             except InvalidPredictionError as e:
                 # This shouldn't happen since we validate in evaluate_entry,
                 # but handle it defensively
                 print(f"Warning: Invalid prediction in results for entry {entry.get('video', 'unknown')}: {e}")
                 # Treat as incorrect
                 exactly_correct, num_correct = 0, 0
+                per_option_acc = 0.0
             
             sample_metrics.append({
                 "prediction": pred,
                 "exactly_correct": exactly_correct,
                 "num_correct_options": num_correct,
+                "per_option_accuracy": per_option_acc,
             })
             
             # @1: Check if first sample is correct
@@ -450,8 +562,15 @@ async def evaluate_dataset(
                 question_has_exact_match = True
             
             question_total_correct += num_correct
-            total_correct_options += num_correct
-            question_type_stats[question_type]["correct_options"] += num_correct
+            # Accumulate per-option accuracy fractions
+            total_per_option_acc += per_option_acc
+            total_samples_for_per_option += 1
+            # Also track for question type stats (using fraction)
+            if "per_option_acc_sum" not in question_type_stats[question_type]:
+                question_type_stats[question_type]["per_option_acc_sum"] = 0.0
+                question_type_stats[question_type]["per_option_samples"] = 0
+            question_type_stats[question_type]["per_option_acc_sum"] += per_option_acc
+            question_type_stats[question_type]["per_option_samples"] += 1
         
         if question_has_exact_match:
             question_exactly_correct += 1
@@ -476,7 +595,8 @@ async def evaluate_dataset(
     
     # Calculate final metrics
     per_question_accuracy = question_exactly_correct / total_questions if total_questions > 0 else 0.0
-    per_option_accuracy = total_correct_options / total_ground_truth_options if total_ground_truth_options > 0 else 0.0
+    # Per-option accuracy: average of per-sample fractions from calculate_per_option_accuracy
+    per_option_accuracy = total_per_option_acc / total_samples_for_per_option if total_samples_for_per_option > 0 else 0.0
     
     # Calculate @1 and @k metrics
     accuracy_at_1 = question_first_sample_correct / total_questions if total_questions > 0 else 0.0
@@ -486,8 +606,7 @@ async def evaluate_dataset(
         "per_question_accuracy": per_question_accuracy,
         "per_option_accuracy": per_option_accuracy,
         "questions_with_exact_match": question_exactly_correct,
-        "total_correct_options": total_correct_options,
-        "total_ground_truth_options": total_ground_truth_options,
+        "total_samples": total_samples_for_per_option,
     }
     
     # Add @1 and @k metrics when num_samples > 1
@@ -502,13 +621,13 @@ async def evaluate_dataset(
     for qtype, stats in question_type_stats.items():
         qtype_total = stats["total"]
         if qtype_total > 0:
+            qtype_per_option_acc = stats["per_option_acc_sum"] / stats["per_option_samples"] if stats["per_option_samples"] > 0 else 0.0
             qtype_metrics = {
                 "total_questions": qtype_total,
                 "per_question_accuracy": stats["exactly_correct"] / qtype_total,
-                "per_option_accuracy": stats["correct_options"] / stats["ground_truth_options"] if stats["ground_truth_options"] > 0 else 0.0,
+                "per_option_accuracy": qtype_per_option_acc,
                 "questions_with_exact_match": stats["exactly_correct"],
-                "total_correct_options": stats["correct_options"],
-                "total_ground_truth_options": stats["ground_truth_options"],
+                "total_samples": stats["per_option_samples"],
             }
             if num_samples > 1:
                 qtype_metrics["accuracy@1"] = stats["first_sample_correct"] / qtype_total
@@ -590,13 +709,13 @@ async def main():
         "-t", "--max-tokens",
         type=int,
         default=None,
-        help="Maximum tokens for generation (default: from model config)",
+        help="Maximum tokens for generation (default: None)",
     )
     parser.add_argument(
         "-T", "--temperature",
         type=float,
         default=None,
-        help="Sampling temperature (default: from model config)",
+        help="Sampling temperature (default: None)",
     )
     parser.add_argument(
         "-b", "--base-dir",
@@ -611,27 +730,22 @@ async def main():
         help="Maximum number of entries to evaluate (for testing, default: all)",
     )
     parser.add_argument(
-        "-p", "--include-predictive",
-        action="store_true",
-        help="Include predictive.jsonl dataset (default: False, only loads counterfactual_test.jsonl and descriptive.jsonl)",
-    )
-    parser.add_argument(
         "-C", "--counterfactual-test-size",
         type=int,
-        default=None,
+        default=256,
         help="Number of entries to load from counterfactual_test.jsonl (default: all)",
     )
     parser.add_argument(
         "-D", "--descriptive-size",
         type=int,
-        default=None,
+        default=256,
         help="Number of entries to load from descriptive.jsonl (default: all)",
     )
     parser.add_argument(
         "-P", "--predictive-size",
         type=int,
-        default=None,
-        help="Number of entries to load from predictive.jsonl (default: all, only used if --include-predictive is set)",
+        default=256,
+        help="Number of entries to load from predictive.jsonl (default: 0, meaning don't include predictive dataset)",
     )
     
     args = parser.parse_args()
@@ -665,15 +779,11 @@ async def main():
     sizes["descriptive"] = descriptive_size
     
     # Predictive (optional)
-    if args.include_predictive:
+    if args.predictive_size > 0:
         predictive_path = os.path.join(dataset_splits_dir, "predictive.jsonl")
         if not os.path.exists(predictive_path):
             raise FileNotFoundError(f"Dataset file not found: {predictive_path}")
-        if args.predictive_size is None:
-            predictive_size = len(list(jsonlines.open(predictive_path)))
-        else:
-            predictive_size = args.predictive_size
-        sizes["predictive"] = predictive_size
+        sizes["predictive"] = args.predictive_size
     
     # Load dataset using gather_test_dataset
     # Note: gather_test_dataset uses relative paths, so we need to change to base_dir

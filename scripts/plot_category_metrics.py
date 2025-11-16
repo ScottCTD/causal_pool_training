@@ -2,7 +2,7 @@
 """
 Plot per-category per-question and per-option accuracy for all models.
 
-This script loads all eval*.json files from datasets/1k_simple/ and creates
+This script loads all eval*.json files from results/1k_simple/ and creates
 visualizations showing per-category metrics (per-question and per-option accuracy)
 for each model.
 """
@@ -107,21 +107,24 @@ def plot_category_metrics(
         per_option_metrics: Dict mapping category -> list of per-option accuracies
         categories: List of category names
         model_names: List of model names (in same order as metric lists)
-        output_path: Path to save the plot
+        output_path: Base path to save the plots (will generate two files)
     """
     if not HAS_MATPLOTLIB:
         print("Skipping plot generation (matplotlib not available)")
         return
     
+    # Generate two output paths
+    base_path = Path(output_path)
+    per_question_path = base_path.parent / f"{base_path.stem}_per_question{base_path.suffix}"
+    per_option_path = base_path.parent / f"{base_path.stem}_per_option{base_path.suffix}"
+    
     n_categories = len(categories)
     n_models = len(model_names)
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    
     x = np.arange(len(categories))
     width = 0.8 / n_models
     
-    # Plot per-question accuracy
-    ax1 = axes[0]
+    # Plot per-question accuracy (separate figure)
+    fig1, ax1 = plt.subplots(figsize=(10, 6))
     for i, model_name in enumerate(model_names):
         offset = (i - n_models / 2 + 0.5) * width
         values = [per_question_metrics[cat][i] for cat in categories]
@@ -161,8 +164,13 @@ def plot_category_metrics(
     ax1.grid(axis='y', alpha=0.3)
     ax1.legend(loc='upper right', fontsize=9)
     
-    # Plot per-option accuracy
-    ax2 = axes[1]
+    plt.tight_layout()
+    plt.savefig(str(per_question_path), dpi=300, bbox_inches='tight')
+    plt.close(fig1)
+    print(f"Plot saved to {per_question_path}")
+    
+    # Plot per-option accuracy (separate figure)
+    fig2, ax2 = plt.subplots(figsize=(10, 6))
     for i, model_name in enumerate(model_names):
         offset = (i - n_models / 2 + 0.5) * width
         values = [per_option_metrics[cat][i] for cat in categories]
@@ -203,24 +211,25 @@ def plot_category_metrics(
     ax2.legend(loc='upper right', fontsize=9)
     
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
-    print(f"Plot saved to {output_path}")
+    plt.savefig(str(per_option_path), dpi=300, bbox_inches='tight')
+    plt.close(fig2)
+    print(f"Plot saved to {per_option_path}")
 
 
 def main():
     """Main function."""
     # Get the project root directory (assuming script is run from project root)
     project_root = Path(__file__).parent.parent
-    dataset_dir = project_root / 'datasets' / '1k_simple'
+    results_dir = project_root / 'results' / '1k_simple'
     
-    if not dataset_dir.exists():
-        raise FileNotFoundError(f"Dataset directory not found: {dataset_dir}")
+    if not results_dir.exists():
+        raise FileNotFoundError(f"Results directory not found: {results_dir}")
     
-    print(f"Loading evaluation results from {dataset_dir}...")
-    results = load_all_eval_results(str(dataset_dir))
+    print(f"Loading evaluation results from {results_dir}...")
+    results = load_all_eval_results(str(results_dir))
     
     if not results:
-        raise ValueError(f"No eval*.json files found in {dataset_dir}")
+        raise ValueError(f"No eval*.json files found in {results_dir}")
     
     print(f"Found {len(results)} model evaluation files:")
     for model_name in sorted(results.keys()):
@@ -231,10 +240,8 @@ def main():
     
     print(f"Found {len(categories)} categories: {', '.join(categories)}")
     
-    # Create output directory if it doesn't exist
-    output_dir = project_root / 'eval'
-    output_dir.mkdir(exist_ok=True)
-    output_path = output_dir / 'category_metrics_plot.png'
+    # Save output to the same results directory
+    output_path = results_dir / 'category_metrics_plot.png'
     
     if HAS_MATPLOTLIB:
         print("\nGenerating plots...")

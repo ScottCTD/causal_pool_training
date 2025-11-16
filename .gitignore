@@ -14,4 +14,4 @@ wandb/
 slurm*
 
 datasets/*
-outputs_sft/*
+outputs/*

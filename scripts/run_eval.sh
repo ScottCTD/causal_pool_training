@@ -88,11 +88,11 @@ source .venv/bin/activate
 #   --descriptive-size N     : Limit descriptive entries
 #   --predictive-size N      : Limit predictive entries
 python scripts/auto_eval.py \
-  --model "Qwen/Qwen3-VL-8B-Instruct" \
+  --model "Qwen/Qwen3-VL-4B-Thinking" \
   --dataset 1k_simple \
   --num-samples 1 \
   --max-concurrent 256 \
-  --max-tokens 10 \
+  # --max-tokens 10 \
   --port 8000 \
 #  --max-entries 10 \
 

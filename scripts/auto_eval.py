@@ -234,6 +234,7 @@ def build_vllm_command(
         "--bind", "/scratch/scottc/cache/:/home/scottc/.cache",
         "--bind", "/scratch/scottc/cache/triton/:/home/scottc/.triton/",
         "--env", "HF_HUB_OFFLINE=1",
+        "--env", "VLLM_NO_USAGE_STATS=1",
         vllm_sif_path,
     ] + vllm_args
     
@@ -314,7 +315,7 @@ Examples:
     parser.add_argument(
         "-c", "--max-concurrent",
         type=int,
-        default=512,
+        default=256,
         help="Maximum concurrent requests (default: 512)",
     )
     parser.add_argument(
@@ -451,10 +452,23 @@ Examples:
     server_process = None
     eval_result = None
     exit_code = 0  # Default exit code
+    server_log_file = None
     try:
+        # Redirect server output to a log file to avoid pipe buffer blocking
+        # If we use PIPE without reading, the buffer fills up and blocks the server
+        server_log_path = os.path.join(
+            base_dir,
+            "outputs",
+            "slurm",
+            f"vllm_server_{args.model.replace('/', '_').replace('-', '_')}_{args.port}.log"
+        )
+        os.makedirs(os.path.dirname(server_log_path), exist_ok=True)
+        server_log_file = open(server_log_path, "w")
+        log(f"Server logs will be written to: {server_log_path}")
+        
         server_process = subprocess.Popen(
             vllm_cmd,
-            stdout=subprocess.PIPE,
+            stdout=server_log_file,
             stderr=subprocess.STDOUT,
             text=True,
             env=os.environ.copy(),
@@ -567,6 +581,13 @@ Examples:
                     log("Server process killed")
             except Exception as e:
                 log(f"WARNING: Error during cleanup: {e}", prefix="[AUTO-EVAL] [WARN]")
+        
+        # Close server log file
+        if server_log_file:
+            try:
+                server_log_file.close()
+            except Exception as e:
+                log(f"WARNING: Error closing server log file: {e}", prefix="[AUTO-EVAL] [WARN]")
     
     log("=" * 60)
     log("Automated evaluation finished")
