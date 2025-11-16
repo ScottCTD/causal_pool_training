@@ -127,17 +127,17 @@ COMMON_DEFAULTS = {
 # Parameters not specified will use COMMON_DEFAULTS
 # Note: If you specify 'port' explicitly, it will be used (but make sure it's unique!)
 MODEL_CONFIGS: Dict[str, Dict[str, any]] = {
-    "Qwen/Qwen3-VL-4B-Instruct": {
-        "dataset": "ds1",
-        # "max_entries": 10,
-    },
-    "Qwen/Qwen3-VL-4B-Thinking": {
-        "dataset": "ds1",
-        "max_tokens": 32768,
-    },
-    "Qwen/Qwen3-VL-8B-Instruct": {
-        "dataset": "ds1",
-    },
+    # "Qwen/Qwen3-VL-4B-Instruct": {
+    #     "dataset": "ds1",
+    #     # "max_entries": 10,
+    # },
+    # "Qwen/Qwen3-VL-4B-Thinking": {
+    #     "dataset": "ds1",
+    #     "max_tokens": 32768,
+    # },
+    # "Qwen/Qwen3-VL-8B-Instruct": {
+    #     "dataset": "ds1",
+    # },
     "causalpool-4B": {
         "dataset": "ds1",
     },

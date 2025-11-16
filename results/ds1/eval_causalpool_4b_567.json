@@ -5,37 +5,37 @@
   "total_questions": 1152,
   "total_samples": 1152,
   "metrics": {
-    "per_question_accuracy": 0.7690972222222222,
-    "per_option_accuracy": 0.8806423611111116,
-    "questions_with_exact_match": 886,
+    "per_question_accuracy": 0.734375,
+    "per_option_accuracy": 0.8628472222222227,
+    "questions_with_exact_match": 846,
     "total_samples": 1152,
     "per_question_type": {
       "counterfactual_velocity": {
         "total_questions": 206,
-        "per_question_accuracy": 0.8349514563106796,
-        "per_option_accuracy": 0.9150485436893205,
-        "questions_with_exact_match": 172,
+        "per_question_accuracy": 0.8058252427184466,
+        "per_option_accuracy": 0.901294498381877,
+        "questions_with_exact_match": 166,
         "total_samples": 206
       },
       "counterfactual_position": {
         "total_questions": 178,
-        "per_question_accuracy": 0.7584269662921348,
-        "per_option_accuracy": 0.8726591760299625,
-        "questions_with_exact_match": 135,
+        "per_question_accuracy": 0.6797752808988764,
+        "per_option_accuracy": 0.8323970037453183,
+        "questions_with_exact_match": 121,
         "total_samples": 178
       },
       "descriptive": {
         "total_questions": 384,
-        "per_question_accuracy": 0.765625,
-        "per_option_accuracy": 0.8828125,
-        "questions_with_exact_match": 294,
+        "per_question_accuracy": 0.71875,
+        "per_option_accuracy": 0.85546875,
+        "questions_with_exact_match": 276,
         "total_samples": 384
       },
       "predictive": {
         "total_questions": 384,
-        "per_question_accuracy": 0.7421875,
-        "per_option_accuracy": 0.8637152777777777,
-        "questions_with_exact_match": 285,
+        "per_question_accuracy": 0.7369791666666666,
+        "per_option_accuracy": 0.8637152777777778,
+        "questions_with_exact_match": 283,
         "total_samples": 384
       }
     }
@@ -275,7 +275,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "AD"
       ],
       "prompts": [
         [
@@ -297,19 +297,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 6,
@@ -365,7 +365,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -387,19 +387,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.3333333333333333
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 8,
@@ -545,7 +545,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -567,11 +567,11 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -1175,7 +1175,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -1197,19 +1197,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 26,
@@ -1220,7 +1220,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -1242,19 +1242,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 27,
@@ -1625,7 +1625,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -1647,11 +1647,11 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "AC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -1715,7 +1715,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -1737,11 +1737,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -1805,7 +1805,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "BD"
       ],
       "prompts": [
         [
@@ -1827,19 +1827,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 40,
@@ -1895,7 +1895,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "AB"
       ],
       "prompts": [
         [
@@ -1917,19 +1917,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 42,
@@ -1940,7 +1940,7 @@
         3
       ],
       "predictions": [
-        "AB"
+        "AD"
       ],
       "prompts": [
         [
@@ -1962,11 +1962,11 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -2120,7 +2120,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "AD"
       ],
       "prompts": [
         [
@@ -2142,11 +2142,11 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -2210,7 +2210,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -2232,19 +2232,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 49,
@@ -2255,7 +2255,7 @@
         2
       ],
       "predictions": [
-        "AD"
+        "AC"
       ],
       "prompts": [
         [
@@ -2277,19 +2277,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 50,
@@ -2345,7 +2345,7 @@
         1
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -2367,18 +2367,18 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "BC",
           "exactly_correct": 0,
-          "num_correct_options": 0,
-          "per_option_accuracy": 0.0
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
       "question_has_exact_match": false,
-      "question_total_correct_options": 0,
+      "question_total_correct_options": 1,
       "first_sample_correct": false
     },
     {
@@ -2435,7 +2435,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -2457,19 +2457,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 54,
@@ -2480,7 +2480,7 @@
         1
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -2502,11 +2502,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -2525,7 +2525,7 @@
         1
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -2547,11 +2547,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "BD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -2570,7 +2570,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -2592,19 +2592,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 57,
@@ -2660,7 +2660,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -2682,19 +2682,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 59,
@@ -2795,7 +2795,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -2817,19 +2817,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 62,
@@ -2975,7 +2975,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -2997,19 +2997,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 66,
@@ -3110,7 +3110,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -3132,19 +3132,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 69,
@@ -3785,7 +3785,7 @@
         1
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -3807,11 +3807,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "BD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -3830,7 +3830,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -3852,19 +3852,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 85,
@@ -3920,7 +3920,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -3942,19 +3942,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 87,
@@ -3965,7 +3965,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -3987,11 +3987,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -4010,7 +4010,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AC"
       ],
       "prompts": [
         [
@@ -4032,19 +4032,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 89,
@@ -4100,7 +4100,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -4122,19 +4122,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 91,
@@ -4415,7 +4415,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -4437,19 +4437,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 98,
@@ -4460,7 +4460,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -4482,19 +4482,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 99,
@@ -4640,7 +4640,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -4662,19 +4662,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 103,
@@ -4865,7 +4865,7 @@
         1
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -4887,19 +4887,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 108,
@@ -5675,7 +5675,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -5697,19 +5697,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 126,
@@ -5855,7 +5855,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -5877,19 +5877,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.3333333333333333
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 130,
@@ -6350,7 +6350,7 @@
         2
       ],
       "predictions": [
-        "AD"
+        "AC"
       ],
       "prompts": [
         [
@@ -6372,19 +6372,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 141,
@@ -6755,7 +6755,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -6777,19 +6777,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 150,
@@ -6845,7 +6845,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -6867,19 +6867,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 152,
@@ -7115,7 +7115,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BD"
       ],
       "prompts": [
         [
@@ -7137,19 +7137,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 158,
@@ -7475,7 +7475,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -7497,19 +7497,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 166,
@@ -8915,7 +8915,7 @@
         1
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -8937,11 +8937,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "BD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -9950,7 +9950,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -9972,19 +9972,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 221,
@@ -9995,7 +9995,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -10017,19 +10017,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 222,
@@ -10085,7 +10085,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -10107,19 +10107,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 224,
@@ -10670,7 +10670,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -10692,19 +10692,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 237,
@@ -11210,7 +11210,7 @@
         3
       ],
       "predictions": [
-        "AB"
+        "BD"
       ],
       "prompts": [
         [
@@ -11232,19 +11232,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 249,
@@ -11660,7 +11660,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -11682,19 +11682,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 259,
@@ -12470,7 +12470,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -12492,19 +12492,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 277,
@@ -12560,7 +12560,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "BD"
       ],
       "prompts": [
         [
@@ -12582,19 +12582,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 279,
@@ -12740,7 +12740,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "AD"
       ],
       "prompts": [
         [
@@ -12762,19 +12762,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 283,
@@ -13010,7 +13010,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -13032,19 +13032,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 289,
@@ -13100,7 +13100,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -13122,11 +13122,11 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
+          "prediction": "AC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -13550,7 +13550,7 @@
         3
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -13572,11 +13572,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -13775,7 +13775,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -13797,11 +13797,11 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
+          "prediction": "AC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -14315,7 +14315,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -14337,19 +14337,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 318,
@@ -14630,7 +14630,7 @@
         3
       ],
       "predictions": [
-        "AB"
+        "BD"
       ],
       "prompts": [
         [
@@ -14652,19 +14652,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 325,
@@ -15170,7 +15170,7 @@
         1
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -15192,19 +15192,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 337,
@@ -15485,7 +15485,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -15507,19 +15507,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 344,
@@ -15575,7 +15575,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "AB"
       ],
       "prompts": [
         [
@@ -15597,19 +15597,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 346,
@@ -15800,7 +15800,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -15822,19 +15822,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 351,
@@ -15845,7 +15845,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -15867,19 +15867,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 352,
@@ -16430,7 +16430,7 @@
         1
       ],
       "predictions": [
-        "AD"
+        "AC"
       ],
       "prompts": [
         [
@@ -16452,11 +16452,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "AC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -16520,7 +16520,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "CD"
       ],
       "prompts": [
         [
@@ -16542,19 +16542,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 0,
+          "per_option_accuracy": 0.0
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 0,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 367,
@@ -17150,7 +17150,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -17172,19 +17172,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 381,
@@ -17555,7 +17555,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "AD"
       ],
       "prompts": [
         [
@@ -17577,19 +17577,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 390,
@@ -17645,7 +17645,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -17667,19 +17667,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 392,
@@ -17825,7 +17825,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "AD"
       ],
       "prompts": [
         [
@@ -17847,19 +17847,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 396,
@@ -17870,7 +17870,7 @@
         3
       ],
       "predictions": [
-        "BC"
+        "CD"
       ],
       "prompts": [
         [
@@ -17892,19 +17892,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 397,
@@ -18005,7 +18005,7 @@
         1
       ],
       "predictions": [
-        "AC"
+        "AD"
       ],
       "prompts": [
         [
@@ -18027,11 +18027,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -18095,7 +18095,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AC"
       ],
       "prompts": [
         [
@@ -18117,19 +18117,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 402,
@@ -18230,7 +18230,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -18252,18 +18252,18 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
+          "prediction": "AB",
           "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "num_correct_options": 0,
+          "per_option_accuracy": 0.0
         }
       ],
       "question_has_exact_match": false,
-      "question_total_correct_options": 1,
+      "question_total_correct_options": 0,
       "first_sample_correct": false
     },
     {
@@ -18410,7 +18410,7 @@
         1
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -18432,19 +18432,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 409,
@@ -18635,7 +18635,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "CD"
       ],
       "prompts": [
         [
@@ -18657,19 +18657,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 414,
@@ -18815,7 +18815,7 @@
         1
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -18837,19 +18837,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 418,
@@ -18860,7 +18860,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -18882,19 +18882,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 419,
@@ -18950,7 +18950,7 @@
         2
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -18972,18 +18972,18 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "BD",
           "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "num_correct_options": 0,
+          "per_option_accuracy": 0.0
         }
       ],
       "question_has_exact_match": false,
-      "question_total_correct_options": 1,
+      "question_total_correct_options": 0,
       "first_sample_correct": false
     },
     {
@@ -18995,7 +18995,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -19017,19 +19017,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 422,
@@ -19445,7 +19445,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AC"
       ],
       "prompts": [
         [
@@ -19467,11 +19467,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "AC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -19625,7 +19625,7 @@
         1
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -19647,19 +19647,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 436,
@@ -20165,7 +20165,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -20187,19 +20187,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 448,
@@ -20525,7 +20525,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -20547,19 +20547,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 456,
@@ -20975,7 +20975,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "CD"
       ],
       "prompts": [
         [
@@ -20997,19 +20997,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 466,
@@ -21110,7 +21110,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -21132,11 +21132,11 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -21200,7 +21200,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AD"
       ],
       "prompts": [
         [
@@ -21222,19 +21222,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 471,
@@ -21605,7 +21605,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "AD"
       ],
       "prompts": [
         [
@@ -21627,19 +21627,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 480,
@@ -21875,7 +21875,7 @@
         2
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -21897,19 +21897,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 486,
@@ -22100,7 +22100,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -22122,18 +22122,18 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "AC",
           "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "num_correct_options": 0,
+          "per_option_accuracy": 0.0
         }
       ],
       "question_has_exact_match": false,
-      "question_total_correct_options": 1,
+      "question_total_correct_options": 0,
       "first_sample_correct": false
     },
     {
@@ -22550,7 +22550,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -22572,19 +22572,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 501,
@@ -22685,7 +22685,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -22707,19 +22707,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 504,
@@ -22820,7 +22820,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -22842,19 +22842,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 507,
@@ -23090,7 +23090,7 @@
         2
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -23112,11 +23112,11 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
+          "prediction": "CD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -23180,7 +23180,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -23202,19 +23202,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 515,
@@ -23315,7 +23315,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -23337,19 +23337,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 518,
@@ -23450,7 +23450,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "BD"
       ],
       "prompts": [
         [
@@ -23472,19 +23472,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 521,
@@ -23720,7 +23720,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AC"
       ],
       "prompts": [
         [
@@ -23742,19 +23742,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 527,
@@ -23855,7 +23855,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "AD"
       ],
       "prompts": [
         [
@@ -23877,11 +23877,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -24890,7 +24890,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AC"
       ],
       "prompts": [
         [
@@ -24912,19 +24912,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 553,
@@ -25385,7 +25385,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -25407,19 +25407,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 564,
@@ -25925,7 +25925,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -25947,19 +25947,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 576,
@@ -26060,7 +26060,7 @@
         2
       ],
       "predictions": [
-        "AD"
+        "AC"
       ],
       "prompts": [
         [
@@ -26082,19 +26082,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 579,
@@ -26780,7 +26780,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AC"
       ],
       "prompts": [
         [
@@ -26802,19 +26802,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 595,
@@ -27320,7 +27320,7 @@
         3
       ],
       "predictions": [
-        "AB"
+        "AD"
       ],
       "prompts": [
         [
@@ -27342,11 +27342,11 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -27410,7 +27410,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "CD"
       ],
       "prompts": [
         [
@@ -27432,19 +27432,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 609,
@@ -27950,7 +27950,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "AD"
       ],
       "prompts": [
         [
@@ -27972,19 +27972,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 621,
@@ -28445,7 +28445,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -28467,19 +28467,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 632,
@@ -28625,7 +28625,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -28647,19 +28647,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 636,
@@ -28715,7 +28715,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "AB"
       ],
       "prompts": [
         [
@@ -28737,11 +28737,11 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -28940,7 +28940,7 @@
         1
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -28962,19 +28962,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 643,
@@ -29570,7 +29570,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "AB"
       ],
       "prompts": [
         [
@@ -29592,11 +29592,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -29615,7 +29615,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "AD"
       ],
       "prompts": [
         [
@@ -29637,19 +29637,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 658,
@@ -29660,7 +29660,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "AB"
       ],
       "prompts": [
         [
@@ -29682,19 +29682,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 659,
@@ -30155,7 +30155,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -30177,19 +30177,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 670,
@@ -30605,7 +30605,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "AD"
       ],
       "prompts": [
         [
@@ -30627,11 +30627,11 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -30740,7 +30740,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "CD"
       ],
       "prompts": [
         [
@@ -30762,19 +30762,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 683,
@@ -30830,7 +30830,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -30852,19 +30852,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 685,
@@ -31100,7 +31100,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -31122,19 +31122,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 691,
@@ -31280,7 +31280,7 @@
         2
       ],
       "predictions": [
-        "AD"
+        "CD"
       ],
       "prompts": [
         [
@@ -31302,11 +31302,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "CD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -31460,7 +31460,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -31482,19 +31482,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 699,
@@ -31685,7 +31685,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -31707,19 +31707,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 704,
@@ -32135,7 +32135,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -32157,19 +32157,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 714,
@@ -32225,7 +32225,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "CD"
       ],
       "prompts": [
         [
@@ -32247,19 +32247,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 716,
@@ -32360,7 +32360,7 @@
         1
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -32382,19 +32382,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 719,
@@ -32405,7 +32405,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "AB"
       ],
       "prompts": [
         [
@@ -32427,19 +32427,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 720,
@@ -32495,7 +32495,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AD"
       ],
       "prompts": [
         [
@@ -32517,19 +32517,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 722,
@@ -32765,7 +32765,7 @@
         3
       ],
       "predictions": [
-        "BC"
+        "CD"
       ],
       "prompts": [
         [
@@ -32787,19 +32787,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 728,
@@ -33035,7 +33035,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -33057,11 +33057,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -33890,7 +33890,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AC"
       ],
       "prompts": [
         [
@@ -33912,19 +33912,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 753,
@@ -33935,7 +33935,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -33957,19 +33957,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 754,
@@ -33980,7 +33980,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -34002,19 +34002,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 755,
@@ -34160,7 +34160,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BD"
       ],
       "prompts": [
         [
@@ -34182,19 +34182,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 759,
@@ -34790,7 +34790,7 @@
         3
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -34812,11 +34812,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "BD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -34970,7 +34970,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AD"
       ],
       "prompts": [
         [
@@ -34992,11 +34992,11 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -36950,7 +36950,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "AD"
       ],
       "prompts": [
         [
@@ -36972,19 +36972,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 821,
@@ -37175,7 +37175,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -37197,19 +37197,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 826,
@@ -37310,7 +37310,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -37332,19 +37332,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 829,
@@ -37355,7 +37355,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -37377,11 +37377,11 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -37400,7 +37400,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -37422,11 +37422,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -37445,7 +37445,7 @@
         3
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -37467,19 +37467,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 832,
@@ -37670,7 +37670,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -37692,19 +37692,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.3333333333333333
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 837,
@@ -37895,7 +37895,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -37917,19 +37917,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 842,
@@ -38075,7 +38075,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -38097,19 +38097,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 846,
@@ -38165,7 +38165,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -38187,11 +38187,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -38210,7 +38210,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "CD"
       ],
       "prompts": [
         [
@@ -38232,19 +38232,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 849,
@@ -38300,7 +38300,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -38322,19 +38322,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 851,
@@ -38435,7 +38435,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "AD"
       ],
       "prompts": [
         [
@@ -38457,11 +38457,11 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -38525,7 +38525,7 @@
         1
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -38547,19 +38547,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 856,
@@ -39065,7 +39065,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -39087,19 +39087,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 868,
@@ -39245,7 +39245,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "AC"
       ],
       "prompts": [
         [
@@ -39267,19 +39267,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 872,
@@ -39290,7 +39290,7 @@
         3
       ],
       "predictions": [
-        "AB"
+        "AD"
       ],
       "prompts": [
         [
@@ -39312,19 +39312,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 873,
@@ -40190,7 +40190,7 @@
         1
       ],
       "predictions": [
-        "CD"
+        "AD"
       ],
       "prompts": [
         [
@@ -40212,18 +40212,18 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "AD",
           "exactly_correct": 0,
-          "num_correct_options": 0,
-          "per_option_accuracy": 0.0
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
       "question_has_exact_match": false,
-      "question_total_correct_options": 0,
+      "question_total_correct_options": 1,
       "first_sample_correct": false
     },
     {
@@ -40460,7 +40460,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -40482,19 +40482,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 899,
@@ -41000,7 +41000,7 @@
         1
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -41022,11 +41022,11 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -41765,7 +41765,7 @@
         2
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -41787,19 +41787,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 928,
@@ -42305,7 +42305,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -42327,19 +42327,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 940,
@@ -42665,7 +42665,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -42687,19 +42687,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.3333333333333333
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 948,
@@ -42710,7 +42710,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -42732,19 +42732,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 949,
@@ -42845,7 +42845,7 @@
         3
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -42867,11 +42867,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "BD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -42890,7 +42890,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -42912,19 +42912,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 953,
@@ -42935,7 +42935,7 @@
         1
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -42957,19 +42957,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 954,
@@ -43025,7 +43025,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "AC"
       ],
       "prompts": [
         [
@@ -43047,19 +43047,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 956,
@@ -43070,7 +43070,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BD"
       ],
       "prompts": [
         [
@@ -43092,19 +43092,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 957,
@@ -43160,7 +43160,7 @@
         2
       ],
       "predictions": [
-        "AD"
+        "AB"
       ],
       "prompts": [
         [
@@ -43182,11 +43182,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "AB",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -43340,7 +43340,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -43362,19 +43362,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 963,
@@ -43430,7 +43430,7 @@
         1
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -43452,19 +43452,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.3333333333333333
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 965,
@@ -43925,7 +43925,7 @@
         3
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -43947,19 +43947,19 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 976,
@@ -44105,7 +44105,7 @@
         1
       ],
       "predictions": [
-        "AC"
+        "AB"
       ],
       "prompts": [
         [
@@ -44127,19 +44127,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.3333333333333333
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 980,
@@ -44150,7 +44150,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -44172,11 +44172,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -44510,7 +44510,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AC"
       ],
       "prompts": [
         [
@@ -44532,19 +44532,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.3333333333333333
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 989,
@@ -44600,7 +44600,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "AC"
       ],
       "prompts": [
         [
@@ -44622,19 +44622,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 991,
@@ -44690,7 +44690,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -44712,19 +44712,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "AB",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 993,
@@ -44825,7 +44825,7 @@
         1
       ],
       "predictions": [
-        "AD"
+        "BD"
       ],
       "prompts": [
         [
@@ -44847,11 +44847,11 @@
         ]
       ],
       "responses": [
-        "AD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AD",
+          "prediction": "BD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -44870,7 +44870,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -44892,19 +44892,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 997,
@@ -45635,7 +45635,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "CD"
       ],
       "prompts": [
         [
@@ -45657,19 +45657,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 1014,
@@ -45680,7 +45680,7 @@
         2
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -45702,11 +45702,11 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
+          "prediction": "BC",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -45725,7 +45725,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "CD"
       ],
       "prompts": [
         [
@@ -45747,19 +45747,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1016,
@@ -46130,7 +46130,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "AD"
       ],
       "prompts": [
         [
@@ -46152,19 +46152,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1025,
@@ -46445,7 +46445,7 @@
         3
       ],
       "predictions": [
-        "AC"
+        "AD"
       ],
       "prompts": [
         [
@@ -46467,11 +46467,11 @@
         ]
       ],
       "responses": [
-        "AC"
+        "AD"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
+          "prediction": "AD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -46715,7 +46715,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -46737,19 +46737,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "CD",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 1038,
@@ -46760,7 +46760,7 @@
         1
       ],
       "predictions": [
-        "BC"
+        "BD"
       ],
       "prompts": [
         [
@@ -46782,11 +46782,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "BD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -46985,7 +46985,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -47007,19 +47007,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 1044,
@@ -47030,7 +47030,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -47052,19 +47052,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1045,
@@ -47165,7 +47165,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BD"
       ],
       "prompts": [
         [
@@ -47187,19 +47187,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BD"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1048,
@@ -47525,7 +47525,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -47547,19 +47547,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.3333333333333333
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1056,
@@ -47795,7 +47795,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "AC"
       ],
       "prompts": [
         [
@@ -47817,19 +47817,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1062,
@@ -48245,7 +48245,7 @@
         1
       ],
       "predictions": [
-        "BD"
+        "AB"
       ],
       "prompts": [
         [
@@ -48267,19 +48267,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1072,
@@ -48875,7 +48875,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -48897,19 +48897,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 1086,
@@ -49190,7 +49190,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "CD"
       ],
       "prompts": [
         [
@@ -49212,19 +49212,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "CD",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1093,
@@ -49235,7 +49235,7 @@
         2
       ],
       "predictions": [
-        "AC"
+        "BC"
       ],
       "prompts": [
         [
@@ -49257,19 +49257,19 @@
         ]
       ],
       "responses": [
-        "AC"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.3333333333333333
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1094,
@@ -49370,7 +49370,7 @@
         3
       ],
       "predictions": [
-        "BD"
+        "BC"
       ],
       "prompts": [
         [
@@ -49392,19 +49392,19 @@
         ]
       ],
       "responses": [
-        "BD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "BD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 1097,
@@ -49505,7 +49505,7 @@
         1
       ],
       "predictions": [
-        "BC"
+        "AB"
       ],
       "prompts": [
         [
@@ -49527,19 +49527,19 @@
         ]
       ],
       "responses": [
-        "BC"
+        "AB"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.3333333333333333
+          "prediction": "AB",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1100,
@@ -49730,7 +49730,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -49752,19 +49752,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.3333333333333333
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1105,
@@ -50495,7 +50495,7 @@
         2
       ],
       "predictions": [
-        "BC"
+        "CD"
       ],
       "prompts": [
         [
@@ -50517,11 +50517,11 @@
         ]
       ],
       "responses": [
-        "BC"
+        "CD"
       ],
       "sample_metrics": [
         {
-          "prediction": "BC",
+          "prediction": "CD",
           "exactly_correct": 0,
           "num_correct_options": 1,
           "per_option_accuracy": 0.5
@@ -50585,7 +50585,7 @@
         3
       ],
       "predictions": [
-        "CD"
+        "BC"
       ],
       "prompts": [
         [
@@ -50607,19 +50607,19 @@
         ]
       ],
       "responses": [
-        "CD"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "CD",
-          "exactly_correct": 1,
-          "num_correct_options": 2,
-          "per_option_accuracy": 1.0
+          "prediction": "BC",
+          "exactly_correct": 0,
+          "num_correct_options": 1,
+          "per_option_accuracy": 0.5
         }
       ],
-      "question_has_exact_match": true,
-      "question_total_correct_options": 2,
-      "first_sample_correct": true
+      "question_has_exact_match": false,
+      "question_total_correct_options": 1,
+      "first_sample_correct": false
     },
     {
       "entry_idx": 1124,
@@ -51125,7 +51125,7 @@
         2
       ],
       "predictions": [
-        "AB"
+        "BC"
       ],
       "prompts": [
         [
@@ -51147,19 +51147,19 @@
         ]
       ],
       "responses": [
-        "AB"
+        "BC"
       ],
       "sample_metrics": [
         {
-          "prediction": "AB",
-          "exactly_correct": 0,
-          "num_correct_options": 1,
-          "per_option_accuracy": 0.5
+          "prediction": "BC",
+          "exactly_correct": 1,
+          "num_correct_options": 2,
+          "per_option_accuracy": 1.0
         }
       ],
-      "question_has_exact_match": false,
-      "question_total_correct_options": 1,
-      "first_sample_correct": false
+      "question_has_exact_match": true,
+      "question_total_correct_options": 2,
+      "first_sample_correct": true
     },
     {
       "entry_idx": 1136,

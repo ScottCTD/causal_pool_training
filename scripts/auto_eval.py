@@ -91,7 +91,7 @@ MODEL_PRESETS: Dict[str, Dict[str, any]] = {
             "--max-num-batched-tokens", "8192",
             "--enforce-eager",
         ],
-        "model_path": "outputs/sft/checkpoint-576/merged",
+        "model_path": "outputs/sft/ds1/checkpoint-1024/merged",
     },
 }
 
