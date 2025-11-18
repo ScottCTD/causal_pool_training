@@ -15,6 +15,8 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 try:
+    # Set non-interactive backend before importing pyplot to avoid segfaults on headless systems
+    import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
     HAS_MATPLOTLIB = True

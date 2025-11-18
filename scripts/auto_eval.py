@@ -10,8 +10,15 @@ This script:
 5. Cleans up the server process
 """
 
-import argparse
+# Set thread limits before importing any libraries that might spawn threads
+# This prevents excessive thread creation on login nodes
 import os
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
+
+import argparse
 import socket
 import subprocess
 import sys
@@ -91,7 +98,21 @@ MODEL_PRESETS: Dict[str, Dict[str, any]] = {
             "--max-num-batched-tokens", "8192",
             "--enforce-eager",
         ],
-        "model_path": "outputs/sft/ds1/checkpoint-1024/merged",
+        "model_path": "outputs/sft/ds1/checkpoint-960/merged",
+    },
+    "Qwen/Qwen3-VL-30B-A3B-Instruct": {
+        "vllm_args": [
+            "--model", "Qwen/Qwen3-VL-30B-A3B-Instruct",
+            "--host", "0.0.0.0",
+            "--port", "{port}",
+            "--tensor-parallel-size", "1",
+            "--gpu-memory-utilization", "0.95",
+            "--max-model-len", "8192",
+            "--max-num-seqs", "512",
+            "--max-num-batched-tokens", "8192",
+            "--enforce-eager",
+            "--enable-expert-parallel",
+        ],
     },
 }
 
@@ -416,22 +437,28 @@ Examples:
         help="Include predictive.jsonl dataset",
     )
     parser.add_argument(
-        "-C", "--counterfactual-test-size",
+        "-C", "--counterfactual-velocity-size",
         type=int,
         default=None,
-        help="Number of entries to load from counterfactual_test.jsonl",
+        help="Number of entries to load from test-counterfactual_velocity.jsonl",
+    )
+    parser.add_argument(
+        "--counterfactual-position-size",
+        type=int,
+        default=None,
+        help="Number of entries to load from test-counterfactual_position.jsonl",
     )
     parser.add_argument(
         "-D", "--descriptive-size",
         type=int,
         default=None,
-        help="Number of entries to load from descriptive.jsonl",
+        help="Number of entries to load from test-descriptive.jsonl",
     )
     parser.add_argument(
         "-P", "--predictive-size",
         type=int,
         default=None,
-        help="Number of entries to load from predictive.jsonl",
+        help="Number of entries to load from test-predictive.jsonl",
     )
     
     args = parser.parse_args()
@@ -575,8 +602,10 @@ Examples:
             eval_cmd.extend(["--max-entries", str(args.max_entries)])
         if args.include_predictive:
             eval_cmd.append("--include-predictive")
-        if args.counterfactual_test_size is not None:
-            eval_cmd.extend(["--counterfactual-test-size", str(args.counterfactual_test_size)])
+        if args.counterfactual_velocity_size is not None:
+            eval_cmd.extend(["--counterfactual-velocity-size", str(args.counterfactual_velocity_size)])
+        if args.counterfactual_position_size is not None:
+            eval_cmd.extend(["--counterfactual-position-size", str(args.counterfactual_position_size)])
         if args.descriptive_size is not None:
             eval_cmd.extend(["--descriptive-size", str(args.descriptive_size)])
         if args.predictive_size is not None:

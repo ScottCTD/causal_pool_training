@@ -22,10 +22,14 @@ def calculate_per_option_accuracy(num_options, label, pred):
         - num_options = 4, label = "AB", pred = "AB" -> 1
         - num_options = 4, label = "AB", pred = "A" -> 3/4
         - num_options = 4, label = "AB", pred = "ABCD" -> 2/4
+        - num_options = 3, label = "AB", pred = "D" -> 0 (out of bounds)
     """
     pred_array = np.zeros(num_options)
     for choice in pred:
         index = letter_to_index(choice)
+        # If index is out of bounds, treat as completely wrong (return 0.0)
+        if index >= num_options:
+            return 0.0
         if pred_array[index] == 1:
             return 0
         pred_array[index] = 1

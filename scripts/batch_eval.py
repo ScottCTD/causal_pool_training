@@ -30,9 +30,10 @@ CONFIGURATION:
         vllm_sif: Path to vllm.sif file (default: None, uses auto-detection)
         max_entries: Limit to N entries (for quick testing, default: None)
         include_predictive: Include predictive.jsonl dataset (default: False)
-        counterfactual_test_size: Limit counterfactual_test entries (default: None)
-        descriptive_size: Limit descriptive entries (default: None)
-        predictive_size: Limit predictive entries (default: None)
+        counterfactual_velocity_size: Limit test-counterfactual_velocity entries (default: None)
+        counterfactual_position_size: Limit test-counterfactual_position entries (default: None)
+        descriptive_size: Limit test-descriptive entries (default: None)
+        predictive_size: Limit test-predictive entries (default: None)
 
 EXAMPLE WORKFLOW:
 
@@ -58,13 +59,13 @@ EXAMPLE WORKFLOW:
        squeue -u $USER
 
     4. View logs (the script will show you the exact commands):
-       tail -f outputs/slurm/eval_<MODEL>_<JOB_ID>.out
+       tail -f outputs/slurm/eval_<MODEL>.out
 
 OUTPUT:
     Each model gets its own SLURM job with:
     - Job name: eval_<MODEL_NAME> (sanitized)
-    - Output:   outputs/slurm/eval_<MODEL>_<JOB_ID>.out
-    - Error:    outputs/slurm/eval_<MODEL>_<JOB_ID>.err
+    - Output:   outputs/slurm/eval_<MODEL>.out
+    - Error:    outputs/slurm/eval_<MODEL>.err
 
     The script will print all job IDs and commands to monitor/logs after submission.
 
@@ -113,9 +114,10 @@ COMMON_DEFAULTS = {
     "num_samples": 1,
     "max_concurrent": 256,
     # "port" will be auto-assigned if not specified
-    "counterfactual_test_size": 384,
-    "descriptive_size": 384,
-    "predictive_size": 384,
+    "counterfactual_velocity_size": 1024,
+    "counterfactual_position_size": 1024,
+    "descriptive_size": 1024,
+    "predictive_size": 1024,
     "vllm_sif": "~/scratch/vllm.sif",
     # Uncomment to set defaults for all models:
     # "max_tokens": 32768,
@@ -127,18 +129,21 @@ COMMON_DEFAULTS = {
 # Parameters not specified will use COMMON_DEFAULTS
 # Note: If you specify 'port' explicitly, it will be used (but make sure it's unique!)
 MODEL_CONFIGS: Dict[str, Dict[str, any]] = {
-    # "Qwen/Qwen3-VL-4B-Instruct": {
-    #     "dataset": "ds1",
-    #     # "max_entries": 10,
-    # },
+    "Qwen/Qwen3-VL-4B-Instruct": {
+        "dataset": "ds1",
+        # "max_entries": 10,
+    },
     # "Qwen/Qwen3-VL-4B-Thinking": {
     #     "dataset": "ds1",
     #     "max_tokens": 32768,
     # },
-    # "Qwen/Qwen3-VL-8B-Instruct": {
-    #     "dataset": "ds1",
-    # },
+    "Qwen/Qwen3-VL-8B-Instruct": {
+        "dataset": "ds1",
+    },
     "causalpool-4B": {
+        "dataset": "ds1",
+    },
+    "Qwen/Qwen3-VL-30B-A3B-Instruct": {
         "dataset": "ds1",
     },
 }
@@ -180,7 +185,8 @@ def build_args(model: str, config: Dict[str, any]) -> List[str]:
         "vllm_sif": "--vllm-sif",
         "max_entries": "--max-entries",
         "include_predictive": "--include-predictive",  # Flag argument
-        "counterfactual_test_size": "--counterfactual-test-size",
+        "counterfactual_velocity_size": "--counterfactual-velocity-size",
+        "counterfactual_position_size": "--counterfactual-position-size",
         "descriptive_size": "--descriptive-size",
         "predictive_size": "--predictive-size",
     }
@@ -239,8 +245,8 @@ def submit_job(
     sbatch_args = [
         "sbatch",
         "--job-name", f"eval_{sanitized}",
-        "--output", f"outputs/slurm/eval_{sanitized}_%j.out",
-        "--error", f"outputs/slurm/eval_{sanitized}_%j.err",
+        "--output", f"outputs/slurm/eval_{sanitized}.out",
+        "--error", f"outputs/slurm/eval_{sanitized}.err",
         "scripts/run_eval.sh",
     ]
     
@@ -351,7 +357,7 @@ def main():
     print("View logs:")
     for model, job_id, port in job_ids:
         sanitized = sanitize_model_name(model)
-        print(f"  tail -f outputs/slurm/eval_{sanitized}_{job_id}.out")
+        print(f"  tail -f outputs/slurm/eval_{sanitized}.out")
 
 
 if __name__ == "__main__":

@@ -80,6 +80,23 @@ apptainer run --nv \
   --max-num-seqs 512 \
   --max-num-batched-tokens 8192 \
   --enforce-eager \
+
+apptainer run --nv \
+  --bind /scratch/scottc/:/scratch/scottc/ \
+  --bind /home/scottc/links/:/home/scottc/links/ \
+  --bind /scratch/scottc/cache/:/home/scottc/.cache \
+  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
+  --env HF_HUB_OFFLINE=1 \
+  ~/scratch/vllm.sif \
+  --model Qwen/Qwen3-VL-30B-A3B-Instruct \
+  --host 0.0.0.0 --port 8000 \
+  --tensor-parallel-size 1 \
+  --gpu-memory-utilization 0.95 \
+  --max-model-len 8192 \
+  --max-num-seqs 512 \
+  --max-num-batched-tokens 8192 \
+  --enforce-eager \
+  --enable-expert-parallel \
 ```
 
 ```sh
@@ -149,4 +166,8 @@ python causal_pool/eval/eval.py \
   --num-samples 1 \
   --max-concurrent 256 \
   --max-tokens 10 \
+```
+
+```sh
+export OPENBLAS_NUM_THREADS=1
 ```

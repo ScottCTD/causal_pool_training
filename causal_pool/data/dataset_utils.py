@@ -14,21 +14,13 @@ def load_causal_pool_dataset(dataset_name, random_seed=42, eval_size=128):
     dataset_base_path = osp.join("datasets", dataset_name)
     raw_train = list(
         jsonlines.open(
-            osp.join(dataset_base_path, "splits", "counterfactual_train.jsonl")
+            osp.join(dataset_base_path, "splits", "train-counterfactual_velocity.jsonl")
+        )
+    ) + list(
+        jsonlines.open(
+            osp.join(dataset_base_path, "splits", "train-counterfactual_position.jsonl")
         )
     )
-
-    new_raw = []
-    bad_videos = set(
-        e["video"]
-        for e in json.load(open(osp.join(dataset_base_path, "bad_videos.json")))[
-            "bad_videos"
-        ]
-    )
-    for entry in raw_train:
-        if entry["video"] not in bad_videos:
-            new_raw.append(entry)
-    raw_train = new_raw
 
     random.seed(random_seed)
     random.shuffle(raw_train)
@@ -42,7 +34,8 @@ def load_causal_pool_dataset(dataset_name, random_seed=42, eval_size=128):
 def gather_test_dataset(dataset_name, sizes: Dict[str, int], random_seed=42) -> Dataset:
     dataset_base_path = osp.join("datasets", dataset_name, "splits")
     names = [
-        "counterfactual_test",
+        "counterfactual_velocity",
+        "counterfactual_position",
         "descriptive",
         "predictive",
     ]
@@ -51,7 +44,10 @@ def gather_test_dataset(dataset_name, sizes: Dict[str, int], random_seed=42) -> 
         if name not in names:
             raise ValueError(f"Invalid dataset name: {name}")
         size = sizes[name]
-        raw = list(jsonlines.open(osp.join(dataset_base_path, name + ".jsonl")))
-        dataset = Dataset.from_list(raw).shuffle(seed=random_seed).select(range(size))
+        raw = list(jsonlines.open(osp.join(dataset_base_path, "test-" + name + ".jsonl")))
+        dataset = Dataset.from_list(raw).shuffle(seed=random_seed)
+        # If size is -1, use all entries; otherwise select up to size
+        if size != -1:
+            dataset = dataset.select(range(size))
         datasets.append(dataset)
     return concatenate_datasets(datasets)

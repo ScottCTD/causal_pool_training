@@ -9,11 +9,18 @@ This script evaluates a model on a dataset with support for:
 - Per-question and per-option accuracy metrics
 """
 
+# Set thread limits before importing any libraries that might spawn threads
+# This prevents excessive thread creation on login nodes
+import os
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
+
 import argparse
 import asyncio
 import itertools
 import json
-import os
 import random
 import signal
 import sys
@@ -114,9 +121,19 @@ def validate_and_get_metrics(entry: Dict[str, Any], pred: str) -> Tuple[int, int
     if len(set(pred)) != len(pred):  # duplicate options
         raise InvalidPredictionError(f"Prediction contains duplicate options: {pred!r}")
     
-    # Get ground truth and number of options
-    ground_truth = entry["ground_truth"]
+    # Check that all selected options are within valid range
+    # Get number of options from entry
     num_options = len(entry["options"])
+    max_valid_letter = chr(ord("A") + num_options - 1)  # e.g., if num_options=3, max is "C"
+    for c in pred:
+        if c > max_valid_letter:
+            raise InvalidPredictionError(
+                f"Prediction contains option '{c}' which is out of range. "
+                f"Valid options are A-{max_valid_letter} (only {num_options} options available): {pred!r}"
+            )
+    
+    # Get ground truth (num_options already set above)
+    ground_truth = entry["ground_truth"]
     
     # Convert ground_truth to string if it's a set or list
     # Handle both integer indices (e.g., [0, 1]) and string letters (e.g., ["A", "B"])
@@ -253,25 +270,28 @@ class AsyncEvaluator:
         """
         Generate a random prediction for an entry.
         
-        Randomly selects uniformly from the power set of all possible option combinations.
-        This includes all possible subsets: empty set, single options, pairs, triplets, etc.
+        Randomly selects uniformly from all possible combinations of exactly 2 options.
         
         Args:
             entry: Dataset entry with 'ground_truth' and 'options' fields
         
         Returns:
-            Prediction string in valid format (e.g., "AC" or "" for empty set)
+            Prediction string in valid format (e.g., "AC" for a pair)
+        
+        Raises:
+            ValueError: If there are fewer than 2 options available
         """
         num_available_options = len(entry["options"])
         
-        # Generate all possible combinations (power set)
-        # For n options, we have 2^n possible combinations
-        all_combinations = []
-        for r in range(num_available_options + 1):  # r from 0 to n (inclusive)
-            for combo in itertools.combinations(range(num_available_options), r):
-                all_combinations.append(combo)
+        # Check if we have at least 2 options
+        if num_available_options < 2:
+            raise ValueError(f"Need at least 2 options, but only {num_available_options} available")
         
-        # Randomly select one combination from the power set
+        # Generate all possible combinations of exactly 2 options
+        # For n options, we have C(n,2) = n*(n-1)/2 possible pairs
+        all_combinations = list(itertools.combinations(range(num_available_options), 2))
+        
+        # Randomly select one combination of exactly 2 options
         selected_indices = random.choice(all_combinations)
         
         # Convert to letters (A-Z), sorted for consistency
@@ -845,57 +865,60 @@ async def main():
         help="Maximum number of entries to evaluate (for testing, default: all)",
     )
     parser.add_argument(
-        "-C", "--counterfactual-test-size",
+        "-C", "--counterfactual-velocity-size",
         type=int,
         default=256,
-        help="Number of entries to load from counterfactual_test.jsonl (default: all)",
+        help="Number of entries to load from test-counterfactual_velocity.jsonl (default: 256, use -1 for all)",
+    )
+    parser.add_argument(
+        "--counterfactual-position-size",
+        type=int,
+        default=256,
+        help="Number of entries to load from test-counterfactual_position.jsonl (default: 256, use -1 for all)",
     )
     parser.add_argument(
         "-D", "--descriptive-size",
         type=int,
         default=256,
-        help="Number of entries to load from descriptive.jsonl (default: all)",
+        help="Number of entries to load from test-descriptive.jsonl (default: 256, use -1 for all)",
     )
     parser.add_argument(
         "-P", "--predictive-size",
         type=int,
         default=256,
-        help="Number of entries to load from predictive.jsonl (default: 0, meaning don't include predictive dataset)",
+        help="Number of entries to load from test-predictive.jsonl (default: 256, use -1 for all)",
     )
     
     args = parser.parse_args()
     
     # Build sizes dict for gather_test_dataset
-    # Always include counterfactual_test and descriptive
+    # Keys must match: counterfactual_velocity, counterfactual_position, descriptive, predictive
     sizes = {}
     
     # Check if files exist and get sizes
     dataset_splits_dir = os.path.join(args.base_dir, "datasets", args.dataset, "splits")
     
-    # Counterfactual test
-    counterfactual_test_path = os.path.join(dataset_splits_dir, "counterfactual_test.jsonl")
-    if not os.path.exists(counterfactual_test_path):
-        raise FileNotFoundError(f"Dataset file not found: {counterfactual_test_path}")
-    if args.counterfactual_test_size is None:
-        # Load all entries to determine size
-        counterfactual_test_size = len(list(jsonlines.open(counterfactual_test_path)))
-    else:
-        counterfactual_test_size = args.counterfactual_test_size
-    sizes["counterfactual_test"] = counterfactual_test_size
+    # Counterfactual velocity
+    counterfactual_velocity_path = os.path.join(dataset_splits_dir, "test-counterfactual_velocity.jsonl")
+    if not os.path.exists(counterfactual_velocity_path):
+        raise FileNotFoundError(f"Dataset file not found: {counterfactual_velocity_path}")
+    sizes["counterfactual_velocity"] = args.counterfactual_velocity_size
+    
+    # Counterfactual position
+    counterfactual_position_path = os.path.join(dataset_splits_dir, "test-counterfactual_position.jsonl")
+    if not os.path.exists(counterfactual_position_path):
+        raise FileNotFoundError(f"Dataset file not found: {counterfactual_position_path}")
+    sizes["counterfactual_position"] = args.counterfactual_position_size
     
     # Descriptive
-    descriptive_path = os.path.join(dataset_splits_dir, "descriptive.jsonl")
+    descriptive_path = os.path.join(dataset_splits_dir, "test-descriptive.jsonl")
     if not os.path.exists(descriptive_path):
         raise FileNotFoundError(f"Dataset file not found: {descriptive_path}")
-    if args.descriptive_size is None:
-        descriptive_size = len(list(jsonlines.open(descriptive_path)))
-    else:
-        descriptive_size = args.descriptive_size
-    sizes["descriptive"] = descriptive_size
+    sizes["descriptive"] = args.descriptive_size
     
     # Predictive (optional)
-    if args.predictive_size > 0:
-        predictive_path = os.path.join(dataset_splits_dir, "predictive.jsonl")
+    if args.predictive_size > 0 or args.predictive_size == -1:
+        predictive_path = os.path.join(dataset_splits_dir, "test-predictive.jsonl")
         if not os.path.exists(predictive_path):
             raise FileNotFoundError(f"Dataset file not found: {predictive_path}")
         sizes["predictive"] = args.predictive_size

@@ -243,7 +243,7 @@ training_args = Seq2SeqTrainingArguments(
     num_train_epochs=1,
     # max_steps=30,
     per_device_train_batch_size=16,
-    gradient_accumulation_steps=2,
+    gradient_accumulation_steps=1,
     lr_scheduler_type="cosine",
     gradient_checkpointing=True,
     gradient_checkpointing_kwargs={"use_reentrant": False},
@@ -263,7 +263,7 @@ training_args = Seq2SeqTrainingArguments(
     load_best_model_at_end=True,
     metric_for_best_model="per_question_accuracy",
     # Logging / reporting
-    output_dir="outputs/sft/",
+    output_dir=f"outputs/sft/{DATASET_NAME}",
     logging_steps=1,
     report_to="wandb",
     # model saving

@@ -28,11 +28,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from eval.eval import (
     normalize_model_name,
     get_metrics,
-    get_video_duration,
-    cut_video_first_half,
     build_prompt,
     AsyncEvaluator,
     evaluate_dataset,
+)
+from causal_pool.data.video_utils import (
+    get_video_duration,
+    cut_video_first_half,
 )
 
 
@@ -171,7 +173,7 @@ class TestGetVideoDuration:
 class TestCutVideoFirstHalf:
     """Tests for cut_video_first_half function."""
     
-    @patch('eval.eval.get_video_duration')
+    @patch('causal_pool.data.video_utils.get_video_duration')
     @patch('subprocess.run')
     def test_successful_codec_copy(self, mock_run, mock_duration):
         mock_duration.return_value = 10.0
@@ -188,7 +190,7 @@ class TestCutVideoFirstHalf:
         assert "-t" in args
         assert "5.0" in args  # Half of 10.0
     
-    @patch('eval.eval.get_video_duration')
+    @patch('causal_pool.data.video_utils.get_video_duration')
     @patch('subprocess.run')
     def test_fallback_to_reencoding(self, mock_run, mock_duration):
         mock_duration.return_value = 8.0
@@ -207,7 +209,7 @@ class TestCutVideoFirstHalf:
         assert "-c:v" in second_call_args
         assert "libx264" in second_call_args
     
-    @patch('eval.eval.get_video_duration')
+    @patch('causal_pool.data.video_utils.get_video_duration')
     @patch('subprocess.run')
     def test_ffmpeg_not_found(self, mock_run, mock_duration):
         mock_duration.return_value = 10.0
@@ -216,7 +218,7 @@ class TestCutVideoFirstHalf:
         with pytest.raises(RuntimeError, match="ffmpeg not found"):
             cut_video_first_half("/path/to/input.mp4", "/path/to/output.mp4")
     
-    @patch('eval.eval.get_video_duration')
+    @patch('causal_pool.data.video_utils.get_video_duration')
     @patch('subprocess.run')
     def test_both_methods_fail(self, mock_run, mock_duration):
         mock_duration.return_value = 10.0
@@ -259,7 +261,7 @@ class TestBuildPrompt:
         assert "Option A" in result[0]["content"][1]["text"]
         assert "Option B" in result[0]["content"][1]["text"]
     
-    @patch('eval.eval.cut_video_first_half')
+    @patch('causal_pool.data.video_utils.cut_video_first_half')
     def test_predictive_question_cuts_video(self, mock_cut, tmp_path):
         """Test that predictive questions cut video to first half."""
         # Create a dummy video file

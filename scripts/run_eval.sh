@@ -120,6 +120,11 @@ module load StdEnv/2023 gcc/12.3 cuda/12.6
 # Set environment variables (these may override .env if needed)
 export TORCH_CUDA_ARCH_LIST="9.0"
 export HF_HUB_OFFLINE=1
+# Limit thread spawning for libraries (prevents excessive threads on login nodes)
+export OPENBLAS_NUM_THREADS=1
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
 
 # Activate virtual environment
 source .venv/bin/activate

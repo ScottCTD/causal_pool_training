@@ -2,7 +2,6 @@
 Utility functions for evaluation script.
 
 This module contains:
-- Video processing utilities (duration, cutting - for pre-processing scripts)
 - Model configuration utilities (hyperparameters, normalization)
 - Evaluation utilities (metrics calculation, prediction validation)
 - Prompt building utilities
@@ -10,7 +9,6 @@ This module contains:
 
 import base64
 import os
-import subprocess
 from typing import Dict, List, Tuple, Any
 from causal_pool.prompt_utils import build_question_prompt
 from causal_pool.utils import normalize_model_name
@@ -72,96 +70,11 @@ def get_model_hyperparameters(model_name: str) -> Dict[str, Any]:
     return MODEL_HYPERPARAMETERS.get(model_name, DEFAULT_HYPERPARAMETERS).copy()
 
 
-def get_video_duration(video_path: str) -> float:
-    """
-    Get video duration in seconds using ffprobe.
-    
-    Args:
-        video_path: Path to video file
-    
-    Returns:
-        Duration in seconds
-    """
-    try:
-        result = subprocess.run(
-            [
-                "ffprobe",
-                "-v", "error",
-                "-show_entries", "format=duration",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                video_path
-            ],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        return float(result.stdout.strip())
-    except (subprocess.CalledProcessError, ValueError, FileNotFoundError) as e:
-        raise RuntimeError(f"Failed to get video duration for {video_path}: {e}")
-
-
-def cut_video_first_half(video_path: str, output_path: str) -> None:
-    """
-    Cut video to first half using ffmpeg.
-    
-    First tries codec copy (fast), falls back to re-encoding if that fails.
-    
-    Args:
-        video_path: Path to input video file
-        output_path: Path to save cut video
-    """
-    duration = get_video_duration(video_path)
-    half_duration = duration / 2.0
-    
-    # First try codec copy (fast, no re-encoding)
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-i", video_path,
-                "-t", str(half_duration),
-                "-c", "copy",  # Copy codec to avoid re-encoding (faster)
-                "-y",  # Overwrite output file
-                output_path
-            ],
-            capture_output=True,
-            check=True,
-        )
-        return  # Success with codec copy
-    except subprocess.CalledProcessError:
-        # Codec copy failed (e.g., cutting at non-keyframe), fall through to re-encoding
-        pass
-    except FileNotFoundError:
-        raise RuntimeError("ffmpeg not found. Please install ffmpeg to use predictive question type.")
-    
-    # Fall back to re-encoding if codec copy fails (e.g., cutting at non-keyframe)
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-i", video_path,
-                "-t", str(half_duration),
-                "-c:v", "libx264",  # Re-encode video
-                "-c:a", "aac",  # Re-encode audio
-                "-preset", "fast",  # Faster encoding
-                "-y",  # Overwrite output file
-                output_path
-            ],
-            capture_output=True,
-            check=True
-        )
-    except subprocess.CalledProcessError as e:
-        error_msg = e.stderr.decode() if e.stderr else str(e)
-        raise RuntimeError(f"Failed to cut video {video_path}: {error_msg}")
-    except FileNotFoundError:
-        raise RuntimeError("ffmpeg not found. Please install ffmpeg to use predictive question type.")
-
-
 def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".", additional_suffix: str = None) -> List[Dict[str, Any]]:
     """
     Build prompt for a dataset entry.
     
-    For predictive questions, uses pre-cut video_half.mp4 instead of video.mp4.
+    For predictive questions, uses pre-cut video_partial.mp4 instead of video.mp4.
     
     Args:
         entry: Dataset entry
@@ -176,8 +89,8 @@ def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".", 
     question_type = entry.get("metadata", {}).get("question_type", "")
     is_predictive = question_type == "predictive"
     
-    # For predictive questions, use pre-cut video_half.mp4
-    video_filename = "video_half.mp4" if is_predictive else "video.mp4"
+    # For predictive questions, use pre-cut video_partial.mp4
+    video_filename = "video_partial.mp4" if is_predictive else "video.mp4"
     video_path = os.path.join(
         base_dir, "datasets", dataset_name, "shots", entry["video"], video_filename
     )
@@ -186,7 +99,7 @@ def build_prompt(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".", 
         if is_predictive:
             raise FileNotFoundError(
                 f"Pre-cut video not found: {video_path}. "
-                f"Please run scripts/precut_test_videos.py to create video_half.mp4 files."
+                f"Please run scripts/precut_test_videos.py to create video_partial.mp4 files."
             )
         else:
             raise FileNotFoundError(f"Video not found: {video_path}")
