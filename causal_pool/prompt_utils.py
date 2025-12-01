@@ -14,9 +14,10 @@ def build_question_prompt(entry, additional_suffix: str = None):
     question = entry["question"]
     options = entry["options"]
 
-    question_prompt = (
-        f"Answer the question based on the given video and context.\n{question}\n"
-    )
+    # question_prompt = (
+    #     f"Answer the question based on the given video and context.\n{question}\n"
+    # )
+    question_prompt = f"{question}\n"
     for i, choice in enumerate(options):
         question_prompt += f"{index_to_letter(i)}. {choice}\n"
     question_prompt += "\nPlease select the correct option(s). Don't write anything else than the option letter(s). Example: AC."

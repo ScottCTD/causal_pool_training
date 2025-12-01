@@ -1,4 +1,6 @@
+import os
 import os.path as osp
+import random
 from collections import defaultdict
 from typing import Dict
 
@@ -22,15 +24,15 @@ from causal_pool.metrics import (
     calculate_per_option_accuracy,
 )
 
-DATASET_NAME = "ds1"
-train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=640)
+DATASET_NAME = "ds2"
+train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=16)
 
 model_name = "Qwen/Qwen3-VL-4B-Instruct"
 
 model = Qwen3VLForConditionalGeneration.from_pretrained(
     model_name,
     dtype="bfloat16",
-    # device_map="auto",
+    device_map="auto",
     attn_implementation="flash_attention_2",
     local_files_only=True,
 )
@@ -134,20 +136,22 @@ def get_model_inputs(conversations, add_generation_prompt):
     return inputs
 
 
-def train_data_collator(samples):
+def data_collator(samples):
     conversations = []
     for sample in samples:
         video_name = sample["video"]
-        video_path = osp.join(
-            "datasets", DATASET_NAME, "shots", video_name, "video.mp4"
-        )
+
+        # find all .mp4 files and randomly choose one
+        shot_dir = osp.join("datasets", DATASET_NAME, "shots", video_name)
+        video_files = [f for f in os.listdir(shot_dir) if f.endswith(".mp4")]
+        video_paths = [osp.join(shot_dir, f) for f in video_files]
+        video_path = random.choice(video_paths)
 
         question_prompt = build_question_prompt(sample)
 
         ground_truth_indices = sample["ground_truth"]  # List[int] indicies
         ground_truth_answer = "".join(index_to_letter(i) for i in ground_truth_indices)
 
-        # TODO: further clarify min/max/total pixels and video tokens
         conversation = [
             {
                 "role": "user",
@@ -155,9 +159,10 @@ def train_data_collator(samples):
                     {
                         "type": "video",
                         "video": video_path,
-                        "min_pixels": 4 * 32 * 32,
-                        "max_pixels": 256 * 32 * 32,
-                        "total_pixels": 20480 * 32 * 32,
+                        "fps": 8,
+                        "min_pixels": 384 * 240,
+                        "max_pixels": 384 * 240,
+                        "total_pixels": 384 * 240 * 1000,
                     },
                     {"type": "text", "text": question_prompt},
                 ],
@@ -198,33 +203,36 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
     preds = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
     labels = tokenizer.batch_decode(label_ids, skip_special_tokens=True)
 
-    metrics_dict = defaultdict(list)
+    metrics_dict = defaultdict(lambda: defaultdict(list))
 
     for i, (pred, label) in enumerate(zip(preds, labels)):
         label = label.strip()
-        # this shortcut only works on single GPU case
-        num_options = len(eval_dataset[i]["options"])
+
+        question_type = eval_dataset[i]["question_type"]
 
         try:
             per_question_accuracy = calculate_per_question_accuracy(label, pred)
-            per_option_accuracy = calculate_per_option_accuracy(num_options, label, pred)
         except Exception as e:
             print(f"Error calculating metrics for sample {i}: {e}")
             per_question_accuracy = 0
-            per_option_accuracy = 0
-        metrics_dict["per_question_accuracy"].append(per_question_accuracy)
-        metrics_dict["per_option_accuracy"].append(per_option_accuracy)
+        metrics_dict[question_type]["PQA"].append(per_question_accuracy)
 
         if i % 100 == 0:
             print("-" * 100)
             print(f"Pred: {pred}")
             print(f"Label: {label}")
-            print(f"PQA={per_question_accuracy:.4f} | POA={per_option_accuracy:.4f} ")
+            print(f"PQA={per_question_accuracy:.4f} ")
 
-    return {
-        "per_question_accuracy": float(np.mean(metrics_dict["per_question_accuracy"])),
-        "per_option_accuracy": float(np.mean(metrics_dict["per_option_accuracy"])),
-    }
+    agg_metrics_dict = {}
+    all_pqa_list = []
+    for question_type in metrics_dict:
+        for metric in metrics_dict[question_type]:
+            agg_metrics_dict[f"{question_type}-{metric}"] = float(np.mean(metrics_dict[question_type][metric]))
+            all_pqa_list.extend(metrics_dict[question_type][metric])
+    
+    agg_metrics_dict["overall-PQA"] = float(np.mean(all_pqa_list))
+
+    return agg_metrics_dict
 
 
 eval_generation_config = GenerationConfig(
@@ -235,15 +243,15 @@ eval_generation_config = GenerationConfig(
 # Configure training arguments using SFTConfig
 training_args = Seq2SeqTrainingArguments(
     # data loading
-    dataloader_num_workers=16,
+    dataloader_num_workers=6,
     dataloader_pin_memory=True,
     dataloader_persistent_workers=True,
     remove_unused_columns=False,
     # training schedule / optimization
     num_train_epochs=1,
     # max_steps=30,
-    per_device_train_batch_size=16,
-    gradient_accumulation_steps=1,
+    per_device_train_batch_size=6,
+    gradient_accumulation_steps=4,
     lr_scheduler_type="cosine",
     gradient_checkpointing=True,
     gradient_checkpointing_kwargs={"use_reentrant": False},
@@ -254,14 +262,14 @@ training_args = Seq2SeqTrainingArguments(
     label_smoothing_factor=0.00,
     bf16=True,
     # eval
-    per_device_eval_batch_size=16,
+    per_device_eval_batch_size=8,
     predict_with_generate=True,
     generation_config=eval_generation_config,
     eval_strategy="steps",
     eval_steps=32,
     eval_on_start=True,
     load_best_model_at_end=True,
-    metric_for_best_model="per_question_accuracy",
+    metric_for_best_model="overall-PQA",
     # Logging / reporting
     output_dir=f"outputs/sft/{DATASET_NAME}",
     logging_steps=1,
@@ -279,7 +287,7 @@ trainer = CausalPoolTrainer(
     processing_class=processor,
     train_dataset=train_dataset,
     eval_dataset=eval_dataset,
-    data_collator=train_data_collator,
+    data_collator=data_collator,
     compute_metrics=compute_metrics,
 )
 

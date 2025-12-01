@@ -44,6 +44,7 @@ from causal_pool.eval.eval_utils import (
     InvalidPredictionError,
     get_model_hyperparameters,
     build_prompt,
+    get_available_videos,
 )
 from causal_pool.metrics import (
     calculate_per_question_accuracy,
@@ -222,6 +223,7 @@ class AsyncEvaluator:
         temperature: Optional[float] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         max_retries: int = 10,
+        fps: int = 5,
     ):
         """
         Initialize async evaluator.
@@ -234,9 +236,11 @@ class AsyncEvaluator:
             temperature: Sampling temperature (default: from model config)
             extra_body: Extra body parameters for API (merged with model defaults)
             max_retries: Maximum number of retries
+            fps: Frames per second for video processing (default: 5)
         """
         self.client = AsyncOpenAI(base_url=base_url, api_key=api_key)
         self.model = model
+        self.fps = fps
         
         # Get model-specific hyperparameters
         model_hparams = get_model_hyperparameters(model)
@@ -247,7 +251,12 @@ class AsyncEvaluator:
         
         # Build extra_body: only include keys that are present in model_hparams or extra_body
         # Don't include keys that are missing or None
-        extra_body_dict = {}
+        extra_body_dict = {
+            "mm_processor_kwargs": {"fps": fps, "do_sample_frames": True,}
+        }
+        # "video": {"size": {"shortest_edge": 384 * 240, "longest_edge": 384 * 240 * 500}}
+        # do_size: False
+        # these all doesn't quite work to specify the resize behavior
         
         # Add keys from model_hparams if they exist and are not None
         for key in ["top_k", "top_p", "repetition_penalty", "presence_penalty"]:
@@ -317,6 +326,7 @@ class AsyncEvaluator:
         entry: Dict[str, Any],
         dataset_name: str,
         base_dir: str = ".",
+        video_filename: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Evaluate a single entry with retry logic.
@@ -328,12 +338,15 @@ class AsyncEvaluator:
             entry: Dataset entry
             dataset_name: Name of the dataset
             base_dir: Base directory for the project
+            video_filename: Optional specific video filename to use (if None, uses first available)
         
         Returns:
             Dictionary with keys:
             - 'prediction': Prediction string (guaranteed to be valid format: pure A-Z, no duplicates)
             - 'prompt': List of message dictionaries (the exact prompt sent to the model)
             - 'response': Raw response string from the model (None for random baseline)
+            - 'token_usage': Dictionary with 'prompt_tokens', 'completion_tokens', 'total_tokens' (None for random baseline)
+            - 'video_filename': The video filename used for this evaluation
         
         Raises:
             BadRequestError: If the video file is invalid/corrupted (not retried)
@@ -349,6 +362,7 @@ class AsyncEvaluator:
             dataset_name,
             base_dir,
             additional_suffix=hint_text,
+            video_filename=video_filename,
         )
         
         # Handle random baseline
@@ -357,10 +371,16 @@ class AsyncEvaluator:
             pred = self._generate_random_prediction(entry)
             # Validate the prediction format (should always be valid, but check anyway)
             _, _, cleaned_pred = validate_and_get_metrics(entry, pred)
+            # Get video filename if not provided
+            if video_filename is None:
+                available_videos = get_available_videos(entry, dataset_name, base_dir)
+                video_filename = available_videos[0] if available_videos else None
             return {
                 'prediction': cleaned_pred,
                 'prompt': messages,
                 'response': None,  # No API response for random baseline
+                'token_usage': None,  # No token usage for random baseline
+                'video_filename': video_filename,
             }
         
         # Create retry decorator with entry-specific callback
@@ -376,6 +396,8 @@ class AsyncEvaluator:
             reraise=True,
         )
         async def _evaluate_with_retry():
+            # Initialize video_filename from outer scope to avoid UnboundLocalError on retry
+            current_video_filename = video_filename
             try:
                 # Build request kwargs, only including extra_body if it has values
                 request_kwargs = {
@@ -393,16 +415,32 @@ class AsyncEvaluator:
                 if raw_response is None:
                     raise ValueError("Empty response from model")
                 
+                # Extract token usage from response
+                token_usage = None
+                if hasattr(response, 'usage') and response.usage is not None:
+                    token_usage = {
+                        'prompt_tokens': response.usage.prompt_tokens if hasattr(response.usage, 'prompt_tokens') else None,
+                        'completion_tokens': response.usage.completion_tokens if hasattr(response.usage, 'completion_tokens') else None,
+                        'total_tokens': response.usage.total_tokens if hasattr(response.usage, 'total_tokens') else None,
+                    }
+                
                 pred = raw_response.strip()
                 # Validate and clean prediction format - this will raise
                 # InvalidPredictionError if invalid, which will trigger a retry
                 _, _, cleaned_pred = validate_and_get_metrics(entry, pred)
+                
+                # Get video filename if not provided
+                if current_video_filename is None:
+                    available_videos = get_available_videos(entry, dataset_name, base_dir)
+                    current_video_filename = available_videos[0] if available_videos else None
                 
                 return {
                     # Store the cleaned prediction (letters only) for downstream metrics/logging
                     'prediction': cleaned_pred,
                     'prompt': messages,
                     'response': raw_response,  # Include original response before stripping
+                    'token_usage': token_usage,  # Token usage information
+                    'video_filename': current_video_filename,
                 }
             
             except BadRequestError as e:
@@ -429,10 +467,13 @@ class AsyncEvaluator:
         """
         Evaluate an entry multiple times (sampling).
         
+        Evaluates all available camera angles, with num_samples repeats per camera angle.
+        For example: 4 camera angles with num_samples=4 = 16 total evaluations.
+        
         Args:
             entry: Dataset entry
             dataset_name: Name of the dataset
-            num_samples: Number of samples to generate
+            num_samples: Number of samples per camera angle (prompt-level sampling)
             base_dir: Base directory for the project
         
         Returns:
@@ -440,11 +481,30 @@ class AsyncEvaluator:
             - 'prediction': Prediction string
             - 'prompt': List of message dictionaries (the exact prompt sent to the model)
             - 'response': Raw response string from the model (None for random baseline)
+            - 'token_usage': Dictionary with 'prompt_tokens', 'completion_tokens', 'total_tokens' (None for random baseline)
+            - 'video_filename': The video filename used for this evaluation
         """
-        tasks = [
-            self.evaluate_entry(entry, dataset_name, base_dir)
-            for _ in range(num_samples)
-        ]
+        # Get all available camera angles
+        try:
+            available_videos = get_available_videos(entry, dataset_name, base_dir)
+        except FileNotFoundError:
+            # Fallback: if no videos found, use legacy behavior with random selection
+            available_videos = []
+        
+        if not available_videos:
+            # Legacy behavior: random selection for each sample
+            tasks = [
+                self.evaluate_entry(entry, dataset_name, base_dir)
+                for _ in range(num_samples)
+            ]
+        else:
+            # For each camera angle, evaluate it num_samples times
+            tasks = [
+                self.evaluate_entry(entry, dataset_name, base_dir, video_filename=video_filename)
+                for video_filename in available_videos
+                for _ in range(num_samples)
+            ]
+        
         return await asyncio.gather(*tasks)
 
 
@@ -501,7 +561,7 @@ async def evaluate_dataset(
                 }
     
     # Evaluate all entries
-    print(f"Evaluating {len(entries)} entries with {num_samples} sample(s) each...")
+    print(f"Evaluating {len(entries)} entries with {num_samples} sample(s) per camera angle...")
     
     # Create tasks with indices
     async def evaluate_with_idx(idx: int, entry: Dict[str, Any]) -> Dict[str, Any]:
@@ -558,6 +618,12 @@ async def evaluate_dataset(
     total_per_option_acc = 0.0
     total_samples_for_per_option = 0
     
+    # Token usage tracking
+    total_prompt_tokens = 0
+    total_completion_tokens = 0
+    total_tokens = 0
+    samples_with_token_usage = 0
+    
     # Per-question-type metrics
     question_type_stats = {}  # question_type -> {total, exactly_correct, first_sample_correct, per_option_acc_sum, per_option_samples}
     
@@ -583,6 +649,7 @@ async def evaluate_dataset(
                 "predictions": [],
                 "prompts": [],
                 "responses": [],
+                "token_usage": [],
                 "sample_metrics": [],
                 "question_has_exact_match": False,
                 "question_total_correct_options": 0,
@@ -647,6 +714,7 @@ async def evaluate_dataset(
         # Store prompts and responses for each sample
         sample_prompts = []
         sample_responses = []
+        sample_token_usage = []
         prediction_strings = []
         
         for idx, pred_dict in enumerate(predictions):
@@ -654,14 +722,16 @@ async def evaluate_dataset(
             pred = pred_dict['prediction']
             prompt = pred_dict['prompt']
             response = pred_dict['response']
+            token_usage = pred_dict.get('token_usage')
             
             # Sanitize prompt to remove video binary data before storing
             video_id = entry.get("video", "unknown")
             sanitized_prompt = sanitize_prompt(prompt, video_id)
             
-            # Store sanitized prompt and response for this sample
+            # Store sanitized prompt, response, and token usage for this sample
             sample_prompts.append(sanitized_prompt)
             sample_responses.append(response)
+            sample_token_usage.append(token_usage)
             
             try:
                 exactly_correct, num_correct, pred_cleaned = validate_and_get_metrics(entry, pred)
@@ -705,6 +775,16 @@ async def evaluate_dataset(
                 question_type_stats[question_type]["per_option_samples"] = 0
             question_type_stats[question_type]["per_option_acc_sum"] += per_option_acc
             question_type_stats[question_type]["per_option_samples"] += 1
+            
+            # Aggregate token usage
+            if token_usage is not None:
+                if token_usage.get('prompt_tokens') is not None:
+                    total_prompt_tokens += token_usage['prompt_tokens']
+                if token_usage.get('completion_tokens') is not None:
+                    total_completion_tokens += token_usage['completion_tokens']
+                if token_usage.get('total_tokens') is not None:
+                    total_tokens += token_usage['total_tokens']
+                samples_with_token_usage += 1
         
         if question_has_exact_match:
             question_exactly_correct += 1
@@ -722,6 +802,7 @@ async def evaluate_dataset(
             "predictions": prediction_strings,  # Keep as list of strings for backward compatibility
             "prompts": sample_prompts,  # List of prompts (one per sample)
             "responses": sample_responses,  # List of responses (one per sample)
+            "token_usage": sample_token_usage,  # List of token usage dicts (one per sample)
             "sample_metrics": sample_metrics,
             "question_has_exact_match": question_has_exact_match,
             "question_total_correct_options": question_total_correct,
@@ -742,6 +823,12 @@ async def evaluate_dataset(
         "per_option_accuracy": per_option_accuracy,
         "questions_with_exact_match": question_exactly_correct,
         "total_samples": total_samples_for_per_option,
+        "token_usage": {
+            "total_prompt_tokens": total_prompt_tokens,
+            "total_completion_tokens": total_completion_tokens,
+            "total_tokens": total_tokens,
+            "samples_with_token_usage": samples_with_token_usage,
+        },
     }
     
     # Add @1 and @k metrics when num_samples > 1
@@ -777,6 +864,7 @@ async def evaluate_dataset(
         "model": evaluator.model,
         "dataset": dataset_name,
         "num_samples": num_samples,
+        "fps": evaluator.fps,
         "total_questions": total_questions,
         "total_samples": total_samples,
         "metrics": metrics_dict,
@@ -888,6 +976,12 @@ async def main():
         default=256,
         help="Number of entries to load from test-predictive.jsonl (default: 256, use -1 for all)",
     )
+    parser.add_argument(
+        "--fps",
+        type=int,
+        default=5,
+        help="Frames per second for video processing (default: 5)",
+    )
     
     args = parser.parse_args()
     
@@ -958,6 +1052,7 @@ async def main():
         api_key=args.api_key,
         max_tokens=args.max_tokens,
         temperature=args.temperature,
+        fps=args.fps,
     )
     
     # Evaluate dataset
@@ -1008,6 +1103,24 @@ async def main():
         print(f"Per-option accuracy: {results['metrics']['per_option_accuracy']:.4f}")
         print(f"Questions with exact match: {results['metrics']['questions_with_exact_match']}/{results['total_questions']}")
         print(f"Total samples: {results['total_samples']}")
+        
+        # Print token usage if available
+        if 'token_usage' in results['metrics']:
+            token_usage = results['metrics']['token_usage']
+            if token_usage['samples_with_token_usage'] > 0:
+                print(f"\nToken Usage:")
+                print(f"  Total prompt tokens: {token_usage['total_prompt_tokens']:,}")
+                print(f"  Total completion tokens: {token_usage['total_completion_tokens']:,}")
+                print(f"  Total tokens: {token_usage['total_tokens']:,}")
+                print(f"  Samples with token usage: {token_usage['samples_with_token_usage']}/{results['total_samples']}")
+                if token_usage['samples_with_token_usage'] > 0:
+                    avg_prompt = token_usage['total_prompt_tokens'] / token_usage['samples_with_token_usage']
+                    avg_completion = token_usage['total_completion_tokens'] / token_usage['samples_with_token_usage']
+                    avg_total = token_usage['total_tokens'] / token_usage['samples_with_token_usage']
+                    print(f"  Average per sample:")
+                    print(f"    Prompt tokens: {avg_prompt:.1f}")
+                    print(f"    Completion tokens: {avg_completion:.1f}")
+                    print(f"    Total tokens: {avg_total:.1f}")
         
         # Print @1 and @k metrics when num_samples > 1
         if results['num_samples'] > 1:

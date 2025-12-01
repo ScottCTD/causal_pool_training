@@ -60,42 +60,120 @@ def get_video_frame_count(video_path: str) -> Tuple[int, str]:
         return -1, "ffprobe not found"
 
 
-def check_single_video(args_tuple: Tuple[str, str, int]) -> Optional[Dict]:
+def check_single_shot(args_tuple: Tuple[str, str, int, bool]) -> List[Dict]:
     """
-    Worker function to check a single video.
+    Worker function to check all videos in a single shot directory.
+    
+    Checks all *-full.mp4 and *-partial.mp4 files in the shot directory.
     
     Args:
-        args_tuple: Tuple of (shot_dir, shots_dir, min_frames)
+        args_tuple: Tuple of (shot_dir, shots_dir, min_frames, check_partial)
+            - shot_dir: Name of the shot directory
+            - shots_dir: Directory containing all shot directories
+            - min_frames: Minimum number of frames required
+            - check_partial: Whether to also check *-partial.mp4 files
     
     Returns:
-        Dictionary with video information if bad, None otherwise
+        List of dictionaries with video information for bad videos (empty list if all good)
     """
-    shot_dir, shots_dir, min_frames = args_tuple
-    video_name = shot_dir
-    video_path = os.path.join(shots_dir, shot_dir, "video.mp4")
+    shot_dir, shots_dir, min_frames, check_partial = args_tuple
+    shot_path = os.path.join(shots_dir, shot_dir)
     
-    frame_count, error_msg = get_video_frame_count(video_path)
+    if not os.path.exists(shot_path):
+        return [{
+            "video": shot_dir,
+            "video_file": None,
+            "video_path": shot_path,
+            "frame_count": -1,
+            "error": "Shot directory not found",
+            "status": "missing"
+        }]
     
-    if frame_count < min_frames:
-        return {
-            "video": video_name,
-            "video_path": video_path,
-            "frame_count": frame_count,
-            "error": error_msg,
-            "status": "missing" if frame_count == -1 and "not found" in error_msg.lower() else "insufficient_frames"
-        }
-    return None
+    bad_videos = []
+    
+    try:
+        # Find all video files in the shot directory
+        all_files = os.listdir(shot_path)
+        
+        # Check *-full.mp4 files
+        full_videos = [f for f in all_files if f.endswith('-full.mp4')]
+        for video_file in full_videos:
+            video_path = os.path.join(shot_path, video_file)
+            frame_count, error_msg = get_video_frame_count(video_path)
+            
+            if frame_count < min_frames:
+                bad_videos.append({
+                    "video": shot_dir,
+                    "video_file": video_file,
+                    "video_path": video_path,
+                    "frame_count": frame_count,
+                    "error": error_msg,
+                    "status": "missing" if frame_count == -1 and "not found" in error_msg.lower() else "insufficient_frames"
+                })
+        
+        # Optionally check *-partial.mp4 files
+        if check_partial:
+            partial_videos = [f for f in all_files if f.endswith('-partial.mp4')]
+            for video_file in partial_videos:
+                video_path = os.path.join(shot_path, video_file)
+                frame_count, error_msg = get_video_frame_count(video_path)
+                
+                if frame_count < min_frames:
+                    bad_videos.append({
+                        "video": shot_dir,
+                        "video_file": video_file,
+                        "video_path": video_path,
+                        "frame_count": frame_count,
+                        "error": error_msg,
+                        "status": "missing" if frame_count == -1 and "not found" in error_msg.lower() else "insufficient_frames"
+                    })
+        
+        # If no *-full.mp4 files found, check for legacy video.mp4
+        if not full_videos and not check_partial:
+            legacy_video_path = os.path.join(shot_path, "video.mp4")
+            if os.path.exists(legacy_video_path):
+                frame_count, error_msg = get_video_frame_count(legacy_video_path)
+                if frame_count < min_frames:
+                    bad_videos.append({
+                        "video": shot_dir,
+                        "video_file": "video.mp4",
+                        "video_path": legacy_video_path,
+                        "frame_count": frame_count,
+                        "error": error_msg,
+                        "status": "missing" if frame_count == -1 and "not found" in error_msg.lower() else "insufficient_frames"
+                    })
+    
+    except Exception as e:
+        bad_videos.append({
+            "video": shot_dir,
+            "video_file": None,
+            "video_path": shot_path,
+            "frame_count": -1,
+            "error": f"Error scanning directory: {str(e)}",
+            "status": "missing"
+        })
+    
+    return bad_videos
 
 
-def find_bad_videos(dataset_name: str, base_dir: str = ".", min_frames: int = 2, num_processes: int = 32) -> List[Dict]:
+def find_bad_videos(
+    dataset_name: str, 
+    base_dir: str = ".", 
+    min_frames: int = 2, 
+    num_processes: int = 32,
+    check_partial: bool = False
+) -> List[Dict]:
     """
     Find all videos with insufficient frames.
+    
+    Checks all *-full.mp4 files in each shot directory, and optionally *-partial.mp4 files.
     
     Args:
         dataset_name: Name of the dataset (e.g., '1k_simple')
         base_dir: Base directory for the project
         min_frames: Minimum number of frames required (default: 2)
         num_processes: Number of parallel processes to use (default: 32)
+        check_partial: Whether to also check *-partial.mp4 files (default: False)
     
     Returns:
         List of dictionaries with video information and issues
@@ -109,22 +187,24 @@ def find_bad_videos(dataset_name: str, base_dir: str = ".", min_frames: int = 2,
     # Scan all shot directories
     shot_dirs = sorted([d for d in os.listdir(shots_dir) if os.path.isdir(os.path.join(shots_dir, d))])
     
-    print(f"Scanning {len(shot_dirs)} video directories with {num_processes} processes...")
+    check_type = "*-full.mp4 and *-partial.mp4" if check_partial else "*-full.mp4"
+    print(f"Scanning {len(shot_dirs)} shot directories for {check_type} files with {num_processes} processes...")
     
     # Prepare arguments for worker function
-    work_items = [(shot_dir, shots_dir, min_frames) for shot_dir in shot_dirs]
+    work_items = [(shot_dir, shots_dir, min_frames, check_partial) for shot_dir in shot_dirs]
     
-    # Process videos in parallel
+    # Process shot directories in parallel
     bad_videos = []
     with Pool(processes=num_processes) as pool:
         results = list(tqdm(
-            pool.imap(check_single_video, work_items),
+            pool.imap(check_single_shot, work_items),
             total=len(work_items),
-            desc="Checking videos"
+            desc="Checking shots"
         ))
     
-    # Filter out None results (good videos)
-    bad_videos = [r for r in results if r is not None]
+    # Flatten results (each shot can have multiple bad videos)
+    for shot_bad_videos in results:
+        bad_videos.extend(shot_bad_videos)
     
     return bad_videos
 
@@ -168,6 +248,11 @@ def main():
         default=32,
         help="Number of parallel processes to use (default: 32)",
     )
+    parser.add_argument(
+        "--check-partial",
+        action="store_true",
+        help="Also check *-partial.mp4 files (default: only check *-full.mp4)",
+    )
     
     args = parser.parse_args()
     
@@ -179,9 +264,19 @@ def main():
     print(f"Finding bad videos in dataset: {args.dataset}")
     print(f"Minimum frames required: {args.min_frames}")
     print(f"Using {args.processes} parallel processes")
+    if args.check_partial:
+        print("Checking both *-full.mp4 and *-partial.mp4 files")
+    else:
+        print("Checking *-full.mp4 files only (use --check-partial to also check *-partial.mp4)")
     print()
     
-    bad_videos = find_bad_videos(args.dataset, args.base_dir, args.min_frames, args.processes)
+    bad_videos = find_bad_videos(
+        args.dataset, 
+        args.base_dir, 
+        args.min_frames, 
+        args.processes,
+        args.check_partial
+    )
     
     # Group by status
     missing = [v for v in bad_videos if v["status"] == "missing"]
@@ -201,25 +296,28 @@ def main():
             print("MISSING VIDEOS:")
             print("-" * 70)
             for video in missing:
-                print(f"  {video['video']}: {video['error']}")
+                video_file_str = f"/{video['video_file']}" if video.get('video_file') else ""
+                print(f"  {video['video']}{video_file_str}: {video['error']}")
             print()
         
         if insufficient:
             print(f"VIDEOS WITH INSUFFICIENT FRAMES (< {args.min_frames}):")
             print("-" * 70)
             for video in insufficient:
-                print(f"  {video['video']}: {video['frame_count']} frame(s) - {video['error']}")
+                video_file_str = f"/{video['video_file']}" if video.get('video_file') else ""
+                print(f"  {video['video']}{video_file_str}: {video['frame_count']} frame(s) - {video['error']}")
             print()
         
         if bad_videos:
-            print("ALL BAD VIDEOS (sorted by video name):")
+            print("ALL BAD VIDEOS (sorted by shot directory and filename):")
             print("-" * 70)
-            for video in sorted(bad_videos, key=lambda x: x['video']):
+            for video in sorted(bad_videos, key=lambda x: (x['video'], x.get('video_file', ''))):
                 status_str = f"[{video['status']}]"
+                video_file_str = f"/{video['video_file']}" if video.get('video_file') else ""
                 if video['frame_count'] >= 0:
-                    print(f"  {video['video']:<20} {status_str:<20} {video['frame_count']} frame(s)")
+                    print(f"  {video['video']}{video_file_str:<30} {status_str:<20} {video['frame_count']} frame(s)")
                 else:
-                    print(f"  {video['video']:<20} {status_str:<20} {video['error']}")
+                    print(f"  {video['video']}{video_file_str:<30} {status_str:<20} {video['error']}")
     
     # Save to file if requested
     if args.output:

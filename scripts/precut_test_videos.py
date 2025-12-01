@@ -8,7 +8,9 @@ This script processes all videos used in test datasets:
 - test-descriptive.jsonl
 - test-predictive.jsonl
 
-Creates video_partial.mp4 files in the same directory as video.mp4.
+For each shot directory containing multiple camera angle videos:
+1. Renames all existing .mp4 files to *-full.mp4
+2. Creates *-partial.mp4 files by cutting each *-full.mp4
 
 This allows us to pre-process videos instead of cutting them during evaluation.
 """
@@ -19,7 +21,7 @@ import multiprocessing
 import os
 import sys
 from pathlib import Path
-from typing import Set, Tuple
+from typing import List, Set, Tuple
 from tqdm import tqdm
 
 # Add parent directory to path to import causal_pool modules
@@ -68,51 +70,121 @@ def get_test_video_names(dataset_name: str, base_dir: str = ".") -> Set[str]:
     return video_names
 
 
-def process_single_video(args: Tuple[str, str, bool, float]) -> Tuple[str, str]:
+def process_single_shot(args: Tuple[str, str, bool, float]) -> Tuple[str, int, int, int, List[str]]:
     """
-    Process a single video (worker function for multiprocessing).
+    Process a single shot directory (worker function for multiprocessing).
+    
+    For each shot directory:
+    1. Finds all .mp4 files that don't end with -full.mp4 or -partial.mp4
+    2. Renames them to *-full.mp4
+    3. Creates *-partial.mp4 for each *-full.mp4
     
     Args:
         args: Tuple of (video_name, shots_dir, skip_existing, fraction)
-            - video_name: Name of the video
+            - video_name: Name of the video/shot directory
             - shots_dir: Directory containing video shots
             - skip_existing: Whether to skip if output already exists
             - fraction: Fraction of video to retain (e.g., 0.3 for first 30%)
     
     Returns:
-        Tuple of (status, video_name) where status is one of:
-            - "processed": Successfully cut video
-            - "skipped": Skipped (already exists or input missing)
-            - "failed": Failed to process
+        Tuple of (status, renamed_count, processed_count, failed_count, failed_files)
+            - status: "processed", "skipped", or "failed"
+            - renamed_count: Number of videos renamed to *-full.mp4
+            - processed_count: Number of partial videos created
+            - failed_count: Number of failed operations
+            - failed_files: List of filenames that failed
     """
     video_name, shots_dir, skip_existing, fraction = args
     
-    video_path = os.path.join(shots_dir, video_name, "video.mp4")
-    output_filename = "video_partial.mp4"
-    output_path = os.path.join(shots_dir, video_name, output_filename)
+    shot_dir = os.path.join(shots_dir, video_name)
     
-    # Check if input video exists
-    if not os.path.exists(video_path):
-        return ("failed", video_name)
+    if not os.path.exists(shot_dir):
+        return ("failed", 0, 0, 1, [video_name])
     
-    # Check if output already exists
-    if skip_existing and os.path.exists(output_path):
-        return ("skipped", video_name)
+    renamed_count = 0
+    processed_count = 0
+    failed_count = 0
+    failed_files = []
     
-    # If not skipping existing files (i.e., --force), delete existing output file
-    if not skip_existing and os.path.exists(output_path):
-        try:
-            os.remove(output_path)
-        except Exception:
-            # If deletion fails, still try to cut (ffmpeg -y should overwrite)
-            pass
-    
-    # Cut video
+    # Find all .mp4 files in the shot directory
     try:
-        cut_video_fraction(video_path, output_path, fraction=fraction)
-        return ("processed", video_name)
+        all_files = os.listdir(shot_dir)
+        mp4_files = [f for f in all_files if f.endswith('.mp4')]
     except Exception:
-        return ("failed", video_name)
+        return ("failed", 0, 0, 1, [video_name])
+    
+    # Step 1: Rename existing videos to *-full.mp4
+    for filename in mp4_files:
+        # Skip files that already end with -full.mp4 or -partial.mp4
+        if filename.endswith('-full.mp4') or filename.endswith('-partial.mp4'):
+            continue
+        
+        # Rename to *-full.mp4
+        base_name = os.path.splitext(filename)[0]  # Remove .mp4 extension
+        new_filename = f"{base_name}-full.mp4"
+        old_path = os.path.join(shot_dir, filename)
+        new_path = os.path.join(shot_dir, new_filename)
+        
+        # Skip if already renamed (shouldn't happen, but be safe)
+        if os.path.exists(new_path):
+            continue
+        
+        try:
+            os.rename(old_path, new_path)
+            renamed_count += 1
+        except Exception:
+            failed_count += 1
+            failed_files.append(f"{video_name}/{filename}")
+    
+    # Step 2: Create *-partial.mp4 for each *-full.mp4
+    try:
+        all_files_after_rename = os.listdir(shot_dir)
+        full_videos = [f for f in all_files_after_rename if f.endswith('-full.mp4')]
+    except Exception:
+        return ("failed", renamed_count, processed_count, failed_count + 1, failed_files)
+    
+    for full_filename in full_videos:
+        # Create corresponding partial filename
+        base_name = full_filename[:-9]  # Remove '-full.mp4' suffix
+        partial_filename = f"{base_name}-partial.mp4"
+        full_path = os.path.join(shot_dir, full_filename)
+        partial_path = os.path.join(shot_dir, partial_filename)
+        
+        # Check if input exists
+        if not os.path.exists(full_path):
+            failed_count += 1
+            failed_files.append(f"{video_name}/{full_filename}")
+            continue
+        
+        # Check if output already exists
+        if skip_existing and os.path.exists(partial_path):
+            continue
+        
+        # If not skipping existing files (i.e., --force), delete existing output file
+        if not skip_existing and os.path.exists(partial_path):
+            try:
+                os.remove(partial_path)
+            except Exception:
+                # If deletion fails, still try to cut (ffmpeg -y should overwrite)
+                pass
+        
+        # Cut video
+        try:
+            cut_video_fraction(full_path, partial_path, fraction=fraction)
+            processed_count += 1
+        except Exception:
+            failed_count += 1
+            failed_files.append(f"{video_name}/{full_filename}")
+    
+    # Determine overall status
+    if failed_count > 0:
+        status = "failed"
+    elif processed_count == 0 and renamed_count == 0:
+        status = "skipped"
+    else:
+        status = "processed"
+    
+    return (status, renamed_count, processed_count, failed_count, failed_files)
 
 
 def precut_videos(
@@ -155,47 +227,59 @@ def precut_videos(
         for video_name in sorted(video_names)
     ]
     
-    # Process videos in parallel with progress bar
-    processed = 0
-    skipped = 0
-    failed = 0
-    failed_videos = []
+    # Process shot directories in parallel with progress bar
+    processed_shots = 0
+    skipped_shots = 0
+    failed_shots = 0
+    total_renamed = 0
+    total_processed = 0
+    total_failed = 0
+    failed_files = []
     
     with multiprocessing.Pool(processes=num_workers) as pool:
         results = list(tqdm(
-            pool.imap(process_single_video, video_args),
+            pool.imap(process_single_shot, video_args),
             total=len(video_args),
-            desc="Processing videos",
-            unit="video"
+            desc="Processing shots",
+            unit="shot"
         ))
     
     # Count results
-    for status, video_name in results:
+    for status, renamed_count, processed_count, failed_count, failed_list in results:
+        total_renamed += renamed_count
+        total_processed += processed_count
+        total_failed += failed_count
+        failed_files.extend(failed_list)
+        
         if status == "processed":
-            processed += 1
+            processed_shots += 1
         elif status == "skipped":
-            skipped += 1
+            skipped_shots += 1
         elif status == "failed":
-            failed += 1
-            failed_videos.append(video_name)
+            failed_shots += 1
     
     # Print summary
     print()
     print("=" * 70)
     print("SUMMARY")
     print("=" * 70)
-    print(f"Total videos: {len(video_names)}")
-    print(f"  - Processed: {processed}")
-    print(f"  - Skipped (already exists): {skipped}")
-    print(f"  - Failed: {failed}")
+    print(f"Total shot directories: {len(video_names)}")
+    print(f"  - Processed: {processed_shots}")
+    print(f"  - Skipped (already exists): {skipped_shots}")
+    print(f"  - Failed: {failed_shots}")
+    print()
+    print(f"Video operations:")
+    print(f"  - Renamed to *-full.mp4: {total_renamed}")
+    print(f"  - Created *-partial.mp4: {total_processed}")
+    print(f"  - Failed operations: {total_failed}")
     
-    if failed_videos:
+    if failed_files:
         print()
-        print("Failed videos:")
-        for video_name in failed_videos[:10]:  # Show first 10
-            print(f"  - {video_name}")
-        if len(failed_videos) > 10:
-            print(f"  ... and {len(failed_videos) - 10} more")
+        print("Failed files:")
+        for filename in failed_files[:20]:  # Show first 20
+            print(f"  - {filename}")
+        if len(failed_files) > 20:
+            print(f"  ... and {len(failed_files) - 20} more")
     print()
 
 
@@ -206,8 +290,8 @@ def main():
     parser.add_argument(
         "--dataset",
         type=str,
-        required=True,
-        help="Dataset name (e.g., '1k_simple')",
+        default="ds2",
+        help="Dataset name (e.g., 'ds2')",
     )
     parser.add_argument(
         "--base-dir",
@@ -218,7 +302,7 @@ def main():
     parser.add_argument(
         "--fraction",
         type=float,
-        default=0.5,
+        default=0.1,
         help="Fraction of video to retain (e.g., 0.3 for first 30%%, default: 0.5)",
     )
     parser.add_argument(
@@ -238,6 +322,9 @@ def main():
     print(f"Pre-cutting test videos for dataset: {args.dataset}")
     print(f"Base directory: {args.base_dir}")
     print(f"Fraction: {args.fraction} (retaining first {args.fraction*100:.1f}%%)")
+    print("Operations:")
+    print("  1. Rename all .mp4 files to *-full.mp4")
+    print("  2. Create *-partial.mp4 files from each *-full.mp4")
     if args.force:
         print("Force mode: Will re-cut existing videos")
     print()

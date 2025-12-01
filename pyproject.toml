@@ -25,6 +25,7 @@ dependencies = [
     "flash-attn",
     "matplotlib>=3.10.7",
     "nvitop>=1.6.0",
+    "google-genai>=1.52.0",
 ]
 
 [project.optional-dependencies]

@@ -28,14 +28,14 @@ def main():
     parser.add_argument(
         "-n", "--dataset-name",
         type=str,
-        required=True,
-        help="Dataset name (e.g., 'ds1')",
+        default="ds2",
+        help="Dataset name (e.g., 'ds2')",
     )
     parser.add_argument(
         "-t", "--num-test-videos",
         type=int,
-        default=512,
-        help="Number of videos to use for test set (default: 512)",
+        default=128,
+        help="Number of videos to use for test set (default: 128)",
     )
     parser.add_argument(
         "-s", "--seed",

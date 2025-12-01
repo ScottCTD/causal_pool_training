@@ -8,6 +8,14 @@ import jsonlines
 from datasets import Dataset, concatenate_datasets
 
 
+def process_entry(entry):
+    metadata = entry["metadata"]
+    question_type = metadata["question_type"]
+
+    entry.pop("metadata")
+    entry["question_type"] = question_type
+    return entry
+
 def load_causal_pool_dataset(dataset_name, random_seed=42, eval_size=128):
     # train with only counterfactual
     # eval with all question types
@@ -21,12 +29,19 @@ def load_causal_pool_dataset(dataset_name, random_seed=42, eval_size=128):
             osp.join(dataset_base_path, "splits", "train-counterfactual_position.jsonl")
         )
     )
-
+    raw_train = [process_entry(entry) for entry in raw_train]
     random.seed(random_seed)
     random.shuffle(raw_train)
 
     train_dataset = Dataset.from_list(raw_train[:-eval_size])
     eval_dataset = Dataset.from_list(raw_train[-eval_size:])
+
+    # load descriptive
+    raw_descriptive = list(jsonlines.open(osp.join(dataset_base_path, "splits", "train-descriptive.jsonl")))
+    raw_descriptive = [process_entry(entry) for entry in raw_descriptive]
+    random.shuffle(raw_descriptive)
+    eval_descriptive = Dataset.from_list(raw_descriptive[:eval_size])
+    eval_dataset = concatenate_datasets([eval_dataset, eval_descriptive])
 
     return train_dataset, eval_dataset
 
