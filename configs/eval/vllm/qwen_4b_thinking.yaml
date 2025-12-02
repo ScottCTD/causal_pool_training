@@ -1,0 +1,9 @@
+# vLLM serving config for Qwen/Qwen3-VL-4B-Thinking
+
+defaults:
+  - default
+
+model: "Qwen/Qwen3-VL-4B-Thinking"
+max_model_len: 40960
+max_num_seqs: 128
+reasoning_parser: "qwen3"

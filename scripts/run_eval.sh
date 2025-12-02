@@ -4,7 +4,7 @@
 #SBATCH --error=outputs/slurm/auto_eval_%j.err
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=1
-#SBATCH --time=0-08:00:00
+#SBATCH --time=0-02:00:00
 # Note: This requests exactly 1 GPU on 1 node for testing
 
 ################################################################################
@@ -92,8 +92,8 @@
 #   Cancel job:           scancel <JOB_ID>
 #
 # NOTES:
-#   - The script automatically selects an idle GPU on the node
-#   - Each job uses exactly 1 GPU
+#   - GPU assignment is handled by SLURM via --gpus-per-node=1
+#   - Each job uses exactly 1 GPU (allocated by SLURM)
 #   - Server cleanup happens automatically on completion or error
 #   - For multiple models, use batch_eval.sh to submit multiple jobs at once
 #
@@ -151,8 +151,7 @@ fi
 # Run automated evaluation
 # All arguments passed to this script are forwarded to auto_eval.py
 # The script will automatically:
-# - Select an idle GPU
-# - Launch vLLM server
+# - Launch vLLM server (using GPUs allocated by SLURM)
 # - Wait for server readiness
 # - Run eval.py
 # - Clean up and exit

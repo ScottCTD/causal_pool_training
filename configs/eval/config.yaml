@@ -1,0 +1,30 @@
+# Main evaluation configuration
+# This config specifies which models to evaluate and common settings
+
+# Models to evaluate (list of model config names from configs/eval/models/)
+# Each model will be evaluated with its own vLLM and eval configs
+models_to_evaluate:
+  # - qwen_4b_instruct
+  # - qwen_4b_thinking
+  # - qwen_8b_instruct
+  # - qwen_30b_a3b_instruct
+  - qwen_32b_instruct
+  # - causalpool_4b_cf
+  # - causalpool_4b_desc
+
+# Common settings
+common:
+  base_port: 8000  # Starting port (auto-incremented per model)
+  base_dir: "${oc.env:PROJECT_DIR,.}"
+  vllm_sif: "~/scratch/vllm.sif"
+
+# Global evaluation settings (applied to all models)
+# These can be overridden per-model in models/*.yaml eval_overrides
+dataset: "ds2"  # Dataset name (e.g., "ds1", "ds2", "1k_simple")
+
+# SLURM settings
+slurm:
+  base_port: ${common.base_port}
+  gpus_per_node: 1
+  time_limit: "0-08:00:00"
+

@@ -1,0 +1,7 @@
+# vLLM serving config for Qwen/Qwen3-VL-32B-Instruct
+
+defaults:
+  - default
+
+model: "Qwen/Qwen3-VL-32B-Instruct"
+

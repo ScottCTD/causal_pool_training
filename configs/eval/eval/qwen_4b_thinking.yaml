@@ -1,0 +1,12 @@
+# Evaluation config for Qwen/Qwen3-VL-4B-Thinking
+
+defaults:
+  - default
+
+hyperparameters:
+  temperature: 1.0
+  top_k: 20
+  top_p: 0.95
+  repetition_penalty: 1.0
+  presence_penalty: 0.0
+

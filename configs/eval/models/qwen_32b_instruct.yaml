@@ -1,0 +1,24 @@
+# Model configuration for Qwen/Qwen3-VL-32B-Instruct
+
+model_name: "Qwen/Qwen3-VL-32B-Instruct"
+
+# vLLM serving config (references configs/eval/vllm/)
+vllm_config: qwen_32b_instruct
+
+# Evaluation config (references configs/eval/eval/)
+eval_config: default
+
+# Model-specific eval overrides (merged with eval config and global config)
+# These override both eval/default.yaml and config.yaml settings
+# Common overrides you might want:
+#   - max_tokens: Override max tokens for generation (e.g., 32768 for thinking models)
+#   - temperature: Override sampling temperature
+#   - num_samples: Override number of samples per question
+#   - max_concurrent: Override max concurrent requests
+eval_overrides:
+  # Example: Uncomment to override defaults
+  # max_tokens: 32768
+  # temperature: 0.9
+  # num_samples: 2
+  # max_concurrent: 128
+

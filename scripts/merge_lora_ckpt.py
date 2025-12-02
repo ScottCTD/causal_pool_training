@@ -4,7 +4,7 @@ from peft import PeftModel
 
 def main():
     parser = argparse.ArgumentParser(description="Merge LoRA checkpoint with base model")
-    parser.add_argument("-b", "--base_model", type=str, required=True, help="Base model name or path")
+    parser.add_argument("-b", "--base_model", type=str, default="Qwen/Qwen3-VL-4B-Instruct", help="Base model name or path")
     parser.add_argument("-c", "--ckpt_path", type=str, required=True, help="Path to LoRA checkpoint")
     parser.add_argument("-o", "--out_dir", type=str, default=None, help="Output directory for merged model (default: {ckpt_path}/merged)")
     parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda"], help="Device to load models on: 'auto' (use GPU if available), 'cpu', or 'cuda' (default: auto)")

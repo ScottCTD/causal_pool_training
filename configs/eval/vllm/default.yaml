@@ -1,0 +1,25 @@
+# Default vLLM serving configuration
+# This is a base config that can be extended by model-specific configs
+
+# Common vLLM arguments
+host: "0.0.0.0"
+tensor_parallel_size: 1
+gpu_memory_utilization: 0.95
+enforce_eager: true
+
+# Model-specific args (override in model configs)
+max_model_len: 8192
+max_num_seqs: 256
+
+# Optional flags
+trust_remote_code: false
+reasoning_parser: null
+
+# Media IO kwargs
+media_io_kwargs:
+  video:
+    num_frames: -1
+
+# Model path override (for local checkpoints like causalpool-4B)
+model_path: null
+

@@ -1,0 +1,8 @@
+# vLLM serving config for Qwen/Qwen3-VL-8B-Instruct
+
+defaults:
+  - default
+
+model: "Qwen/Qwen3-VL-8B-Instruct"
+
+

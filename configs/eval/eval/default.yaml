@@ -1,0 +1,37 @@
+# Default evaluation configuration
+# Common defaults for all models
+
+# Dataset settings
+dataset: "ds2"
+
+# Sampling settings
+num_samples: 1
+max_concurrent: 256
+
+# Generation settings (null = use model default)
+max_tokens: null
+temperature: null
+
+# Dataset size limits (null = use all, -1 = use all)
+max_entries: null
+counterfactual_velocity_size: 256
+counterfactual_position_size: 256
+descriptive_size: 256
+predictive_size: 256
+
+# Video processing
+fps: 8
+
+# API settings
+api_key: "EMPTY"
+base_url: "http://127.0.0.1:8000/v1"  # Will be overridden by auto_eval.py
+
+# Model hyperparameters (for eval.py)
+# These are used if not overridden by command line args
+hyperparameters:
+  temperature: 0.8
+  top_k: 20
+  top_p: 0.8
+  repetition_penalty: 1.0
+  presence_penalty: 1.5
+

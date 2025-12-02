@@ -1,0 +1,9 @@
+# vLLM serving config for causalpool-4B-CF
+
+defaults:
+  - default
+
+model: null  # Will be replaced with model_path
+model_path: "outputs/sft/ds2-cf/checkpoint-352/merged"
+served_model_name: "CausalPool-4B-cf"
+

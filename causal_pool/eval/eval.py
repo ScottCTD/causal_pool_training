@@ -243,7 +243,9 @@ class AsyncEvaluator:
         self.fps = fps
         
         # Get model-specific hyperparameters
-        model_hparams = get_model_hyperparameters(model)
+        # Note: base_dir is not available here, so use current directory
+        # This should be fine since configs are relative to project root
+        model_hparams = get_model_hyperparameters(model, ".")
         
         # Use provided values or fall back to model defaults
         self.max_tokens = max_tokens if max_tokens is not None else model_hparams.get("max_tokens")
@@ -279,28 +281,38 @@ class AsyncEvaluator:
         """
         Generate a random prediction for an entry.
         
-        Randomly selects uniformly from all possible combinations of exactly 2 options.
+        Randomly selects uniformly from all possible combinations of exactly k options,
+        where k = len(ground_truth). For example, if ground_truth has 1 option, it selects
+        1 option from all available options; if ground_truth has 2 options, it selects 2.
         
         Args:
             entry: Dataset entry with 'ground_truth' and 'options' fields
         
         Returns:
-            Prediction string in valid format (e.g., "AC" for a pair)
+            Prediction string in valid format (e.g., "A" for 1 option, "AC" for 2 options)
         
         Raises:
-            ValueError: If there are fewer than 2 options available
+            ValueError: If there are fewer options available than required, or if k < 1
         """
         num_available_options = len(entry["options"])
         
-        # Check if we have at least 2 options
-        if num_available_options < 2:
-            raise ValueError(f"Need at least 2 options, but only {num_available_options} available")
+        # Determine number of correct options from ground_truth
+        num_correct = _num_correct_options_from_entry(entry)
         
-        # Generate all possible combinations of exactly 2 options
-        # For n options, we have C(n,2) = n*(n-1)/2 possible pairs
-        all_combinations = list(itertools.combinations(range(num_available_options), 2))
+        # Validate that we have enough options available
+        if num_correct < 1:
+            raise ValueError(f"Number of correct options must be at least 1, but got {num_correct}")
         
-        # Randomly select one combination of exactly 2 options
+        if num_available_options < num_correct:
+            raise ValueError(
+                f"Need at least {num_correct} options, but only {num_available_options} available"
+            )
+        
+        # Generate all possible combinations of exactly num_correct options
+        # For n options choosing k, we have C(n,k) possible combinations
+        all_combinations = list(itertools.combinations(range(num_available_options), num_correct))
+        
+        # Randomly select one combination
         selected_indices = random.choice(all_combinations)
         
         # Convert to letters (A-Z), sorted for consistency
@@ -609,8 +621,8 @@ async def evaluate_dataset(
     total_questions = len(entries)
     total_samples = total_questions * num_samples
     
-    # Per-question metrics: a question is correct if ANY sample is exactly correct
-    question_exactly_correct = 0  # @k (where k=num_samples): any sample correct
+    # Per-question metrics: use fractional correctness (num_correct_cameras / total_cameras)
+    question_exactly_correct_sum = 0.0  # Sum of fractions: num_correct_cameras / total_cameras per question
     question_first_sample_correct = 0  # @1: first sample only
     
     # Per-option metrics: aggregate across all samples using metrics.py
@@ -652,6 +664,9 @@ async def evaluate_dataset(
                 "token_usage": [],
                 "sample_metrics": [],
                 "question_has_exact_match": False,
+                "question_fraction_correct": 0.0,
+                "num_correct_cameras": 0,
+                "total_cameras": 0,
                 "question_total_correct_options": 0,
                 "first_sample_correct": False,
                 "error": error,
@@ -660,7 +675,7 @@ async def evaluate_dataset(
             if question_type not in question_type_stats:
                 question_type_stats[question_type] = {
                     "total": 0,
-                    "exactly_correct": 0,
+                    "exactly_correct_sum": 0.0,
                     "first_sample_correct": 0,
                     "per_option_acc_sum": 0.0,
                     "per_option_samples": 0,
@@ -696,7 +711,7 @@ async def evaluate_dataset(
         if question_type not in question_type_stats:
             question_type_stats[question_type] = {
                 "total": 0,
-                "exactly_correct": 0,
+                "exactly_correct_sum": 0.0,
                 "first_sample_correct": 0,
                 "per_option_acc_sum": 0.0,
                 "per_option_samples": 0,
@@ -706,7 +721,8 @@ async def evaluate_dataset(
         # Calculate metrics for each prediction
         # predictions is now a list of dicts with keys: 'prediction', 'prompt', 'response'
         sample_metrics = []
-        question_has_exact_match = False
+        num_correct_cameras = 0  # Count of correct camera angles for this question
+        total_cameras = len(predictions)  # Total number of camera angles
         question_total_correct = 0
         first_sample_correct = False
         
@@ -761,9 +777,9 @@ async def evaluate_dataset(
             if idx == 0 and exactly_correct:
                 first_sample_correct = True
             
-            # @k: Check if any sample is correct
+            # Count correct camera angles (for fractional per-question accuracy)
             if exactly_correct:
-                question_has_exact_match = True
+                num_correct_cameras += 1
             
             question_total_correct += num_correct
             # Accumulate per-option accuracy fractions
@@ -786,9 +802,14 @@ async def evaluate_dataset(
                     total_tokens += token_usage['total_tokens']
                 samples_with_token_usage += 1
         
-        if question_has_exact_match:
-            question_exactly_correct += 1
-            question_type_stats[question_type]["exactly_correct"] += 1
+        # Calculate fractional correctness for this question: num_correct_cameras / total_cameras
+        question_fraction = num_correct_cameras / total_cameras if total_cameras > 0 else 0.0
+        question_exactly_correct_sum += question_fraction
+        
+        # Track fractional correctness for question type stats
+        if "exactly_correct_sum" not in question_type_stats[question_type]:
+            question_type_stats[question_type]["exactly_correct_sum"] = 0.0
+        question_type_stats[question_type]["exactly_correct_sum"] += question_fraction
         
         if first_sample_correct:
             question_first_sample_correct += 1
@@ -804,24 +825,28 @@ async def evaluate_dataset(
             "responses": sample_responses,  # List of responses (one per sample)
             "token_usage": sample_token_usage,  # List of token usage dicts (one per sample)
             "sample_metrics": sample_metrics,
-            "question_has_exact_match": question_has_exact_match,
+            "question_has_exact_match": question_fraction > 0.0,  # Keep for backward compatibility (any correct)
+            "question_fraction_correct": question_fraction,  # Fractional correctness: num_correct_cameras / total_cameras
+            "num_correct_cameras": num_correct_cameras,
+            "total_cameras": total_cameras,
             "question_total_correct_options": question_total_correct,
             "first_sample_correct": first_sample_correct,
         })
     
     # Calculate final metrics
-    per_question_accuracy = question_exactly_correct / total_questions if total_questions > 0 else 0.0
+    # Per-question accuracy: average fractional correctness (num_correct_cameras / total_cameras) across all questions
+    per_question_accuracy = question_exactly_correct_sum / total_questions if total_questions > 0 else 0.0
     # Per-option accuracy: average of per-sample fractions from calculate_per_option_accuracy
     per_option_accuracy = total_per_option_acc / total_samples_for_per_option if total_samples_for_per_option > 0 else 0.0
     
     # Calculate @1 and @k metrics
     accuracy_at_1 = question_first_sample_correct / total_questions if total_questions > 0 else 0.0
-    accuracy_at_k = question_exactly_correct / total_questions if total_questions > 0 else 0.0
+    # @k: average fractional correctness (same as per_question_accuracy now)
+    accuracy_at_k = per_question_accuracy
     
     metrics_dict = {
-        "per_question_accuracy": per_question_accuracy,
+        "per_question_accuracy": per_question_accuracy,  # Average fractional correctness: mean(num_correct_cameras / total_cameras)
         "per_option_accuracy": per_option_accuracy,
-        "questions_with_exact_match": question_exactly_correct,
         "total_samples": total_samples_for_per_option,
         "token_usage": {
             "total_prompt_tokens": total_prompt_tokens,
@@ -836,7 +861,6 @@ async def evaluate_dataset(
         metrics_dict["accuracy@1"] = accuracy_at_1
         metrics_dict[f"accuracy@{num_samples}"] = accuracy_at_k
         metrics_dict["questions_with_first_sample_correct"] = question_first_sample_correct
-        metrics_dict["questions_with_any_sample_correct"] = question_exactly_correct
     
     # Calculate per-question-type metrics
     per_question_type_metrics = {}
@@ -844,18 +868,18 @@ async def evaluate_dataset(
         qtype_total = stats["total"]
         if qtype_total > 0:
             qtype_per_option_acc = stats["per_option_acc_sum"] / stats["per_option_samples"] if stats["per_option_samples"] > 0 else 0.0
+            # Per-question accuracy: average fractional correctness for this question type
+            qtype_per_question_acc = stats["exactly_correct_sum"] / qtype_total if "exactly_correct_sum" in stats else 0.0
             qtype_metrics = {
                 "total_questions": qtype_total,
-                "per_question_accuracy": stats["exactly_correct"] / qtype_total,
+                "per_question_accuracy": qtype_per_question_acc,  # Average fractional correctness
                 "per_option_accuracy": qtype_per_option_acc,
-                "questions_with_exact_match": stats["exactly_correct"],
                 "total_samples": stats["per_option_samples"],
             }
             if num_samples > 1:
                 qtype_metrics["accuracy@1"] = stats["first_sample_correct"] / qtype_total
-                qtype_metrics[f"accuracy@{num_samples}"] = stats["exactly_correct"] / qtype_total
+                qtype_metrics[f"accuracy@{num_samples}"] = qtype_per_question_acc
                 qtype_metrics["questions_with_first_sample_correct"] = stats["first_sample_correct"]
-                qtype_metrics["questions_with_any_sample_correct"] = stats["exactly_correct"]
             per_question_type_metrics[qtype] = qtype_metrics
     
     metrics_dict["per_question_type"] = per_question_type_metrics
@@ -1063,7 +1087,7 @@ async def main():
     if args.model != "random":
         print(f"  Max concurrent: {args.max_concurrent}")
         print(f"  Hyperparameters:")
-        model_hparams = get_model_hyperparameters(args.model)
+        model_hparams = get_model_hyperparameters(args.model, args.base_dir)
         max_tokens = args.max_tokens if args.max_tokens is not None else model_hparams.get("max_tokens")
         temperature = args.temperature if args.temperature is not None else model_hparams.get("temperature")
         if max_tokens is not None:
@@ -1099,9 +1123,8 @@ async def main():
         print("\n" + "=" * 50)
         print("EVALUATION SUMMARY")
         print("=" * 50)
-        print(f"Per-question accuracy: {results['metrics']['per_question_accuracy']:.4f}")
+        print(f"Per-question accuracy: {results['metrics']['per_question_accuracy']:.4f} (average fractional correctness: num_correct_cameras / total_cameras)")
         print(f"Per-option accuracy: {results['metrics']['per_option_accuracy']:.4f}")
-        print(f"Questions with exact match: {results['metrics']['questions_with_exact_match']}/{results['total_questions']}")
         print(f"Total samples: {results['total_samples']}")
         
         # Print token usage if available
@@ -1130,12 +1153,11 @@ async def main():
                 count = results['metrics']['questions_with_first_sample_correct']
                 accuracy = results['metrics']['accuracy@1']
                 print(f"  Accuracy@1 (first sample only): {accuracy:.4f} ({count}/{results['total_questions']} questions)")
-            # @k: any sample correct (where k = num_samples)
+            # @k: average fractional correctness (where k = num_samples)
             accuracy_key = f"accuracy@{results['num_samples']}"
             if accuracy_key in results['metrics']:
-                count = results['metrics']['questions_with_any_sample_correct']
                 accuracy = results['metrics'][accuracy_key]
-                print(f"  Accuracy@{results['num_samples']} (any sample correct): {accuracy:.4f} ({count}/{results['total_questions']} questions)")
+                print(f"  Accuracy@{results['num_samples']} (average fractional correctness): {accuracy:.4f}")
         
         # Print per-question-type metrics
         if "per_question_type" in results['metrics'] and results['metrics']['per_question_type']:
@@ -1143,15 +1165,14 @@ async def main():
             for qtype, qtype_metrics in sorted(results['metrics']['per_question_type'].items()):
                 print(f"\n  {qtype}:")
                 print(f"    Total questions: {qtype_metrics['total_questions']}")
-                print(f"    Per-question accuracy: {qtype_metrics['per_question_accuracy']:.4f}")
+                print(f"    Per-question accuracy: {qtype_metrics['per_question_accuracy']:.4f} (average fractional correctness)")
                 print(f"    Per-option accuracy: {qtype_metrics['per_option_accuracy']:.4f}")
-                print(f"    Questions with exact match: {qtype_metrics['questions_with_exact_match']}/{qtype_metrics['total_questions']}")
                 if results['num_samples'] > 1:
                     if "accuracy@1" in qtype_metrics:
                         print(f"    Accuracy@1: {qtype_metrics['accuracy@1']:.4f} ({qtype_metrics['questions_with_first_sample_correct']}/{qtype_metrics['total_questions']} questions)")
                     accuracy_key = f"accuracy@{results['num_samples']}"
                     if accuracy_key in qtype_metrics:
-                        print(f"    Accuracy@{results['num_samples']}: {qtype_metrics[accuracy_key]:.4f} ({qtype_metrics['questions_with_any_sample_correct']}/{qtype_metrics['total_questions']} questions)")
+                        print(f"    Accuracy@{results['num_samples']}: {qtype_metrics[accuracy_key]:.4f} (average fractional correctness)")
         
         print("=" * 50)
         

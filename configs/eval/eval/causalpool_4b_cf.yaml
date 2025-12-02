@@ -1,0 +1,6 @@
+# Evaluation config for causalpool-4B-CF
+# Uses same hyperparameters as Qwen3-VL-4B-Instruct
+
+defaults:
+  - qwen_4b_instruct
+

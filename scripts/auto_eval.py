@@ -3,11 +3,13 @@
 Automated evaluation orchestrator for Trillium cluster.
 
 This script:
-1. Selects an idle GPU from the 4-GPU node
-2. Launches vLLM server via Apptainer for the specified model
-3. Waits for the server to be ready
-4. Runs eval.py against the local server
-5. Cleans up the server process
+1. Launches vLLM server via Apptainer for the specified model
+2. Waits for the server to be ready
+3. Runs eval.py against the local server
+4. Cleans up the server process
+
+GPU assignment is handled by SLURM. The script uses all GPUs allocated by SLURM
+by not setting CUDA_VISIBLE_DEVICES.
 """
 
 # Set thread limits before importing any libraries that might spawn threads
@@ -19,7 +21,6 @@ os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
 import argparse
-import socket
 import subprocess
 import sys
 import time
@@ -28,189 +29,66 @@ import urllib.request
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from omegaconf import DictConfig, OmegaConf
 
-# Model preset configurations
-# Each entry maps a model name (HF-style) to its vLLM server command template
-MODEL_PRESETS: Dict[str, Dict[str, any]] = {
-    "Qwen/Qwen3-VL-4B-Instruct": {
-        "vllm_args": [
-            "--model", "Qwen/Qwen3-VL-4B-Instruct",
-            "--host", "0.0.0.0",
-            "--port", "{port}",
-            "--tensor-parallel-size", "1",
-            "--gpu-memory-utilization", "0.9",
-            "--max-model-len", "8192",
-            "--max-num-seqs", "512",
-            "--max-num-batched-tokens", "8192",
-            "--enforce-eager",
-        ],
-    },
-    "Qwen/Qwen3-VL-4B-Thinking": {
-        "vllm_args": [
-            "--model", "Qwen/Qwen3-VL-4B-Thinking",
-            "--host", "0.0.0.0",
-            "--port", "{port}",
-            "--tensor-parallel-size", "1",
-            "--gpu-memory-utilization", "0.95",
-            "--max-model-len", "40960",
-            "--max-num-seqs", "256",
-            "--reasoning-parser", "qwen3",
-            "--enforce-eager",
-        ],
-    },
-    "Qwen/Qwen3-VL-8B-Instruct": {
-        "vllm_args": [
-            "--model", "Qwen/Qwen3-VL-8B-Instruct",
-            "--host", "0.0.0.0",
-            "--port", "{port}",
-            "--tensor-parallel-size", "1",
-            "--gpu-memory-utilization", "0.9",
-            "--max-model-len", "8192",
-            "--max-num-seqs", "512",
-            "--max-num-batched-tokens", "8192",
-            "--enforce-eager",
-        ],
-    },
-    "OpenGVLab/InternVL3_5-4B": {
-        "vllm_args": [
-            "--model", "OpenGVLab/InternVL3_5-4B",
-            "--host", "0.0.0.0",
-            "--port", "{port}",
-            "--trust-remote-code",
-            "--tensor-parallel-size", "1",
-            "--gpu-memory-utilization", "0.9",
-            "--max-model-len", "40960",
-            "--max-num-seqs", "512",
-            "--max-num-batched-tokens", "8192",
-            "--enforce-eager",
-        ],
-    },
-    "causalpool-4B": {
-        "vllm_args": [
-            "--model", "{model_path}",
-            "--served-model-name", "causalpool-4B",
-            "--host", "0.0.0.0",
-            "--port", "{port}",
-            "--tensor-parallel-size", "1",
-            "--gpu-memory-utilization", "0.9",
-            "--max-model-len", "8192",
-            "--max-num-seqs", "512",
-            "--max-num-batched-tokens", "8192",
-            "--enforce-eager",
-        ],
-        "model_path": "outputs/sft/ds1/checkpoint-960/merged",
-    },
-    "Qwen/Qwen3-VL-30B-A3B-Instruct": {
-        "vllm_args": [
-            "--model", "Qwen/Qwen3-VL-30B-A3B-Instruct",
-            "--host", "0.0.0.0",
-            "--port", "{port}",
-            "--tensor-parallel-size", "1",
-            "--gpu-memory-utilization", "0.95",
-            "--max-model-len", "8192",
-            "--max-num-seqs", "512",
-            "--max-num-batched-tokens", "8192",
-            "--enforce-eager",
-            "--enable-expert-parallel",
-        ],
-    },
-}
+
+def load_vllm_config(model_name: str, base_dir: str) -> DictConfig:
+    """
+    Load vLLM config for a model from YAML files.
+    
+    Maps model names to config names:
+    - "Qwen/Qwen3-VL-4B-Instruct" -> "qwen_4b_instruct"
+    - "Qwen/Qwen3-VL-4B-Thinking" -> "qwen_4b_thinking"
+    - "Qwen/Qwen3-VL-8B-Instruct" -> "qwen_8b_instruct"
+    - "CausalPool-4B-cf" -> "causalpool_4b_cf"
+    - "CausalPool-4B-desc" -> "causalpool_4b_desc"
+    - "Qwen/Qwen3-VL-30B-A3B-Instruct" -> "qwen_30b_a3b_instruct"
+    - "OpenGVLab/InternVL3_5-4B" -> "internvl3_5_4b"
+    """
+    # Map model names to config names
+    model_to_config = {
+        "Qwen/Qwen3-VL-4B-Instruct": "qwen_4b_instruct",
+        "Qwen/Qwen3-VL-4B-Thinking": "qwen_4b_thinking",
+        "Qwen/Qwen3-VL-8B-Instruct": "qwen_8b_instruct",
+        "CausalPool-4B-cf": "causalpool_4b_cf",
+        "CausalPool-4B-desc": "causalpool_4b_desc",
+        "Qwen/Qwen3-VL-30B-A3B-Instruct": "qwen_30b_a3b_instruct",
+        "OpenGVLab/InternVL3_5-4B": "internvl3_5_4b",
+    }
+    
+    config_name = model_to_config.get(model_name)
+    if config_name is None:
+        raise ValueError(f"Unknown model: {model_name}. Available models: {list(model_to_config.keys())}")
+    
+    # Load config files
+    config_path = Path(base_dir) / "configs" / "eval" / "vllm"
+    default_file = config_path / "default.yaml"
+    model_file = config_path / f"{config_name}.yaml"
+    
+    if not model_file.exists():
+        raise FileNotFoundError(f"vLLM config not found: {model_file}")
+    
+    # Load default config first (always merge with default.yaml if it exists)
+    default_cfg = OmegaConf.load(default_file) if default_file.exists() else OmegaConf.create({})
+    # Remove defaults key if present (Hydra-specific, not needed for OmegaConf)
+    if "defaults" in default_cfg:
+        del default_cfg["defaults"]
+    
+    # Load model-specific config (will override defaults)
+    model_cfg = OmegaConf.load(model_file)
+    # Remove defaults key if present (Hydra-specific, we handle defaults by always merging with default.yaml)
+    if "defaults" in model_cfg:
+        del model_cfg["defaults"]
+    
+    # Merge configs (model config overrides defaults)
+    cfg = OmegaConf.merge(default_cfg, model_cfg)
+    
+    return cfg
 
 
 def log(message: str, prefix: str = "[AUTO-EVAL]"):
     """Print a log message with prefix."""
     print(f"{prefix} {message}", flush=True)
-
-
-def pick_idle_gpu(base_dir: str) -> int:
-    """
-    Select the most idle GPU by checking utilization and memory usage via nvidia-smi.
-    
-    Uses nvidia-smi to query GPU utilization and selects the GPU with lowest utilization
-    and memory usage. If CUDA_VISIBLE_DEVICES is set by SLURM, respects it.
-    
-    Args:
-        base_dir: Base directory for the project (unused, kept for compatibility)
-    
-    Returns:
-        GPU index
-    """
-    # Get actual hostname (not SLURM_NODELIST which might be a range)
-    hostname = socket.gethostname()
-    
-    log("Checking GPU status via nvidia-smi...")
-    log(f"Hostname: {hostname}")
-    
-    # IMPORTANT: We completely ignore CUDA_VISIBLE_DEVICES set by SLURM
-    # We query all GPUs via nvidia-smi and pick the most idle one
-    # Since the user controls the delay between submissions, we can safely pick any idle GPU
-    if os.environ.get("CUDA_VISIBLE_DEVICES"):
-        log(f"CUDA_VISIBLE_DEVICES={os.environ.get('CUDA_VISIBLE_DEVICES')} (ignored - will pick most idle GPU)")
-    
-    # Query nvidia-smi for GPU utilization info
-    gpu_utilization = {}  # GPU index -> (utilization, memory_used)
-    try:
-        # Create a clean environment for nvidia-smi without CUDA_VISIBLE_DEVICES
-        # to see all GPUs on the node
-        nvidia_smi_env = {}
-        for key, value in os.environ.items():
-            if key != "CUDA_VISIBLE_DEVICES":
-                nvidia_smi_env[key] = value
-        
-        log("Querying nvidia-smi for GPU utilization...")
-        
-        result = subprocess.run(
-            ["nvidia-smi", "--query-gpu=index,utilization.gpu,memory.used", "--format=csv,noheader,nounits"],
-            capture_output=True,
-            text=True,
-            check=True,
-            env=nvidia_smi_env,
-        )
-        
-        # Print full nvidia-smi output for debugging
-        log("nvidia-smi output:")
-        for line in result.stdout.strip().split("\n"):
-            if line.strip():
-                log(f"  {line}")
-        
-        # Parse GPU utilization info
-        for line in result.stdout.strip().split("\n"):
-            if not line.strip():
-                continue
-            parts = line.split(", ")
-            if len(parts) >= 3:
-                try:
-                    gpu_idx = int(parts[0].strip())
-                    utilization = int(parts[1].strip())
-                    memory_used = int(parts[2].strip())
-                    gpu_utilization[gpu_idx] = (utilization, memory_used)
-                except ValueError:
-                    continue
-        
-        log(f"nvidia-smi found {len(gpu_utilization)} GPU(s): {sorted(gpu_utilization.keys())}")
-        
-    except (subprocess.CalledProcessError, Exception) as e:
-        log(f"ERROR: Failed to query nvidia-smi: {e}", prefix="[AUTO-EVAL] [ERROR]")
-        log("Using GPU 0 as fallback (nvidia-smi query failed)", prefix="[AUTO-EVAL] [ERROR]")
-        return 0
-    
-    if not gpu_utilization:
-        log("ERROR: No GPUs found via nvidia-smi, using GPU 0 as fallback", prefix="[AUTO-EVAL] [ERROR]")
-        return 0
-    
-    # Note: We don't filter by CUDA_VISIBLE_DEVICES - we pick the most idle GPU on the node
-    # The user controls the delay between submissions to prevent conflicts
-    
-    # Sort by utilization (ascending), then by memory used (ascending)
-    available_gpus = [(gpu_idx, util_info[0], util_info[1]) for gpu_idx, util_info in gpu_utilization.items()]
-    available_gpus.sort(key=lambda x: (x[1], x[2]))
-    
-    selected_gpu = available_gpus[0][0]
-    log(f"Selected most idle GPU: GPU {selected_gpu} (utilization: {available_gpus[0][1]}%, memory: {available_gpus[0][2]} MB)")
-    if len(available_gpus) > 1:
-        log(f"All GPUs considered (sorted by idle): {[(g, u, m) for g, u, m in available_gpus[:3]]}")
-    
-    return selected_gpu
 
 
 def wait_for_server(base_url: str, timeout: int = 600, interval: int = 5) -> bool:
@@ -267,7 +145,7 @@ def build_vllm_command(
     Build the Apptainer command to launch vLLM server.
     
     Args:
-        model_name: Model preset name (key in MODEL_PRESETS)
+        model_name: Model preset name
         port: Port number for the server
         vllm_sif_path: Path to vllm.sif file
         base_dir: Base directory for the project
@@ -275,21 +153,50 @@ def build_vllm_command(
     Returns:
         List of command arguments for subprocess
     """
-    preset = MODEL_PRESETS[model_name]
-    vllm_args = preset["vllm_args"].copy()
+    # Load vLLM config
+    vllm_cfg = load_vllm_config(model_name, base_dir)
     
-    # Replace placeholders in vllm_args
-    for i, arg in enumerate(vllm_args):
-        if arg == "{port}":
-            vllm_args[i] = str(port)
-        elif arg == "{model_path}":
-            # For causalpool-4B, use the model_path from preset
-            model_path = preset.get("model_path", "")
-            if model_path:
-                # Make it absolute if it's relative
-                if not os.path.isabs(model_path):
-                    model_path = os.path.join(base_dir, model_path)
-                vllm_args[i] = model_path
+    # Build vLLM args from config
+    vllm_args = []
+    
+    # Model name (use model_path if available, otherwise model)
+    if vllm_cfg.get("model_path"):
+        model_path = vllm_cfg.model_path
+        if not os.path.isabs(model_path):
+            model_path = os.path.join(base_dir, model_path)
+        vllm_args.extend(["--model", model_path])
+        if vllm_cfg.get("served_model_name"):
+            vllm_args.extend(["--served-model-name", vllm_cfg.served_model_name])
+    else:
+        vllm_args.extend(["--model", vllm_cfg.model])
+    
+    # Required args
+    vllm_args.extend(["--host", str(vllm_cfg.host)])
+    vllm_args.extend(["--port", str(port)])
+    
+    # Optional args
+    if vllm_cfg.get("tensor_parallel_size"):
+        vllm_args.extend(["--tensor-parallel-size", str(vllm_cfg.tensor_parallel_size)])
+    if vllm_cfg.get("gpu_memory_utilization"):
+        vllm_args.extend(["--gpu-memory-utilization", str(vllm_cfg.gpu_memory_utilization)])
+    if vllm_cfg.get("max_model_len"):
+        vllm_args.extend(["--max-model-len", str(vllm_cfg.max_model_len)])
+    if vllm_cfg.get("max_num_seqs"):
+        vllm_args.extend(["--max-num-seqs", str(vllm_cfg.max_num_seqs)])
+    if vllm_cfg.get("enforce_eager", False):
+        vllm_args.append("--enforce-eager")
+    if vllm_cfg.get("trust_remote_code", False):
+        vllm_args.append("--trust-remote-code")
+    if vllm_cfg.get("reasoning_parser"):
+        vllm_args.extend(["--reasoning-parser", str(vllm_cfg.reasoning_parser)])
+    if vllm_cfg.get("enable_expert_parallel", False):
+        vllm_args.append("--enable-expert-parallel")
+    
+    # Handle media_io_kwargs (nested argument)
+    if vllm_cfg.get("media_io_kwargs"):
+        media_io = vllm_cfg.media_io_kwargs
+        if media_io.get("video") and media_io.video.get("num_frames") is not None:
+            vllm_args.extend(["--media-io-kwargs.video.num_frames", str(media_io.video.num_frames)])
     
     # Build Apptainer command
     cmd = [
@@ -346,13 +253,20 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Run evaluation with default settings
-  python scripts/auto_eval.py --model "Qwen/Qwen3-VL-4B-Instruct" --dataset 1k_simple
+  # Run evaluation with default settings (via SLURM)
+  sbatch scripts/run_eval.sh --model "Qwen/Qwen3-VL-4B-Instruct" --dataset ds1
+  
+  # Run directly on compute node (when already on a compute node)
+  bash scripts/run_eval_direct.sh --model "Qwen/Qwen3-VL-4B-Instruct" --dataset ds1
+  
+  # Or set up environment manually and run:
+  source scripts/setup_eval_env.sh
+  python scripts/auto_eval.py --model "Qwen/Qwen3-VL-4B-Instruct" --dataset ds1
   
   # Run with custom parameters
-  python scripts/auto_eval.py \\
+  bash scripts/run_eval_direct.sh \\
     --model "Qwen/Qwen3-VL-4B-Thinking" \\
-    --dataset 1k_simple \\
+    --dataset ds1 \\
     --num-samples 1 \\
     --max-concurrent 64 \\
     --max-tokens 32768
@@ -488,10 +402,11 @@ Examples:
     log(f"Base directory: {base_dir}")
     log(f"vLLM SIF path: {vllm_sif_path}")
     
-    # Validate model preset
-    if args.model not in MODEL_PRESETS:
-        log(f"ERROR: Unknown model preset: {args.model}", prefix="[AUTO-EVAL] [ERROR]")
-        log(f"Available presets: {', '.join(sorted(MODEL_PRESETS.keys()))}", prefix="[AUTO-EVAL] [ERROR]")
+    # Validate model preset (try loading config)
+    try:
+        load_vllm_config(args.model, base_dir)
+    except (ValueError, FileNotFoundError) as e:
+        log(f"ERROR: {e}", prefix="[AUTO-EVAL] [ERROR]")
         sys.exit(1)
     
     # Check prerequisites
@@ -502,26 +417,13 @@ Examples:
         sys.exit(1)
     log("Prerequisites check passed")
     
-    # Select GPU using nvidia-smi to find the most idle GPU
-    # We completely ignore CUDA_VISIBLE_DEVICES set by SLURM
-    log("=" * 60)
-    log("GPU Selection")
-    log("=" * 60)
-    is_slurm = "SLURM_JOB_ID" in os.environ
-    if is_slurm:
-        log("Running under SLURM")
-    else:
-        log("Running manually (not under SLURM)")
-    
-    # Check if SLURM set CUDA_VISIBLE_DEVICES (we'll ignore it and pick the most idle GPU)
+    # GPU assignment: SLURM allocates GPUs and sets CUDA_VISIBLE_DEVICES automatically
+    # We use all allocated GPUs by not overriding CUDA_VISIBLE_DEVICES
     cuda_visible = os.environ.get("CUDA_VISIBLE_DEVICES")
     if cuda_visible:
-        log(f"CUDA_VISIBLE_DEVICES={cuda_visible} (set by SLURM, but will be ignored)")
-    
-    selected_gpu = pick_idle_gpu(base_dir)
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(selected_gpu)
-    log(f"Final GPU selection: GPU {selected_gpu}, CUDA_VISIBLE_DEVICES={selected_gpu}")
-    log("=" * 60)
+        log(f"Using GPUs allocated by SLURM: CUDA_VISIBLE_DEVICES={cuda_visible}")
+    else:
+        log("No CUDA_VISIBLE_DEVICES set - will use all available GPUs")
     
     # Build vLLM command
     log("Building vLLM server command...")

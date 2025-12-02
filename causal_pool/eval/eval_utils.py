@@ -9,7 +9,9 @@ This module contains:
 
 import base64
 import os
-from typing import Dict, List, Tuple, Any
+from pathlib import Path
+from typing import Dict, List, Tuple, Any, Optional
+from omegaconf import OmegaConf
 from causal_pool.prompt_utils import build_question_prompt
 from causal_pool.utils import normalize_model_name
 
@@ -19,35 +21,18 @@ class InvalidPredictionError(ValueError):
     pass
 
 
-# Model-specific hyperparameter defaults
-MODEL_HYPERPARAMETERS: Dict[str, Dict[str, Any]] = {
-    "Qwen/Qwen3-VL-4B-Instruct": {
-        "temperature": 0.8,
-        "top_k": 20,
-        "top_p": 0.8,
-        "repetition_penalty": 1.0,
-        "presence_penalty": 1.5,
-    },
-    "Qwen/Qwen3-VL-4B-Thinking": {
-        "temperature": 1.0,
-        "top_k": 20,
-        "top_p": 0.95,
-        "repetition_penalty": 1.0,
-        "presence_penalty": 0.0,
-    },
-    "Qwen/Qwen3-VL-8B-Instruct": {
-        "temperature": 0.8,
-        "top_k": 20,
-        "top_p": 0.8,
-        "repetition_penalty": 1.0,
-        "presence_penalty": 1.5,
-    },
-    "OpenGVLab/InternVL3_5-4B": {
-        "temperature": 0.0,
-    }
+# Model name to eval config name mapping
+MODEL_TO_EVAL_CONFIG: Dict[str, str] = {
+    "Qwen/Qwen3-VL-4B-Instruct": "qwen_4b_instruct",
+    "Qwen/Qwen3-VL-4B-Thinking": "qwen_4b_thinking",
+    "Qwen/Qwen3-VL-8B-Instruct": "qwen_8b_instruct",
+    "CausalPool-4B-cf": "causalpool_4b_cf",
+    "CausalPool-4B-desc": "causalpool_4b_desc",
+    "Qwen/Qwen3-VL-30B-A3B-Instruct": "qwen_30b_a3b_instruct",
+    "OpenGVLab/InternVL3_5-4B": "default",  # Use default if no specific config
 }
 
-# Default hyperparameters (used if model not found in MODEL_HYPERPARAMETERS)
+# Default hyperparameters (used if model not found in configs)
 DEFAULT_HYPERPARAMETERS = {
     "temperature": 0.8,
     "top_k": 20,
@@ -57,17 +42,51 @@ DEFAULT_HYPERPARAMETERS = {
 }
 
 
-def get_model_hyperparameters(model_name: str) -> Dict[str, Any]:
+def get_model_hyperparameters(model_name: str, base_dir: str = ".") -> Dict[str, Any]:
     """
-    Get hyperparameters for a specific model, falling back to defaults if not found.
+    Get hyperparameters for a specific model from config files, falling back to defaults if not found.
     
     Args:
         model_name: Model name (e.g., "Qwen/Qwen3-VL-4B-Instruct")
+        base_dir: Base directory for the project (default: current directory)
     
     Returns:
         Dictionary of hyperparameters
     """
-    return MODEL_HYPERPARAMETERS.get(model_name, DEFAULT_HYPERPARAMETERS).copy()
+    # Map model name to eval config name
+    eval_config_name = MODEL_TO_EVAL_CONFIG.get(model_name, "default")
+    
+    # Load config files
+    config_path = Path(base_dir) / "configs" / "eval" / "eval"
+    default_file = config_path / "default.yaml"
+    eval_file = config_path / f"{eval_config_name}.yaml"
+    
+    # Try to load from config files
+    try:
+        # Load default config first (always merge with default.yaml if it exists)
+        default_cfg = OmegaConf.load(default_file) if default_file.exists() else OmegaConf.create({})
+        # Remove defaults key if present (Hydra-specific)
+        if "defaults" in default_cfg:
+            del default_cfg["defaults"]
+        
+        # Load eval-specific config (will override defaults)
+        eval_cfg = OmegaConf.load(eval_file) if eval_file.exists() else OmegaConf.create({})
+        # Remove defaults key if present (Hydra-specific, we handle defaults by always merging with default.yaml)
+        if "defaults" in eval_cfg:
+            del eval_cfg["defaults"]
+        
+        # Merge configs
+        cfg = OmegaConf.merge(default_cfg, eval_cfg)
+        
+        # Extract hyperparameters
+        if "hyperparameters" in cfg:
+            return dict(cfg.hyperparameters)
+    except Exception:
+        # If loading fails, fall back to defaults
+        pass
+    
+    # Fall back to hardcoded defaults
+    return DEFAULT_HYPERPARAMETERS.copy()
 
 
 def get_available_videos(entry: Dict[str, Any], dataset_name: str, base_dir: str = ".") -> List[str]:

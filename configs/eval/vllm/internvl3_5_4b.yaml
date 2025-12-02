@@ -1,0 +1,14 @@
+# vLLM serving config for OpenGVLab/InternVL3_5-4B
+
+defaults:
+  - default
+
+model: "OpenGVLab/InternVL3_5-4B"
+host: "0.0.0.0"
+trust_remote_code: true
+tensor_parallel_size: 1
+gpu_memory_utilization: 0.9
+max_model_len: 40960
+max_num_seqs: 512
+enforce_eager: true
+

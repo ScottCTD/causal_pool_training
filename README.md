@@ -222,6 +222,30 @@ python causal_pool/eval/eval.py \
   --max-tokens 10 \
 ```
 
+serve vllm with lora:
+```sh
+apptainer run --nv \
+  --bind /scratch/scottc/:/scratch/scottc/ \
+  --bind /home/scottc/links/:/home/scottc/links/ \
+  --bind /scratch/scottc/cache/:/home/scottc/.cache \
+  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
+  --env HF_HUB_OFFLINE=1 \
+  ~/scratch/vllm.sif \
+  --model Qwen/Qwen3-VL-4B-Instruct \
+  --host 0.0.0.0 --port 8000 \
+  --tensor-parallel-size 1 \
+  --gpu-memory-utilization 0.9 \
+  --max-model-len 8192 \
+  --max-num-seqs 512 \
+  --max-num-batched-tokens 8192 \
+  --enforce-eager \
+  --enable-lora \
+  --lora-modules cf=/home/scottc/links/scratch/causal_pool/outputs/sft/ds2-cf/checkpoint-352 desc=/home/scottc/links/scratch/causal_pool/outputs/sft/ds2-desc/checkpoint-346 \
+  --max-lora-rank 128 \
+  --max-loras 2 \
+```
+this seems to be not working as expected
+
 ```sh
 export OPENBLAS_NUM_THREADS=1
 ```

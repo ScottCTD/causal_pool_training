@@ -1,0 +1,14 @@
+# Model configuration for causalpool-4B-CF (counterfactual fine-tuned)
+
+model_name: "CausalPool-4B-cf"
+
+# vLLM serving config (references configs/eval/vllm/)
+vllm_config: causalpool_4b_cf
+
+# Evaluation config (references configs/eval/eval/)
+eval_config: qwen_4b_instruct
+
+# Model-specific eval overrides (merged with eval config and global config)
+eval_overrides:
+  # Same parameters as Qwen3-VL-4B-Instruct
+

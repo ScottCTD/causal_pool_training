@@ -1,0 +1,6 @@
+# Evaluation config for Qwen/Qwen3-VL-8B-Instruct
+
+defaults:
+  - default
+
+

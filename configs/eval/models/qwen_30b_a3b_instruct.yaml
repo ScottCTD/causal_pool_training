@@ -1,0 +1,16 @@
+# Model configuration for Qwen/Qwen3-VL-30B-A3B-Instruct
+
+model_name: "Qwen/Qwen3-VL-30B-A3B-Instruct"
+
+# vLLM serving config (references configs/eval/vllm/)
+vllm_config: qwen_30b_a3b_instruct
+
+# Evaluation config (references configs/eval/eval/)
+eval_config: default
+
+# Model-specific eval overrides (merged with eval config and global config)
+eval_overrides:
+  # Add model-specific overrides here if needed
+  # max_tokens: null
+  # temperature: null
+
