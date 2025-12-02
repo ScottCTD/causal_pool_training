@@ -29,6 +29,7 @@ MODEL_TO_EVAL_CONFIG: Dict[str, str] = {
     "CausalPool-4B-cf": "causalpool_4b_cf",
     "CausalPool-4B-desc": "causalpool_4b_desc",
     "Qwen/Qwen3-VL-30B-A3B-Instruct": "qwen_30b_a3b_instruct",
+    "Qwen/Qwen3-VL-32B-Instruct": "qwen_32b_instruct",
     "OpenGVLab/InternVL3_5-4B": "default",  # Use default if no specific config
 }
 

@@ -19,7 +19,7 @@ export HF_HUB_OFFLINE=1
 # export TOKENIZERS_PARALLELISM=false
 # export RAYON_NUM_THREADS=1
 
-export CUDA_VISIBLE_DEVICES=$(./scripts/pick_idle_gpu.sh)
+# export CUDA_VISIBLE_DEVICES=$(./scripts/pick_idle_gpu.sh)
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 module load StdEnv/2023 gcc/12.3 cuda/12.6

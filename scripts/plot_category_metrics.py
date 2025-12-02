@@ -56,7 +56,7 @@ def load_all_eval_results(dataset_dir: str) -> Dict[str, Dict]:
     return results
 
 
-def extract_category_metrics(results: Dict[str, Dict]) -> Tuple[Dict[str, List], Dict[str, List], List[str]]:
+def extract_category_metrics(results: Dict[str, Dict]) -> Tuple[Dict[str, List], Dict[str, List], Dict[str, List], List[str]]:
     """
     Extract per-category metrics from all model results.
     
@@ -64,7 +64,7 @@ def extract_category_metrics(results: Dict[str, Dict]) -> Tuple[Dict[str, List],
         results: Dictionary mapping model names to evaluation results
     
     Returns:
-        Tuple of (per_question_metrics, per_option_metrics, categories)
+        Tuple of (per_question_metrics, per_option_metrics, consistency_metrics, categories, model_names)
         where each metrics dict maps category -> [values for each model]
     """
     # Collect all unique categories across all models
@@ -83,6 +83,7 @@ def extract_category_metrics(results: Dict[str, Dict]) -> Tuple[Dict[str, List],
     
     per_question_metrics = {cat: [] for cat in categories}
     per_option_metrics = {cat: [] for cat in categories}
+    consistency_metrics = {cat: [] for cat in categories}
     
     for model_name in model_names:
         model_data = results[model_name]
@@ -96,13 +97,17 @@ def extract_category_metrics(results: Dict[str, Dict]) -> Tuple[Dict[str, List],
             per_option_metrics[category].append(
                 category_data.get('per_option_accuracy', 0.0)
             )
+            consistency_metrics[category].append(
+                category_data.get('consistency', 0.0)
+            )
     
-    return per_question_metrics, per_option_metrics, categories, model_names
+    return per_question_metrics, per_option_metrics, consistency_metrics, categories, model_names
 
 
 def plot_category_metrics(
     per_question_metrics: Dict[str, List],
     per_option_metrics: Dict[str, List],
+    consistency_metrics: Dict[str, List],
     categories: List[str],
     model_names: List[str],
     output_path: str = 'eval/category_metrics_plot.png'
@@ -113,18 +118,20 @@ def plot_category_metrics(
     Args:
         per_question_metrics: Dict mapping category -> list of per-question accuracies
         per_option_metrics: Dict mapping category -> list of per-option accuracies
+        consistency_metrics: Dict mapping category -> list of consistency values (std dev)
         categories: List of category names
         model_names: List of model names (in same order as metric lists)
-        output_path: Base path to save the plots (will generate two files)
+        output_path: Base path to save the plots (will generate three files)
     """
     if not HAS_MATPLOTLIB:
         print("Skipping plot generation (matplotlib not available)")
         return
     
-    # Generate two output paths
+    # Generate three output paths
     base_path = Path(output_path)
     per_question_path = base_path.parent / f"{base_path.stem}_per_question{base_path.suffix}"
     per_option_path = base_path.parent / f"{base_path.stem}_per_option{base_path.suffix}"
+    consistency_path = base_path.parent / f"{base_path.stem}_consistency{base_path.suffix}"
     
     n_categories = len(categories)
     n_models = len(model_names)
@@ -222,6 +229,52 @@ def plot_category_metrics(
     plt.savefig(str(per_option_path), dpi=300, bbox_inches='tight')
     plt.close(fig2)
     print(f"Plot saved to {per_option_path}")
+    
+    # Plot consistency (std dev) - lower is better
+    fig3, ax3 = plt.subplots(figsize=(10, 6))
+    for i, model_name in enumerate(model_names):
+        offset = (i - n_models / 2 + 0.5) * width
+        values = [consistency_metrics[cat][i] for cat in categories]
+        bars = ax3.bar(x + offset, values, width, label=model_name, alpha=0.8)
+        
+        # Add consistency labels on top of each bar
+        for bar, val in zip(bars, values):
+            if val > 0:
+                # Position text on top of the bar
+                ax3.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    val + 0.01,
+                    f'{val:.3f}',
+                    va='bottom',
+                    ha='center',
+                    fontsize=8
+                )
+            else:
+                # For zero values, show label inside the bar
+                ax3.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    0.01,
+                    f'{val:.3f}',
+                    va='bottom',
+                    ha='center',
+                    fontsize=8,
+                    color='gray'
+                )
+    
+    ax3.set_xlabel('Category', fontsize=12)
+    ax3.set_ylabel('Consistency (Std Dev)', fontsize=12)
+    ax3.set_title('Per-Category Consistency Across Camera Angles (Lower is Better)', fontsize=14, fontweight='bold')
+    ax3.set_xticks(x)
+    ax3.set_xticklabels(categories, fontsize=10, rotation=45, ha='right')
+    max_val = max(max(vals) for vals in consistency_metrics.values()) if consistency_metrics else 0.5
+    ax3.set_ylim(0, max(0.5, max_val * 1.15))
+    ax3.grid(axis='y', alpha=0.3)
+    ax3.legend(loc='upper right', fontsize=9)
+    
+    plt.tight_layout()
+    plt.savefig(str(consistency_path), dpi=300, bbox_inches='tight')
+    plt.close(fig3)
+    print(f"Plot saved to {consistency_path}")
 
 
 def parse_args():
@@ -315,7 +368,7 @@ def main():
         print(f"  - {model_name}")
     
     print("\nExtracting category metrics...")
-    per_question_metrics, per_option_metrics, categories, model_names = extract_category_metrics(results)
+    per_question_metrics, per_option_metrics, consistency_metrics, categories, model_names = extract_category_metrics(results)
     
     print(f"Found {len(categories)} categories: {', '.join(categories)}")
     
@@ -332,6 +385,7 @@ def main():
             plot_category_metrics(
                 per_question_metrics,
                 per_option_metrics,
+                consistency_metrics,
                 categories,
                 model_names,
                 str(output_path)
@@ -371,6 +425,20 @@ def main():
         for category in categories:
             print(f"{category:<30}", end="")
             for val in per_option_metrics[category]:
+                print(f"{val:<{col_width}.4f}", end="")
+            print()
+        
+        print("\n" + "="*total_width)
+        print("Summary Table: Per-Category Consistency (Std Dev, Lower is Better)")
+        print("="*total_width)
+        print(f"{'Category':<30}", end="")
+        for model_name in model_names:
+            print(f"{model_name:<{col_width}}", end="")
+        print()
+        print("-"*total_width)
+        for category in categories:
+            print(f"{category:<30}", end="")
+            for val in consistency_metrics[category]:
                 print(f"{val:<{col_width}.4f}", end="")
             print()
 

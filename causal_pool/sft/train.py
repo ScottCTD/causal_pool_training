@@ -31,8 +31,8 @@ warnings.filterwarnings(
 )
 
 DATASET_NAME = "ds2"
-# train_dataset, eval_dataset = load_counterfactual_train_dataset(DATASET_NAME, eval_size=128)
-train_dataset, eval_dataset = load_descriptive_train_dataset(DATASET_NAME, eval_size=128)
+train_dataset, eval_dataset = load_counterfactual_train_dataset(DATASET_NAME, eval_size=128)
+# train_dataset, eval_dataset = load_descriptive_train_dataset(DATASET_NAME, eval_size=128)
 
 model_name = "Qwen/Qwen3-VL-4B-Instruct"
 
@@ -254,7 +254,7 @@ eval_generation_config = GenerationConfig(
     do_sample=False,
 )
 
-run_name = f"{DATASET_NAME}-desc"
+run_name = f"{DATASET_NAME}-cf"
 training_args = Seq2SeqTrainingArguments(
     # data loading
     dataloader_num_workers=8,

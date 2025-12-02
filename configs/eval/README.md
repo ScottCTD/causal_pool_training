@@ -44,33 +44,24 @@ models_to_evaluate:
 
 ### 2. Adding a New Model
 
-To add a new model, create three config files:
+To completely add a new model to the evaluation system, you need to:
 
-#### Step 1: Create model config (`models/your_model.yaml`)
+1. Create config files (vLLM and eval configs)
+2. Add model name mappings in Python code (required for `auto_eval.py`)
+3. Optionally create a model config file (for batch evaluation)
 
-```yaml
-model_name: "Your/Model-Name"
+**Important**: The model name you use must match exactly across all files (including the Python mappings).
 
-# vLLM serving config (references configs/eval/vllm/)
-vllm_config: your_model
+#### Step 1: Create vLLM config (`vllm/your_model.yaml`)
 
-# Evaluation config (references configs/eval/eval/)
-eval_config: default
-
-# Model-specific eval overrides (merged with eval config)
-eval_overrides:
-  dataset: "ds1"
-  # num_samples: 1
-  # max_concurrent: 256
-```
-
-#### Step 2: Create vLLM config (`vllm/your_model.yaml`)
+Create a vLLM serving configuration file. Choose a config name based on your model (e.g., `qwen_32b_instruct.yaml` for `Qwen/Qwen3-VL-32B-Instruct`):
 
 ```yaml
+# vllm/qwen_32b_instruct.yaml
 defaults:
   - default
 
-model: "Your/Model-Name"
+model: "Qwen/Qwen3-VL-32B-Instruct"
 host: "0.0.0.0"
 tensor_parallel_size: 1
 gpu_memory_utilization: 0.9
@@ -79,9 +70,14 @@ max_num_seqs: 512
 enforce_eager: true
 ```
 
-#### Step 3: Create eval config (`eval/your_model.yaml`)
+**Note**: The `model` field should contain the exact model identifier (HuggingFace path or local path).
+
+#### Step 2: Create eval config (`eval/your_model.yaml`)
+
+Create an evaluation configuration file with the same name:
 
 ```yaml
+# eval/qwen_32b_instruct.yaml
 defaults:
   - default
 
@@ -93,14 +89,104 @@ hyperparameters:
   presence_penalty: 1.5
 ```
 
-#### Step 4: Add to main config
+#### Step 3: Add model name mappings in Python code
 
-Add your model to `config.yaml`:
+**CRITICAL**: You must add the model name mapping in two Python files, otherwise you'll get an "Unknown model" error.
+
+##### 3a. Add to `scripts/auto_eval.py`
+
+Edit the `load_vllm_config` function and add your model to the `model_to_config` dictionary:
+
+```python
+# scripts/auto_eval.py (around line 49-58)
+model_to_config = {
+    "Qwen/Qwen3-VL-4B-Instruct": "qwen_4b_instruct",
+    "Qwen/Qwen3-VL-4B-Thinking": "qwen_4b_thinking",
+    "Qwen/Qwen3-VL-8B-Instruct": "qwen_8b_instruct",
+    "CausalPool-4B-cf": "causalpool_4b_cf",
+    "CausalPool-4B-desc": "causalpool_4b_desc",
+    "Qwen/Qwen3-VL-30B-A3B-Instruct": "qwen_30b_a3b_instruct",
+    "Qwen/Qwen3-VL-32B-Instruct": "qwen_32b_instruct",  # <-- Add your model here
+    "OpenGVLab/InternVL3_5-4B": "internvl3_5_4b",
+}
+```
+
+Also update the docstring to document the new mapping:
+
+```python
+"""
+Maps model names to config names:
+- "Qwen/Qwen3-VL-4B-Instruct" -> "qwen_4b_instruct"
+...
+- "Qwen/Qwen3-VL-32B-Instruct" -> "qwen_32b_instruct"  # <-- Add here too
+...
+"""
+```
+
+##### 3b. Add to `causal_pool/eval/eval_utils.py`
+
+Edit the `MODEL_TO_EVAL_CONFIG` dictionary:
+
+```python
+# causal_pool/eval/eval_utils.py (around line 25-34)
+MODEL_TO_EVAL_CONFIG: Dict[str, str] = {
+    "Qwen/Qwen3-VL-4B-Instruct": "qwen_4b_instruct",
+    "Qwen/Qwen3-VL-4B-Thinking": "qwen_4b_thinking",
+    "Qwen/Qwen3-VL-8B-Instruct": "qwen_8b_instruct",
+    "CausalPool-4B-cf": "causalpool_4b_cf",
+    "CausalPool-4B-desc": "causalpool_4b_desc",
+    "Qwen/Qwen3-VL-30B-A3B-Instruct": "qwen_30b_a3b_instruct",
+    "Qwen/Qwen3-VL-32B-Instruct": "qwen_32b_instruct",  # <-- Add your model here
+    "OpenGVLab/InternVL3_5-4B": "default",
+}
+```
+
+**Important**: 
+- The model name (left side) must match exactly what you'll use in the command line (e.g., `--model "Qwen/Qwen3-VL-32B-Instruct"`)
+- The config name (right side) must match the YAML filename without `.yaml` (e.g., `qwen_32b_instruct`)
+
+#### Step 4: (Optional) Create model config for batch evaluation (`models/your_model.yaml`)
+
+If you plan to use batch evaluation (`scripts/batch_eval.py`), create a model config file:
+
+```yaml
+# models/qwen_32b_instruct.yaml
+model_name: "Qwen/Qwen3-VL-32B-Instruct"
+
+# vLLM serving config (references configs/eval/vllm/)
+vllm_config: qwen_32b_instruct
+
+# Evaluation config (references configs/eval/eval/)
+eval_config: qwen_32b_instruct
+
+# Model-specific eval overrides (merged with eval config)
+eval_overrides:
+  dataset: "ds2"
+  # num_samples: 1
+  # max_concurrent: 256
+```
+
+#### Step 5: (Optional) Add to main config for batch evaluation
+
+If using batch evaluation, add your model to `config.yaml`:
 
 ```yaml
 models_to_evaluate:
-  - your_model
+  - qwen_32b_instruct  # Use the config name, not the model name
 ```
+
+#### Summary Checklist
+
+When adding a new model, ensure you've completed:
+
+- [ ] Created `configs/eval/vllm/your_model.yaml` with vLLM serving settings
+- [ ] Created `configs/eval/eval/your_model.yaml` with evaluation hyperparameters
+- [ ] Added model mapping in `scripts/auto_eval.py` → `model_to_config` dictionary
+- [ ] Added model mapping in `causal_pool/eval/eval_utils.py` → `MODEL_TO_EVAL_CONFIG` dictionary
+- [ ] (Optional) Created `configs/eval/models/your_model.yaml` for batch evaluation
+- [ ] (Optional) Added model to `configs/eval/config.yaml` → `models_to_evaluate` list
+
+**Common mistake**: Forgetting to add the Python mappings (Step 3) will result in an "Unknown model" error even if the config files exist.
 
 ### 3. Modifying vLLM Serving Arguments
 

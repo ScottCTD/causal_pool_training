@@ -21,6 +21,7 @@ import argparse
 import asyncio
 import itertools
 import json
+import math
 import random
 import signal
 import sys
@@ -625,6 +626,9 @@ async def evaluate_dataset(
     question_exactly_correct_sum = 0.0  # Sum of fractions: num_correct_cameras / total_cameras per question
     question_first_sample_correct = 0  # @1: first sample only
     
+    # Consistency metric: std dev of correctness across camera angles
+    consistency_std_sum = 0.0  # Sum of std devs across camera angles for each question
+    
     # Per-option metrics: aggregate across all samples using metrics.py
     # Accumulate per-option accuracy fractions (from calculate_per_option_accuracy)
     total_per_option_acc = 0.0
@@ -667,6 +671,7 @@ async def evaluate_dataset(
                 "question_fraction_correct": 0.0,
                 "num_correct_cameras": 0,
                 "total_cameras": 0,
+                "consistency_std": 0.0,
                 "question_total_correct_options": 0,
                 "first_sample_correct": False,
                 "error": error,
@@ -676,6 +681,7 @@ async def evaluate_dataset(
                 question_type_stats[question_type] = {
                     "total": 0,
                     "exactly_correct_sum": 0.0,
+                    "consistency_std_sum": 0.0,
                     "first_sample_correct": 0,
                     "per_option_acc_sum": 0.0,
                     "per_option_samples": 0,
@@ -712,6 +718,7 @@ async def evaluate_dataset(
             question_type_stats[question_type] = {
                 "total": 0,
                 "exactly_correct_sum": 0.0,
+                "consistency_std_sum": 0.0,
                 "first_sample_correct": 0,
                 "per_option_acc_sum": 0.0,
                 "per_option_samples": 0,
@@ -725,6 +732,7 @@ async def evaluate_dataset(
         total_cameras = len(predictions)  # Total number of camera angles
         question_total_correct = 0
         first_sample_correct = False
+        correctness_values = []  # List of exactly_correct values (0 or 1) for consistency calculation
         
         # Extract prompt from first sample (should be the same for all samples)
         # Store prompts and responses for each sample
@@ -781,6 +789,9 @@ async def evaluate_dataset(
             if exactly_correct:
                 num_correct_cameras += 1
             
+            # Track correctness values for consistency calculation
+            correctness_values.append(exactly_correct)
+            
             question_total_correct += num_correct
             # Accumulate per-option accuracy fractions
             total_per_option_acc += per_option_acc
@@ -806,10 +817,25 @@ async def evaluate_dataset(
         question_fraction = num_correct_cameras / total_cameras if total_cameras > 0 else 0.0
         question_exactly_correct_sum += question_fraction
         
+        # Calculate consistency (std dev of correctness across camera angles)
+        # For binary values [0, 1], std dev = sqrt(p * (1-p)) where p is proportion of 1s
+        if total_cameras > 1:
+            # Calculate sample std dev
+            mean_correctness = question_fraction
+            variance = sum((val - mean_correctness) ** 2 for val in correctness_values) / total_cameras
+            consistency_std = math.sqrt(variance) if variance > 0 else 0.0
+        else:
+            # Single camera angle: no variance
+            consistency_std = 0.0
+        
+        consistency_std_sum += consistency_std
+        
         # Track fractional correctness for question type stats
         if "exactly_correct_sum" not in question_type_stats[question_type]:
             question_type_stats[question_type]["exactly_correct_sum"] = 0.0
+            question_type_stats[question_type]["consistency_std_sum"] = 0.0
         question_type_stats[question_type]["exactly_correct_sum"] += question_fraction
+        question_type_stats[question_type]["consistency_std_sum"] += consistency_std
         
         if first_sample_correct:
             question_first_sample_correct += 1
@@ -829,6 +855,7 @@ async def evaluate_dataset(
             "question_fraction_correct": question_fraction,  # Fractional correctness: num_correct_cameras / total_cameras
             "num_correct_cameras": num_correct_cameras,
             "total_cameras": total_cameras,
+            "consistency_std": consistency_std,  # Std dev of correctness across camera angles
             "question_total_correct_options": question_total_correct,
             "first_sample_correct": first_sample_correct,
         })
@@ -836,6 +863,8 @@ async def evaluate_dataset(
     # Calculate final metrics
     # Per-question accuracy: average fractional correctness (num_correct_cameras / total_cameras) across all questions
     per_question_accuracy = question_exactly_correct_sum / total_questions if total_questions > 0 else 0.0
+    # Consistency: average std dev of correctness across camera angles (lower is better)
+    consistency = consistency_std_sum / total_questions if total_questions > 0 else 0.0
     # Per-option accuracy: average of per-sample fractions from calculate_per_option_accuracy
     per_option_accuracy = total_per_option_acc / total_samples_for_per_option if total_samples_for_per_option > 0 else 0.0
     
@@ -847,6 +876,7 @@ async def evaluate_dataset(
     metrics_dict = {
         "per_question_accuracy": per_question_accuracy,  # Average fractional correctness: mean(num_correct_cameras / total_cameras)
         "per_option_accuracy": per_option_accuracy,
+        "consistency": consistency,  # Average std dev of correctness across camera angles (lower is better)
         "total_samples": total_samples_for_per_option,
         "token_usage": {
             "total_prompt_tokens": total_prompt_tokens,
@@ -870,10 +900,13 @@ async def evaluate_dataset(
             qtype_per_option_acc = stats["per_option_acc_sum"] / stats["per_option_samples"] if stats["per_option_samples"] > 0 else 0.0
             # Per-question accuracy: average fractional correctness for this question type
             qtype_per_question_acc = stats["exactly_correct_sum"] / qtype_total if "exactly_correct_sum" in stats else 0.0
+            # Consistency: average std dev for this question type
+            qtype_consistency = stats["consistency_std_sum"] / qtype_total if "consistency_std_sum" in stats else 0.0
             qtype_metrics = {
                 "total_questions": qtype_total,
                 "per_question_accuracy": qtype_per_question_acc,  # Average fractional correctness
                 "per_option_accuracy": qtype_per_option_acc,
+                "consistency": qtype_consistency,  # Average std dev of correctness across camera angles
                 "total_samples": stats["per_option_samples"],
             }
             if num_samples > 1:
@@ -1125,6 +1158,7 @@ async def main():
         print("=" * 50)
         print(f"Per-question accuracy: {results['metrics']['per_question_accuracy']:.4f} (average fractional correctness: num_correct_cameras / total_cameras)")
         print(f"Per-option accuracy: {results['metrics']['per_option_accuracy']:.4f}")
+        print(f"Consistency: {results['metrics'].get('consistency', 0.0):.4f} (std dev of correctness across cameras, lower is better)")
         print(f"Total samples: {results['total_samples']}")
         
         # Print token usage if available
@@ -1167,6 +1201,7 @@ async def main():
                 print(f"    Total questions: {qtype_metrics['total_questions']}")
                 print(f"    Per-question accuracy: {qtype_metrics['per_question_accuracy']:.4f} (average fractional correctness)")
                 print(f"    Per-option accuracy: {qtype_metrics['per_option_accuracy']:.4f}")
+                print(f"    Consistency: {qtype_metrics.get('consistency', 0.0):.4f} (std dev, lower is better)")
                 if results['num_samples'] > 1:
                     if "accuracy@1" in qtype_metrics:
                         print(f"    Accuracy@1: {qtype_metrics['accuracy@1']:.4f} ({qtype_metrics['questions_with_first_sample_correct']}/{qtype_metrics['total_questions']} questions)")

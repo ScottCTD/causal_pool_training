@@ -43,6 +43,7 @@ def load_vllm_config(model_name: str, base_dir: str) -> DictConfig:
     - "CausalPool-4B-cf" -> "causalpool_4b_cf"
     - "CausalPool-4B-desc" -> "causalpool_4b_desc"
     - "Qwen/Qwen3-VL-30B-A3B-Instruct" -> "qwen_30b_a3b_instruct"
+    - "Qwen/Qwen3-VL-32B-Instruct" -> "qwen_32b_instruct"
     - "OpenGVLab/InternVL3_5-4B" -> "internvl3_5_4b"
     """
     # Map model names to config names
@@ -53,6 +54,7 @@ def load_vllm_config(model_name: str, base_dir: str) -> DictConfig:
         "CausalPool-4B-cf": "causalpool_4b_cf",
         "CausalPool-4B-desc": "causalpool_4b_desc",
         "Qwen/Qwen3-VL-30B-A3B-Instruct": "qwen_30b_a3b_instruct",
+        "Qwen/Qwen3-VL-32B-Instruct": "qwen_32b_instruct",
         "OpenGVLab/InternVL3_5-4B": "internvl3_5_4b",
     }
     

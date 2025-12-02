@@ -1,0 +1,4127 @@
+{
+  "shot_1112": {
+    "shot_id": "shot_1112",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 1,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-1.02, dy=0.42) to (dx=0.00, dy=2.20) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be grey-orange-wall\nB. The second wall hit would be red-green-wall\nC. The first wall hit would be grey-orange-wall\nD. The third wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_1093"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 20,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-1.02, dy=0.42) to (dx=0.00, dy=2.06) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 2 different walls\nB. The third wall hit would be orange-red-wall\nC. The first wall hit would be red-green-wall\nD. The ball would hit 3 different walls",
+        "counterfactual_shot_id": "shot_1221"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 51,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial velocity were changed from (dx=-1.02, dy=0.42) to (dx=-0.76, dy=-0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be red-green-wall\nB. The ball would hit the same wall 2 times\nC. The second wall hit would be grey-orange-wall\nD. The ball would be pocketed in the blue pocket",
+        "counterfactual_shot_id": "shot_1221"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 257,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "A",
+          "C"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.32) to (x=0.16, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The third wall hit would be grey-orange-wall\nC. The first wall hit would be orange-red-wall\nD. The ball would be pocketed in the gray pocket",
+        "counterfactual_shot_id": "shot_2648"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 276,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.32) to (x=0.61, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the red pocket\nB. The third wall hit would be purple-grey-wall\nC. The ball would hit 1 wall\nD. The ball would hit the same wall 3 times",
+        "counterfactual_shot_id": "shot_2648"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 307,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.32) to (x=0.83, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be grey-orange-wall\nB. The third wall hit would be orange-red-wall\nC. The ball would be pocketed in the red pocket\nD. The first wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_600"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 695,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The first wall hit was green-blue-wall\nB. The ball was pocketed\nC. The first wall hit was orange-red-wall\nD. The third wall hit was blue-purple-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 708,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The second wall hit was red-green-wall\nB. The ball was pocketed in the blue pocket\nC. The second wall hit was grey-orange-wall\nD. The ball was pocketed in the purple pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 725,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed\nB. The second wall hit was orange-red-wall\nC. The ball hits 0 walls\nD. The third wall hit was grey-orange-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 753,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: What happened in this video?\nA. The second wall hit was orange-red-wall\nB. The third wall hit was green-blue-wall\nC. The second wall hit was green-blue-wall\nD. The first wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 776,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "A",
+          "C",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be blue-purple-wall\nB. The first wall hit will be orange-red-wall\nC. The second wall hit will be green-blue-wall\nD. The third wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 852,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "B",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be blue-purple-wall\nB. The first wall hit will be blue-purple-wall\nC. The ball will be pocketed in the blue pocket\nD. The second wall hit will be purple-grey-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 1023,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit 1 wall\nB. The ball will be pocketed\nC. The ball will hit 0 walls\nD. The third wall hit will be green-blue-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3316": {
+    "shot_id": "shot_3316",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 3,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial velocity were changed from (dx=0.95, dy=2.28) to (dx=0.63, dy=1.52) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be orange-red-wall\nB. The ball would hit 3 different walls\nC. The second wall hit would be purple-grey-wall\nD. The third wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_3160"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 105,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial velocity were changed from (dx=0.95, dy=2.28) to (dx=-1.55, dy=1.55) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be purple-grey-wall\nB. The ball would be pocketed in the green pocket\nC. The third wall hit would be red-green-wall\nD. The third wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_3206"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 173,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.95, dy=2.28) to (dx=-1.02, dy=0.42) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be orange-red-wall\nB. The ball would hit 0 walls\nC. The first wall hit would be orange-red-wall\nD. The first wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_3160"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 259,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.32) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the green pocket\nB. The first wall hit would be red-green-wall\nC. The ball would hit 4 different walls\nD. The third wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_3060"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 361,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.32) to (x=0.16, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 3 times\nB. The ball would be pocketed in the orange pocket\nC. The third wall hit would be purple-grey-wall\nD. The third wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_1012"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 429,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.32) to (x=0.16, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be blue-purple-wall\nB. The ball would hit the same wall 3 times\nC. The first wall hit would be green-blue-wall\nD. The second wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_1780"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 594,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The first wall hit was orange-red-wall\nB. The second wall hit was blue-purple-wall\nC. The third wall hit was red-green-wall\nD. The third wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 692,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The first wall hit was purple-grey-wall\nB. The first wall hit was green-blue-wall\nC. The ball was pocketed in the purple pocket\nD. The third wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 826,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit the same wall 2 times\nB. The first wall hit will be purple-grey-wall\nC. The second wall hit will be red-green-wall\nD. The second wall hit will be grey-orange-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 1009,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be orange-red-wall\nB. The first wall hit will be red-green-wall\nC. The ball will be pocketed\nD. The first wall hit will be grey-orange-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_2383": {
+    "shot_id": "shot_2383",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 6,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial velocity were changed from (dx=0.68, dy=-0.68) to (dx=-1.07, dy=-1.07) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 2 times\nB. The third wall hit would be green-blue-wall\nC. The first wall hit would be orange-red-wall\nD. The second wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_2443"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 168,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.68, dy=-0.68) to (dx=-0.42, dy=1.02) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be purple-grey-wall\nB. The ball would be pocketed in the orange pocket\nC. The third wall hit would be orange-red-wall\nD. The first wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_2491"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 262,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.38, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 2 different walls\nB. The ball would hit 3 different walls\nC. The third wall hit would be blue-purple-wall\nD. The ball would be pocketed",
+        "counterfactual_shot_id": "shot_1615"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 424,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.83, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be orange-red-wall\nB. The ball would hit 1 wall\nC. The third wall hit would be green-blue-wall\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_1103"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 539,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The ball hits 2 different walls\nB. The second wall hit was orange-red-wall\nC. The ball was pocketed in the green pocket\nD. The third wall hit was purple-grey-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 667,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "D",
+          "B",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The second wall hit was red-green-wall\nB. The first wall hit was orange-red-wall\nC. The ball was pocketed in the green pocket\nD. The first wall hit was grey-orange-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 696,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "B",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The second wall hit was grey-orange-wall\nB. The second wall hit was purple-grey-wall\nC. The first wall hit was green-blue-wall\nD. The ball hits 1 wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 781,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "C",
+          "D",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be purple-grey-wall\nB. The ball will be pocketed in the green pocket\nC. The ball will hit 0 walls\nD. The second wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 825,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit the same wall 3 times\nB. The second wall hit will be red-green-wall\nC. The first wall hit will be orange-red-wall\nD. The third wall hit will be green-blue-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 1005,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be red-green-wall\nB. The ball will hit 0 walls\nC. The second wall hit will be purple-grey-wall\nD. The first wall hit will be grey-orange-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_897": {
+    "shot_id": "shot_897",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 8,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "C",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=1.51, dy=0.00) to (dx=-0.55, dy=0.00) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be orange-red-wall\nB. The ball would hit 1 wall\nC. The first wall hit would be orange-red-wall\nD. The third wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_793"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 175,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.51, dy=0.00) to (dx=0.53, dy=-1.27) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the gray pocket\nB. The ball would hit the same wall 3 times\nC. The second wall hit would be green-blue-wall\nD. The ball would be pocketed in the blue pocket",
+        "counterfactual_shot_id": "shot_894"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 250,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=1.51, dy=0.00) to (dx=-0.74, dy=1.78) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the grey pocket\nB. The third wall hit would be purple-grey-wall\nC. The ball would hit the same wall 3 times\nD. The second wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_950"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 264,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=1.66) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be blue-purple-wall\nB. The ball would be pocketed in the purple pocket\nC. The ball would hit the same wall 2 times\nD. The ball would be pocketed in the orange pocket",
+        "counterfactual_shot_id": "shot_2945"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 431,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "C",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=1.66) to (x=0.16, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the red pocket\nB. The first wall hit would be purple-grey-wall\nC. The third wall hit would be grey-orange-wall\nD. The first wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_3457"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 506,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "A",
+          "C",
+          "C",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=1.66) to (x=0.61, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be red-green-wall\nB. The first wall hit would be grey-orange-wall\nC. The ball would hit 2 different walls\nD. The third wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_2433"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 519,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The ball hits 2 different walls\nB. The ball was pocketed in the gray pocket\nC. The ball was pocketed in the blue pocket\nD. The ball was pocketed in the red pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 674,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The third wall hit was red-green-wall\nB. The second wall hit was grey-orange-wall\nC. The ball hits the same wall 2 times\nD. The ball hits 0 walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 742,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The second wall hit was red-green-wall\nB. The first wall hit was blue-purple-wall\nC. The ball hits the same wall 2 times\nD. The first wall hit was green-blue-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 818,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be orange-red-wall\nB. The first wall hit will be grey-orange-wall\nC. The first wall hit will be blue-purple-wall\nD. The third wall hit will be orange-red-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 910,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed in the gray pocket\nB. The ball will be pocketed in the red pocket\nC. The second wall hit will be red-green-wall\nD. The ball will hit 2 different walls",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_635": {
+    "shot_id": "shot_635",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 12,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=-0.97, dy=-0.97) to (dx=1.07, dy=-1.07) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be blue-purple-wall\nB. The second wall hit would be red-green-wall\nC. The first wall hit would be purple-grey-wall\nD. The second wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_655"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 268,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=1.21) to (x=0.83, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be green-blue-wall\nB. The ball would hit the same wall 3 times\nC. The third wall hit would be grey-orange-wall\nD. The second wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_3707"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 598,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The third wall hit was green-blue-wall\nB. The ball was pocketed in the purple pocket\nC. The ball hits 2 different walls\nD. The ball was pocketed in the orange pocket",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 811,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "B",
+          "A",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be green-blue-wall\nB. The first wall hit will be grey-orange-wall\nC. The third wall hit will be orange-red-wall\nD. The second wall hit will be blue-purple-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 895,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be purple-grey-wall\nB. The ball will be pocketed in the orange pocket\nC. The first wall hit will be red-green-wall\nD. The first wall hit will be purple-grey-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_470": {
+    "shot_id": "shot_470",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 21,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.84, dy=2.03) to (dx=-0.47, dy=1.14) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The third wall hit would be grey-orange-wall\nC. The ball would be pocketed in the red pocket\nD. The first wall hit would be grey-orange-wall",
+        "counterfactual_shot_id": "shot_411"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 190,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.84, dy=2.03) to (dx=1.26, dy=1.26) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be blue-purple-wall\nB. The first wall hit would be blue-purple-wall\nC. The ball would hit 1 wall\nD. The third wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_419"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 277,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "D",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=0.77) to (x=0.38, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be grey-orange-wall\nB. The second wall hit would be green-blue-wall\nC. The ball would hit the same wall 3 times\nD. The second wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_2006"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 446,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=0.77) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be grey-orange-wall\nB. The ball would hit 2 different walls\nC. The first wall hit would be green-blue-wall\nD. The first wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_982"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 615,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The ball hits 4 different walls\nB. The third wall hit was red-green-wall\nC. The third wall hit was purple-grey-wall\nD. The second wall hit was red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 685,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed in the gray pocket\nB. The first wall hit was purple-grey-wall\nC. The first wall hit was green-blue-wall\nD. The second wall hit was purple-grey-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 845,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be purple-grey-wall\nB. The first wall hit will be orange-red-wall\nC. The first wall hit will be blue-purple-wall\nD. The first wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 919,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be green-blue-wall\nB. The first wall hit will be blue-purple-wall\nC. The second wall hit will be grey-orange-wall\nD. The ball will hit 3 different walls",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_301": {
+    "shot_id": "shot_301",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 36,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=-0.69) to (dx=0.29, dy=-0.29) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the orange pocket\nB. The ball would hit 0 walls\nC. The first wall hit would be purple-grey-wall\nD. The first wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_271"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 135,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "D",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=-0.69) to (dx=-0.47, dy=1.14) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be grey-orange-wall\nB. The ball would be pocketed in the purple pocket\nC. The second wall hit would be orange-red-wall\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_323"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 156,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=-0.69) to (dx=-0.63, dy=1.52) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be green-blue-wall\nB. The second wall hit would be grey-orange-wall\nC. The ball would hit the same wall 2 times\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_323"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 292,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=0.77) to (x=0.38, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the green pocket\nB. The ball would hit 1 wall\nC. The third wall hit would be blue-purple-wall\nD. The first wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_1581"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 391,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=0.77) to (x=0.61, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be blue-purple-wall\nB. The first wall hit would be red-green-wall\nC. The third wall hit would be green-blue-wall\nD. The first wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_1581"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 412,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=0.77) to (x=0.38, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the orange pocket\nB. The ball would be pocketed in the gray pocket\nC. The ball would hit 1 wall\nD. The ball would hit the same wall 2 times",
+        "counterfactual_shot_id": "shot_3629"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 555,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The second wall hit was red-green-wall\nB. The first wall hit was orange-red-wall\nC. The ball hits 1 wall\nD. The first wall hit was red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 626,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The third wall hit was purple-grey-wall\nB. The ball hits 3 different walls\nC. The first wall hit was red-green-wall\nD. The second wall hit was green-blue-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 657,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The ball hits the same wall 2 times\nB. The first wall hit was red-green-wall\nC. The ball was pocketed in the orange pocket\nD. The ball hits the same wall 3 times",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 791,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "C",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed in the gray pocket\nB. The first wall hit will be red-green-wall\nC. The ball will hit 0 walls\nD. The ball will hit the same wall 3 times",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 856,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed in the red pocket\nB. The third wall hit will be orange-red-wall\nC. The ball will be pocketed\nD. The ball will hit 1 wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 893,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be purple-grey-wall\nB. The third wall hit will be blue-purple-wall\nC. The ball will hit 1 wall\nD. The ball will be pocketed in the gray pocket",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3682": {
+    "shot_id": "shot_3682",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 41,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.14, dy=0.47) to (dx=0.00, dy=-1.79) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be red-green-wall\nB. The third wall hit would be green-blue-wall\nC. The ball would hit the same wall 2 times\nD. The second wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_3757"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 115,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=1.14, dy=0.47) to (dx=0.00, dy=1.24) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 1 wall\nB. The ball would hit the same wall 2 times\nC. The second wall hit would be purple-grey-wall\nD. The first wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_3757"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 297,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.21) to (x=0.61, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be green-blue-wall\nB. The third wall hit would be green-blue-wall\nC. The second wall hit would be grey-orange-wall\nD. The third wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_2402"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 371,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.21) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the orange pocket\nB. The second wall hit would be blue-purple-wall\nC. The third wall hit would be grey-orange-wall\nD. The ball would be pocketed in the gray pocket",
+        "counterfactual_shot_id": "shot_2402"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 541,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The ball hits 2 different walls\nB. The ball was pocketed in the red pocket\nC. The ball hits the same wall 2 times\nD. The third wall hit was red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 544,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The second wall hit was grey-orange-wall\nB. The first wall hit was grey-orange-wall\nC. The second wall hit was orange-red-wall\nD. The third wall hit was green-blue-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 655,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The first wall hit was blue-purple-wall\nB. The ball hits 2 different walls\nC. The first wall hit was orange-red-wall\nD. The first wall hit was red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 714,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The second wall hit was purple-grey-wall\nB. The third wall hit was red-green-wall\nC. The first wall hit was blue-purple-wall\nD. The ball was pocketed in the blue pocket",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 793,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed in the blue pocket\nB. The first wall hit will be grey-orange-wall\nC. The ball will hit 3 different walls\nD. The first wall hit will be orange-red-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 933,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed in the blue pocket\nB. The ball will hit 1 wall\nC. The third wall hit will be orange-red-wall\nD. The ball will be pocketed in the red pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 991,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit 1 wall\nB. The ball will be pocketed in the blue pocket\nC. The ball will be pocketed in the green pocket\nD. The third wall hit will be green-blue-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3475": {
+    "shot_id": "shot_3475",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 42,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "C",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial velocity were changed from (dx=1.17, dy=1.17) to (dx=0.78, dy=0.78) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be orange-red-wall\nB. The ball would be pocketed in the red pocket\nC. The ball would hit 1 wall\nD. The second wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_3411"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 69,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.17, dy=1.17) to (dx=1.36, dy=1.36) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be red-green-wall\nB. The second wall hit would be green-blue-wall\nC. The first wall hit would be purple-grey-wall\nD. The second wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_3411"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 112,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.17, dy=1.17) to (dx=-1.26, dy=1.26) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be grey-orange-wall\nB. The ball would hit 3 different walls\nC. The ball would be pocketed in the purple pocket\nD. The second wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_3495"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 298,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "B",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.77) to (x=0.38, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 2 times\nB. The first wall hit would be blue-purple-wall\nC. The ball would be pocketed in the blue pocket\nD. The ball would be pocketed in the orange pocket",
+        "counterfactual_shot_id": "shot_1427"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 325,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.77) to (x=0.61, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 3 times\nB. The ball would be pocketed in the red pocket\nC. The second wall hit would be orange-red-wall\nD. The ball would hit 1 wall",
+        "counterfactual_shot_id": "shot_147"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 368,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "A",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.77) to (x=0.16, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be grey-orange-wall\nB. The third wall hit would be green-blue-wall\nC. The third wall hit would be blue-purple-wall\nD. The second wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_147"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 518,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "C",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed in the purple pocket\nB. The ball hits 3 different walls\nC. The second wall hit was red-green-wall\nD. The third wall hit was grey-orange-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 595,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "D",
+          "C",
+          "C",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed\nB. The third wall hit was grey-orange-wall\nC. The first wall hit was green-blue-wall\nD. The second wall hit was green-blue-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 632,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "A",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The ball hits 3 different walls\nB. The first wall hit was grey-orange-wall\nC. The first wall hit was blue-purple-wall\nD. The second wall hit was red-green-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 774,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "A",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be grey-orange-wall\nB. The third wall hit will be green-blue-wall\nC. The second wall hit will be green-blue-wall\nD. The ball will be pocketed in the purple pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 861,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be green-blue-wall\nB. The first wall hit will be purple-grey-wall\nC. The ball will be pocketed in the orange pocket\nD. The third wall hit will be purple-grey-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 1011,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "C",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed in the orange pocket\nB. The ball will hit 2 different walls\nC. The first wall hit will be grey-orange-wall\nD. The ball will hit the same wall 2 times",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_2342": {
+    "shot_id": "shot_2342",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 43,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.26, dy=0.63) to (dx=-0.89, dy=0.37) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be blue-purple-wall\nB. The third wall hit would be purple-grey-wall\nC. The ball would be pocketed in the orange pocket\nD. The second wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_2376"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 299,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.83, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 1 wall\nB. The first wall hit would be purple-grey-wall\nC. The first wall hit would be grey-orange-wall\nD. The second wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_3878"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 687,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "B",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The third wall hit was orange-red-wall\nB. The first wall hit was grey-orange-wall\nC. The second wall hit was grey-orange-wall\nD. The ball hits 0 walls",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 786,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be grey-orange-wall\nB. The first wall hit will be purple-grey-wall\nC. The ball will hit 1 wall\nD. The third wall hit will be blue-purple-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 912,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be purple-grey-wall\nB. The ball will be pocketed\nC. The second wall hit will be green-blue-wall\nD. The ball will hit the same wall 2 times",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3397": {
+    "shot_id": "shot_3397",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 50,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=0.96) to (dx=1.52, dy=0.63) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be grey-orange-wall\nB. The ball would hit 2 different walls\nC. The third wall hit would be grey-orange-wall\nD. The third wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_3480"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 117,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=0.96) to (dx=-1.52, dy=0.63) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 2 different walls\nB. The first wall hit would be grey-orange-wall\nC. The second wall hit would be red-green-wall\nD. The third wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_3480"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 306,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.77) to (x=0.38, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 1 wall\nB. The second wall hit would be blue-purple-wall\nC. The ball would be pocketed in the purple pocket\nD. The second wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_69"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 373,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=0.77) to (x=0.38, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be purple-grey-wall\nB. The ball would hit 1 wall\nC. The second wall hit would be orange-red-wall\nD. The ball would be pocketed",
+        "counterfactual_shot_id": "shot_1093"
+      }
+    ],
+    "descriptive_questions": [],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 944,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be orange-red-wall\nB. The ball will hit 1 wall\nC. The third wall hit will be purple-grey-wall\nD. The third wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 972,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "C",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be purple-grey-wall\nB. The first wall hit will be grey-orange-wall\nC. The ball will be pocketed\nD. The first wall hit will be green-blue-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 982,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be green-blue-wall\nB. The second wall hit will be blue-purple-wall\nC. The ball will hit the same wall 2 times\nD. The ball will hit 1 wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3691": {
+    "shot_id": "shot_3691",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 53,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "D",
+          "A",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=-0.87, dy=-0.87) to (dx=-0.89, dy=0.37) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 2 different walls\nB. The ball would be pocketed in the green pocket\nC. The third wall hit would be grey-orange-wall\nD. The first wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_3739"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 236,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.87, dy=-0.87) to (dx=-1.17, dy=-1.17) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be orange-red-wall\nB. The ball would be pocketed in the blue pocket\nC. The ball would be pocketed in the purple pocket\nD. The ball would be pocketed in the orange pocket",
+        "counterfactual_shot_id": "shot_3739"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 309,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.21) to (x=0.38, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 1 wall\nB. The ball would be pocketed in the purple pocket\nC. The first wall hit would be orange-red-wall\nD. The third wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_1899"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 492,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.21) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be red-green-wall\nB. The ball would hit the same wall 3 times\nC. The ball would hit 3 different walls\nD. The ball would be pocketed in the red pocket",
+        "counterfactual_shot_id": "shot_2923"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 534,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The ball hits 2 different walls\nB. The first wall hit was orange-red-wall\nC. The ball was pocketed in the gray pocket\nD. The ball hits 0 walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 728,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The third wall hit was red-green-wall\nB. The second wall hit was grey-orange-wall\nC. The first wall hit was blue-purple-wall\nD. The ball hits 2 different walls",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 875,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed\nB. The third wall hit will be red-green-wall\nC. The second wall hit will be red-green-wall\nD. The ball will hit 1 wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 954,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be blue-purple-wall\nB. The second wall hit will be green-blue-wall\nC. The ball will be pocketed in the blue pocket\nD. The first wall hit will be orange-red-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3824": {
+    "shot_id": "shot_3824",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 57,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=2.16, dy=-0.89) to (dx=0.51, dy=0.21) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be grey-orange-wall\nB. The ball would be pocketed in the red pocket\nC. The first wall hit would be blue-purple-wall\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_3601"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 313,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.21) to (x=0.16, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be blue-purple-wall\nB. The ball would be pocketed in the blue pocket\nC. The ball would be pocketed in the green pocket\nD. The ball would hit 3 different walls",
+        "counterfactual_shot_id": "shot_3312"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 588,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The second wall hit was orange-red-wall\nB. The first wall hit was orange-red-wall\nC. The ball hits 3 different walls\nD. The third wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 800,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be orange-red-wall\nB. The ball will hit 3 different walls\nC. The ball will be pocketed in the gray pocket\nD. The third wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_629": {
+    "shot_id": "shot_629",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 64,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=1.37) to (dx=0.68, dy=-0.68) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The third wall hit would be blue-purple-wall\nC. The second wall hit would be red-green-wall\nD. The first wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_568"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 234,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=1.37) to (dx=0.97, dy=-0.97) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be purple-grey-wall\nB. The first wall hit would be green-blue-wall\nC. The second wall hit would be green-blue-wall\nD. The ball would be pocketed in the purple pocket",
+        "counterfactual_shot_id": "shot_639"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 320,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=1.21) to (x=0.38, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The third wall hit would be blue-purple-wall\nC. The ball would hit 2 different walls\nD. The first wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_1909"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 490,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=1.21) to (x=0.38, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 1 wall\nB. The third wall hit would be orange-red-wall\nC. The first wall hit would be orange-red-wall\nD. The ball would hit the same wall 3 times",
+        "counterfactual_shot_id": "shot_1141"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 643,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The first wall hit was orange-red-wall\nB. The first wall hit was blue-purple-wall\nC. The first wall hit was purple-grey-wall\nD. The ball hits 0 walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 652,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed in the blue pocket\nB. The second wall hit was red-green-wall\nC. The third wall hit was purple-grey-wall\nD. The ball hits 3 different walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 736,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "D",
+          "C"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: What happened in this video?\nA. The ball hits the same wall 2 times\nB. The ball was pocketed in the gray pocket\nC. The first wall hit was purple-grey-wall\nD. The ball hits 0 walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 751,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The ball hits 1 wall\nB. The ball hits the same wall 3 times\nC. The second wall hit was purple-grey-wall\nD. The first wall hit was purple-grey-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 885,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "A",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be red-green-wall\nB. The second wall hit will be blue-purple-wall\nC. The ball will be pocketed in the purple pocket\nD. The first wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3820": {
+    "shot_id": "shot_3820",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 65,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial velocity were changed from (dx=-0.89, dy=-2.16) to (dx=-1.78, dy=-0.74) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The first wall hit would be grey-orange-wall\nC. The third wall hit would be red-green-wall\nD. The ball would be pocketed in the gray pocket",
+        "counterfactual_shot_id": "shot_3770"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 321,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.21) to (x=0.83, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the green pocket\nB. The ball would be pocketed in the blue pocket\nC. The ball would be pocketed in the purple pocket\nD. The ball would hit 3 different walls",
+        "counterfactual_shot_id": "shot_4076"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 646,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The second wall hit was blue-purple-wall\nB. The third wall hit was purple-grey-wall\nC. The ball hits 1 wall\nD. The ball was pocketed in the purple pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 732,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The second wall hit was orange-red-wall\nB. The second wall hit was blue-purple-wall\nC. The ball hits 0 walls\nD. The third wall hit was purple-grey-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 785,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "B",
+          "A"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit 1 wall\nB. The ball will hit 2 different walls\nC. The third wall hit will be orange-red-wall\nD. The ball will be pocketed in the green pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 967,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be orange-red-wall\nB. The first wall hit will be purple-grey-wall\nC. The ball will hit 3 different walls\nD. The second wall hit will be orange-red-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_2315": {
+    "shot_id": "shot_2315",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 73,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.29, dy=-0.29) to (dx=1.78, dy=0.74) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 2 times\nB. The ball would be pocketed\nC. The first wall hit would be green-blue-wall\nD. The ball would be pocketed in the purple pocket",
+        "counterfactual_shot_id": "shot_2482"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 210,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial velocity were changed from (dx=-0.29, dy=-0.29) to (dx=-1.52, dy=-0.63) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The ball would hit the same wall 2 times\nC. The third wall hit would be orange-red-wall\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_2360"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 329,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "B",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 0 walls\nB. The first wall hit would be orange-red-wall\nC. The ball would hit the same wall 3 times\nD. The third wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_523"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 466,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.83, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be purple-grey-wall\nB. The ball would be pocketed in the gray pocket\nC. The third wall hit would be blue-purple-wall\nD. The ball would hit 0 walls",
+        "counterfactual_shot_id": "shot_11"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 763,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The first wall hit was red-green-wall\nB. The ball hits 0 walls\nC. The first wall hit was blue-purple-wall\nD. The ball was pocketed in the orange pocket",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": []
+  },
+  "shot_49": {
+    "shot_id": "shot_49",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 76,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.82, dy=0.00) to (dx=-0.76, dy=0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The ball would hit 3 different walls\nC. The third wall hit would be grey-orange-wall\nD. The ball would hit 1 wall",
+        "counterfactual_shot_id": "shot_56"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 87,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "C",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=0.82, dy=0.00) to (dx=-1.36, dy=-1.36) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The second wall hit would be blue-purple-wall\nC. The first wall hit would be grey-orange-wall\nD. The third wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_56"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 332,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=0.32) to (x=0.16, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be grey-orange-wall\nB. The ball would be pocketed in the orange pocket\nC. The ball would hit 1 wall\nD. The ball would be pocketed in the blue pocket",
+        "counterfactual_shot_id": "shot_817"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 343,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "A",
+          "C"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.16, y=0.32) to (x=0.16, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed\nB. The first wall hit would be purple-grey-wall\nC. The ball would hit 1 wall\nD. The third wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_817"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 629,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The first wall hit was green-blue-wall\nB. The third wall hit was blue-purple-wall\nC. The ball hits 2 different walls\nD. The ball was pocketed in the gray pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 686,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: What happened in this video?\nA. The third wall hit was blue-purple-wall\nB. The ball hits 0 walls\nC. The first wall hit was green-blue-wall\nD. The third wall hit was grey-orange-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 854,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "D",
+          "D",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be orange-red-wall\nB. The ball will be pocketed in the orange pocket\nC. The second wall hit will be orange-red-wall\nD. The ball will hit 1 wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_1334": {
+    "shot_id": "shot_1334",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 86,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.32, dy=0.76) to (dx=0.32, dy=-0.76) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 3 different walls\nB. The first wall hit would be red-green-wall\nC. The first wall hit would be green-blue-wall\nD. The ball would hit the same wall 3 times",
+        "counterfactual_shot_id": "shot_1382"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 253,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.32, dy=0.76) to (dx=0.51, dy=-0.21) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 2 times\nB. The third wall hit would be grey-orange-wall\nC. The ball would hit 1 wall\nD. The first wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_1312"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 342,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.77) to (x=0.16, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be red-green-wall\nB. The second wall hit would be purple-grey-wall\nC. The third wall hit would be orange-red-wall\nD. The second wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_3382"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 509,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "D",
+          "A",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.77) to (x=0.16, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be grey-orange-wall\nB. The ball would be pocketed in the gray pocket\nC. The ball would be pocketed in the purple pocket\nD. The ball would be pocketed",
+        "counterfactual_shot_id": "shot_1078"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 576,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "D",
+          "A",
+          "C",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The first wall hit was orange-red-wall\nB. The first wall hit was grey-orange-wall\nC. The ball hits 0 walls\nD. The ball hits 1 wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 744,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "B"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: What happened in this video?\nA. The third wall hit was red-green-wall\nB. The first wall hit was purple-grey-wall\nC. The first wall hit was grey-orange-wall\nD. The ball was pocketed in the purple pocket",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 813,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be purple-grey-wall\nB. The first wall hit will be red-green-wall\nC. The ball will be pocketed in the gray pocket\nD. The ball will be pocketed in the orange pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 970,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit the same wall 3 times\nB. The ball will hit 2 different walls\nC. The ball will be pocketed in the green pocket\nD. The ball will hit 1 wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_1267": {
+    "shot_id": "shot_1267",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 88,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.75, dy=1.75) to (dx=-1.78, dy=-0.74) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 1 wall\nB. The second wall hit would be purple-grey-wall\nC. The ball would hit 3 different walls\nD. The third wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_1210"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 171,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.75, dy=1.75) to (dx=-0.21, dy=-0.51) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed\nB. The ball would hit 3 different walls\nC. The ball would hit 1 wall\nD. The first wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_1210"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 186,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.75, dy=1.75) to (dx=0.00, dy=-2.06) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be orange-red-wall\nB. The ball would be pocketed in the orange pocket\nC. The third wall hit would be grey-orange-wall\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_1165"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 344,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.32) to (x=0.38, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the purple pocket\nB. The third wall hit would be red-green-wall\nC. The third wall hit would be grey-orange-wall\nD. The ball would hit the same wall 2 times",
+        "counterfactual_shot_id": "shot_1779"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 427,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.32) to (x=0.38, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be orange-red-wall\nB. The ball would hit 0 walls\nC. The ball would be pocketed\nD. The second wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_2035"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 442,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=0.32) to (x=0.38, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 1 wall\nB. The ball would hit the same wall 2 times\nC. The first wall hit would be purple-grey-wall\nD. The ball would hit 5 different walls",
+        "counterfactual_shot_id": "shot_2035"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 543,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The ball hits 1 wall\nB. The ball was pocketed in the gray pocket\nC. The second wall hit was purple-grey-wall\nD. The first wall hit was grey-orange-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 549,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "C",
+          "C",
+          "A"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The first wall hit was green-blue-wall\nB. The ball was pocketed in the orange pocket\nC. The second wall hit was purple-grey-wall\nD. The ball was pocketed in the blue pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 691,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The third wall hit was red-green-wall\nB. The second wall hit was green-blue-wall\nC. The first wall hit was green-blue-wall\nD. The first wall hit was purple-grey-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 783,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be purple-grey-wall\nB. The ball will be pocketed in the blue pocket\nC. The ball will be pocketed in the green pocket\nD. The ball will hit 3 different walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 843,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be grey-orange-wall\nB. The ball will hit the same wall 3 times\nC. The first wall hit will be purple-grey-wall\nD. The second wall hit will be green-blue-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 873,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be blue-purple-wall\nB. The third wall hit will be green-blue-wall\nC. The second wall hit will be red-green-wall\nD. The ball will hit 0 walls",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_2608": {
+    "shot_id": "shot_2608",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 108,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.63, dy=-0.26) to (dx=1.51, dy=0.00) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be purple-grey-wall\nB. The ball would hit 2 different walls\nC. The ball would be pocketed in the gray pocket\nD. The third wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_2689"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 364,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=1.21) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the green pocket\nB. The ball would hit 2 different walls\nC. The first wall hit would be orange-red-wall\nD. The ball would hit 1 wall",
+        "counterfactual_shot_id": "shot_2864"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 713,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The third wall hit was orange-red-wall\nB. The ball hits 3 different walls\nC. The first wall hit was blue-purple-wall\nD. The ball was pocketed in the blue pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 726,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: What happened in this video?\nA. The ball hits 1 wall\nB. The ball was pocketed in the gray pocket\nC. The ball was pocketed in the green pocket\nD. The third wall hit was red-green-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 830,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be grey-orange-wall\nB. The third wall hit will be red-green-wall\nC. The ball will hit 1 wall\nD. The ball will be pocketed in the purple pocket",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3706": {
+    "shot_id": "shot_3706",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 111,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial velocity were changed from (dx=-1.27, dy=-0.53) to (dx=-0.39, dy=-0.39) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be grey-orange-wall\nB. The ball would hit 2 different walls\nC. The first wall hit would be red-green-wall\nD. The first wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_3611"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 367,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.21) to (x=0.16, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the purple pocket\nB. The third wall hit would be green-blue-wall\nC. The third wall hit would be blue-purple-wall\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_634"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 531,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The third wall hit was green-blue-wall\nB. The ball hits 2 different walls\nC. The first wall hit was orange-red-wall\nD. The ball was pocketed in the orange pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 558,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "B",
+          "D",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The third wall hit was blue-purple-wall\nB. The second wall hit was purple-grey-wall\nC. The ball hits the same wall 3 times\nD. The first wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 716,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "B",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: What happened in this video?\nA. The first wall hit was grey-orange-wall\nB. The second wall hit was red-green-wall\nC. The ball was pocketed in the red pocket\nD. The ball hits 2 different walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 762,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The first wall hit was purple-grey-wall\nB. The ball hits 2 different walls\nC. The first wall hit was orange-red-wall\nD. The second wall hit was blue-purple-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 900,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be green-blue-wall\nB. The ball will hit 0 walls\nC. The second wall hit will be green-blue-wall\nD. The third wall hit will be blue-purple-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 977,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be orange-red-wall\nB. The first wall hit will be blue-purple-wall\nC. The first wall hit will be purple-grey-wall\nD. The second wall hit will be green-blue-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_1919": {
+    "shot_id": "shot_1919",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 122,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.97, dy=-0.97) to (dx=-0.63, dy=-1.52) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be orange-red-wall\nB. The ball would be pocketed in the gray pocket\nC. The third wall hit would be purple-grey-wall\nD. The first wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_1804"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 154,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.97, dy=-0.97) to (dx=-0.76, dy=-0.32) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be purple-grey-wall\nB. The second wall hit would be red-green-wall\nC. The first wall hit would be grey-orange-wall\nD. The second wall hit would be purple-grey-wall",
+        "counterfactual_shot_id": "shot_1894"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 167,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.97, dy=-0.97) to (dx=-0.76, dy=0.32) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the green pocket\nB. The second wall hit would be purple-grey-wall\nC. The third wall hit would be grey-orange-wall\nD. The ball would hit the same wall 3 times",
+        "counterfactual_shot_id": "shot_1848"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 378,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=1.66) to (x=0.83, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be green-blue-wall\nB. The ball would be pocketed\nC. The ball would be pocketed in the orange pocket\nD. The first wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_3711"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 410,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=1.66) to (x=0.83, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 2 times\nB. The third wall hit would be red-green-wall\nC. The ball would be pocketed in the blue pocket\nD. The first wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_3967"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 423,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=1.66) to (x=0.38, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be green-blue-wall\nB. The ball would be pocketed in the orange pocket\nC. The second wall hit would be green-blue-wall\nD. The third wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_1663"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 645,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The third wall hit was orange-red-wall\nB. The ball hits 3 different walls\nC. The ball hits the same wall 2 times\nD. The ball was pocketed in the purple pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 764,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed\nB. The first wall hit was blue-purple-wall\nC. The second wall hit was blue-purple-wall\nD. The third wall hit was green-blue-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 876,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "C",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be purple-grey-wall\nB. The ball will hit 3 different walls\nC. The ball will hit 0 walls\nD. The second wall hit will be orange-red-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 1021,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be grey-orange-wall\nB. The ball will be pocketed in the purple pocket\nC. The ball will be pocketed in the gray pocket\nD. The second wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_4084": {
+    "shot_id": "shot_4084",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 126,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.95, dy=2.28) to (dx=-0.39, dy=0.39) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be blue-purple-wall\nB. The second wall hit would be grey-orange-wall\nC. The first wall hit would be purple-grey-wall\nD. The second wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_3896"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 138,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "D",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial velocity were changed from (dx=0.95, dy=2.28) to (dx=2.20, dy=0.00) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed\nB. The first wall hit would be orange-red-wall\nC. The first wall hit would be green-blue-wall\nD. The first wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_4049"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 382,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.66) to (x=0.16, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be red-green-wall\nB. The first wall hit would be purple-grey-wall\nC. The second wall hit would be purple-grey-wall\nD. The ball would be pocketed in the green pocket",
+        "counterfactual_shot_id": "shot_1524"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 394,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "C",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.66) to (x=0.83, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The ball would hit the same wall 3 times\nB. The third wall hit would be purple-grey-wall\nC. The third wall hit would be orange-red-wall\nD. The ball would be pocketed in the red pocket",
+        "counterfactual_shot_id": "shot_3572"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 568,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "B",
+          "D",
+          "C"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed in the orange pocket\nB. The second wall hit was orange-red-wall\nC. The second wall hit was red-green-wall\nD. The ball was pocketed",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 634,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed in the blue pocket\nB. The second wall hit was green-blue-wall\nC. The ball hits 3 different walls\nD. The ball hits 0 walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 712,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: What happened in this video?\nA. The second wall hit was grey-orange-wall\nB. The ball hits 0 walls\nC. The first wall hit was blue-purple-wall\nD. The ball was pocketed",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 864,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "D",
+          "A"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be purple-grey-wall\nB. The first wall hit will be green-blue-wall\nC. The second wall hit will be blue-purple-wall\nD. The ball will be pocketed",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 869,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be green-blue-wall\nB. The third wall hit will be red-green-wall\nC. The ball will hit 3 different walls\nD. The ball will be pocketed in the purple pocket",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_2479": {
+    "shot_id": "shot_2479",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 137,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.26, dy=-1.26) to (dx=-1.26, dy=-1.26) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be purple-grey-wall\nB. The ball would hit 3 different walls\nC. The second wall hit would be purple-grey-wall\nD. The ball would hit 2 different walls",
+        "counterfactual_shot_id": "shot_2475"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 143,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "D",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial velocity were changed from (dx=1.26, dy=-1.26) to (dx=-0.68, dy=-1.65) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The ball would be pocketed\nC. The first wall hit would be purple-grey-wall\nD. The second wall hit would be green-blue-wall",
+        "counterfactual_shot_id": "shot_2390"
+      },
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 163,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=1.26, dy=-1.26) to (dx=1.65, dy=0.00) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 3 different walls\nB. The first wall hit would be red-green-wall\nC. The second wall hit would be red-green-wall\nD. The second wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_2449"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 393,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "A",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.61, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be grey-orange-wall\nB. The first wall hit would be green-blue-wall\nC. The ball would hit the same wall 3 times\nD. The first wall hit would be grey-orange-wall",
+        "counterfactual_shot_id": "shot_2735"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 399,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "C",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.83, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be orange-red-wall\nB. The ball would hit 3 different walls\nC. The third wall hit would be blue-purple-wall\nD. The third wall hit would be orange-red-wall",
+        "counterfactual_shot_id": "shot_2735"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 419,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "C",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.77) to (x=0.83, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be green-blue-wall\nB. The second wall hit would be green-blue-wall\nC. The second wall hit would be orange-red-wall\nD. The second wall hit would be grey-orange-wall",
+        "counterfactual_shot_id": "shot_4015"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 616,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "C",
+          "B",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The third wall hit was green-blue-wall\nB. The second wall hit was red-green-wall\nC. The first wall hit was orange-red-wall\nD. The second wall hit was blue-purple-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 673,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "C",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: What happened in this video?\nA. The third wall hit was blue-purple-wall\nB. The ball hits 2 different walls\nC. The second wall hit was red-green-wall\nD. The ball was pocketed in the blue pocket",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 859,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "C",
+          "B"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed in the blue pocket\nB. The first wall hit will be red-green-wall\nC. The ball will hit 1 wall\nD. The first wall hit will be orange-red-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 959,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be blue-purple-wall\nB. The second wall hit will be red-green-wall\nC. The second wall hit will be blue-purple-wall\nD. The ball will hit 2 different walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 992,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit 2 different walls\nB. The second wall hit will be grey-orange-wall\nC. The third wall hit will be red-green-wall\nD. The first wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_1573": {
+    "shot_id": "shot_1573",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 162,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.00, dy=0.69) to (dx=-0.89, dy=0.37) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 0 walls\nB. The ball would be pocketed in the purple pocket\nC. The ball would be pocketed in the blue pocket\nD. The first wall hit would be grey-orange-wall",
+        "counterfactual_shot_id": "shot_1608"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 418,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "C",
+          "D",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.38, y=1.21) to (x=0.61, y=0.77) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be red-green-wall\nB. The ball would hit the same wall 2 times\nC. The first wall hit would be purple-grey-wall\nD. The ball would hit 0 walls",
+        "counterfactual_shot_id": "shot_1317"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 676,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "A",
+          "B",
+          "A",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The first wall hit was green-blue-wall\nB. The ball hits 1 wall\nC. The third wall hit was blue-purple-wall\nD. The third wall hit was grey-orange-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 721,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "A",
+          "C"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: What happened in this video?\nA. The first wall hit was green-blue-wall\nB. The ball was pocketed in the red pocket\nC. The ball hits 1 wall\nD. The ball hits 0 walls",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 735,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The third wall hit was blue-purple-wall\nB. The first wall hit was orange-red-wall\nC. The first wall hit was purple-grey-wall\nD. The ball was pocketed in the gray pocket",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 844,
+        "correct": false,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will hit 2 different walls\nB. The first wall hit will be green-blue-wall\nC. The ball will hit the same wall 2 times\nD. The first wall hit will be purple-grey-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_3843": {
+    "shot_id": "shot_3843",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 178,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.29, dy=0.29) to (dx=-0.29, dy=0.29) (assume all other variables are unchanged), what would happen?\nA. The ball would be pocketed in the orange pocket\nB. The first wall hit would be purple-grey-wall\nC. The second wall hit would be purple-grey-wall\nD. The second wall hit would be blue-purple-wall",
+        "counterfactual_shot_id": "shot_3847"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 434,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.66) to (x=0.16, y=1.21) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be grey-orange-wall\nB. The first wall hit would be grey-orange-wall\nC. The ball would be pocketed in the blue pocket\nD. The ball would hit 0 walls",
+        "counterfactual_shot_id": "shot_3075"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 571,
+        "correct": false,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The ball hits the same wall 2 times\nB. The second wall hit was purple-grey-wall\nC. The ball hits 1 wall\nD. The first wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "descriptive",
+        "entry_idx": 606,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: What happened in this video?\nA. The first wall hit was blue-purple-wall\nB. The ball was pocketed in the green pocket\nC. The ball was pocketed in the blue pocket\nD. The second wall hit was purple-grey-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 833,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "D",
+          "A"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be grey-orange-wall\nB. The ball will be pocketed in the green pocket\nC. The third wall hit will be purple-grey-wall\nD. The second wall hit will be purple-grey-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 838,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The first wall hit will be blue-purple-wall\nB. The ball will hit 3 different walls\nC. The third wall hit will be blue-purple-wall\nD. The ball will be pocketed in the orange pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 880,
+        "correct": false,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "D",
+          "B"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be purple-grey-wall\nB. The ball will hit 1 wall\nC. The first wall hit will be blue-purple-wall\nD. The first wall hit will be green-blue-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  },
+  "shot_2055": {
+    "shot_id": "shot_2055",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 179,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=-0.29, dy=0.29) to (dx=0.26, dy=-0.63) (assume all other variables are unchanged), what would happen?\nA. The third wall hit would be grey-orange-wall\nB. The ball would hit 1 wall\nC. The ball would hit 3 different walls\nD. The ball would be pocketed in the gray pocket",
+        "counterfactual_shot_id": "shot_2050"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 435,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "C",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: If the initial ball position were changed from (x=0.61, y=0.32) to (x=0.38, y=0.32) (assume all other variables are unchanged), what would happen?\nA. The second wall hit would be green-blue-wall\nB. The second wall hit would be blue-purple-wall\nC. The first wall hit would be green-blue-wall\nD. The ball would hit 1 wall",
+        "counterfactual_shot_id": "shot_1031"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 533,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "B",
+          "A",
+          "B",
+          "A"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The first wall hit was grey-orange-wall\nB. The third wall hit was purple-grey-wall\nC. The ball hits 0 walls\nD. The third wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": []
+  },
+  "shot_4068": {
+    "shot_id": "shot_4068",
+    "counterfactual_questions": [
+      {
+        "question_type": "counterfactual_velocity",
+        "entry_idx": 203,
+        "correct": true,
+        "ground_truth": [
+          3
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: If the initial velocity were changed from (dx=0.89, dy=2.16) to (dx=-1.07, dy=-1.07) (assume all other variables are unchanged), what would happen?\nA. The ball would hit 0 walls\nB. The ball would be pocketed in the purple pocket\nC. The ball would be pocketed in the blue pocket\nD. The second wall hit would be red-green-wall",
+        "counterfactual_shot_id": "shot_3979"
+      },
+      {
+        "question_type": "counterfactual_position",
+        "entry_idx": 459,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "A",
+          "A",
+          "C",
+          "D"
+        ],
+        "question_fraction_correct": 0.5,
+        "question": "Question: If the initial ball position were changed from (x=0.83, y=1.66) to (x=0.61, y=1.66) (assume all other variables are unchanged), what would happen?\nA. The first wall hit would be purple-grey-wall\nB. The second wall hit would be purple-grey-wall\nC. The ball would be pocketed\nD. The ball would hit 3 different walls",
+        "counterfactual_shot_id": "shot_3044"
+      }
+    ],
+    "descriptive_questions": [
+      {
+        "question_type": "descriptive",
+        "entry_idx": 699,
+        "correct": false,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "D",
+          "D",
+          "D",
+          "D"
+        ],
+        "question_fraction_correct": 0.0,
+        "question": "Question: What happened in this video?\nA. The ball was pocketed in the orange pocket\nB. The first wall hit was blue-purple-wall\nC. The ball hits 0 walls\nD. The first wall hit was orange-red-wall",
+        "counterfactual_shot_id": null
+      }
+    ],
+    "predictive_questions": [
+      {
+        "question_type": "predictive",
+        "entry_idx": 773,
+        "correct": true,
+        "ground_truth": [
+          0
+        ],
+        "predictions": [
+          "C",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.75,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The ball will be pocketed\nB. The ball will be pocketed in the blue pocket\nC. The second wall hit will be grey-orange-wall\nD. The ball will be pocketed in the green pocket",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 896,
+        "correct": true,
+        "ground_truth": [
+          2
+        ],
+        "predictions": [
+          "C",
+          "C",
+          "C",
+          "C"
+        ],
+        "question_fraction_correct": 1.0,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The third wall hit will be purple-grey-wall\nB. The ball will be pocketed in the purple pocket\nC. The ball will hit 0 walls\nD. The third wall hit will be grey-orange-wall",
+        "counterfactual_shot_id": null
+      },
+      {
+        "question_type": "predictive",
+        "entry_idx": 909,
+        "correct": true,
+        "ground_truth": [
+          1
+        ],
+        "predictions": [
+          "B",
+          "A",
+          "A",
+          "A"
+        ],
+        "question_fraction_correct": 0.25,
+        "question": "Question: Based on the first part of the video, what will happen in STRICTLY the second part of the video?\nA. The second wall hit will be red-green-wall\nB. The ball will be pocketed\nC. The third wall hit will be purple-grey-wall\nD. The third wall hit will be red-green-wall",
+        "counterfactual_shot_id": null
+      }
+    ]
+  }
+}

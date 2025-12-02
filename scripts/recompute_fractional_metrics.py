@@ -8,6 +8,7 @@ Updates all result files to use the new fractional correctness metric:
 """
 
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Dict, Any, List
@@ -39,10 +40,20 @@ def recompute_question_metrics(entry: Dict[str, Any]) -> Dict[str, Any]:
     # Calculate fractional correctness
     question_fraction_correct = num_correct_cameras / total_cameras if total_cameras > 0 else 0.0
     
+    # Calculate consistency (std dev of correctness across camera angles)
+    correctness_values = [metric.get("exactly_correct", 0) for metric in sample_metrics]
+    if total_cameras > 1:
+        mean_correctness = question_fraction_correct
+        variance = sum((val - mean_correctness) ** 2 for val in correctness_values) / total_cameras
+        consistency_std = math.sqrt(variance) if variance > 0 else 0.0
+    else:
+        consistency_std = 0.0
+    
     # Update entry with new fields
     entry["question_fraction_correct"] = question_fraction_correct
     entry["num_correct_cameras"] = num_correct_cameras
     entry["total_cameras"] = total_cameras
+    entry["consistency_std"] = consistency_std
     
     # Keep question_has_exact_match for backward compatibility (any camera correct)
     entry["question_has_exact_match"] = num_correct_cameras > 0
@@ -70,6 +81,9 @@ def recompute_aggregated_metrics(results: Dict[str, Any]) -> Dict[str, Any]:
     question_fraction_sum = 0.0
     question_first_sample_correct = 0
     
+    # Accumulate consistency (std dev)
+    consistency_std_sum = 0.0
+    
     # Per-question-type stats
     question_type_stats = {}
     
@@ -91,6 +105,7 @@ def recompute_aggregated_metrics(results: Dict[str, Any]) -> Dict[str, Any]:
                 question_type_stats[question_type] = {
                     "total": 0,
                     "exactly_correct_sum": 0.0,
+                    "consistency_std_sum": 0.0,
                     "first_sample_correct": 0,
                     "per_option_acc_sum": 0.0,
                     "per_option_samples": 0,
@@ -98,15 +113,19 @@ def recompute_aggregated_metrics(results: Dict[str, Any]) -> Dict[str, Any]:
             question_type_stats[question_type]["total"] += 1
             continue
         
-        # Recompute question-level metrics if not already present
-        if "question_fraction_correct" not in entry:
+        # Recompute question-level metrics if not already present or if consistency_std is missing
+        if "question_fraction_correct" not in entry or "consistency_std" not in entry:
             entry = recompute_question_metrics(entry)
         
         question_fraction = entry.get("question_fraction_correct", 0.0)
+        consistency_std = entry.get("consistency_std", 0.0)
         question_type = entry.get("question_type", "unknown")
         
         # Accumulate fractional correctness
         question_fraction_sum += question_fraction
+        
+        # Accumulate consistency
+        consistency_std_sum += consistency_std
         
         # Track first sample correctness
         if entry.get("first_sample_correct", False):
@@ -117,6 +136,7 @@ def recompute_aggregated_metrics(results: Dict[str, Any]) -> Dict[str, Any]:
             question_type_stats[question_type] = {
                 "total": 0,
                 "exactly_correct_sum": 0.0,
+                "consistency_std_sum": 0.0,
                 "first_sample_correct": 0,
                 "per_option_acc_sum": 0.0,
                 "per_option_samples": 0,
@@ -124,6 +144,7 @@ def recompute_aggregated_metrics(results: Dict[str, Any]) -> Dict[str, Any]:
         
         question_type_stats[question_type]["total"] += 1
         question_type_stats[question_type]["exactly_correct_sum"] += question_fraction
+        question_type_stats[question_type]["consistency_std_sum"] += consistency_std
         
         if entry.get("first_sample_correct", False):
             question_type_stats[question_type]["first_sample_correct"] += 1
@@ -151,12 +172,14 @@ def recompute_aggregated_metrics(results: Dict[str, Any]) -> Dict[str, Any]:
     
     # Calculate final metrics
     per_question_accuracy = question_fraction_sum / total_questions if total_questions > 0 else 0.0
+    consistency = consistency_std_sum / total_questions if total_questions > 0 else 0.0
     per_option_accuracy = total_per_option_acc / total_samples_for_per_option if total_samples_for_per_option > 0 else 0.0
     
     # Build metrics dictionary
     metrics_dict = {
         "per_question_accuracy": per_question_accuracy,
         "per_option_accuracy": per_option_accuracy,
+        "consistency": consistency,  # Average std dev of correctness across camera angles
         "total_samples": total_samples_for_per_option,
         "token_usage": {
             "total_prompt_tokens": total_prompt_tokens,
@@ -181,11 +204,13 @@ def recompute_aggregated_metrics(results: Dict[str, Any]) -> Dict[str, Any]:
         if qtype_total > 0:
             qtype_per_option_acc = stats["per_option_acc_sum"] / stats["per_option_samples"] if stats["per_option_samples"] > 0 else 0.0
             qtype_per_question_acc = stats["exactly_correct_sum"] / qtype_total
+            qtype_consistency = stats["consistency_std_sum"] / qtype_total if "consistency_std_sum" in stats else 0.0
             
             qtype_metrics = {
                 "total_questions": qtype_total,
                 "per_question_accuracy": qtype_per_question_acc,
                 "per_option_accuracy": qtype_per_option_acc,
+                "consistency": qtype_consistency,  # Average std dev of correctness across camera angles
                 "total_samples": stats["per_option_samples"],
             }
             
@@ -222,12 +247,14 @@ def process_result_file(filepath: Path) -> bool:
         with open(filepath, 'r') as f:
             results = json.load(f)
         
-        # Check if already updated (has question_fraction_correct in first entry)
+        # Check if already updated (has question_fraction_correct and consistency_std in first entry)
         if results.get("detailed_results"):
             first_entry = results["detailed_results"][0]
-            if "question_fraction_correct" in first_entry:
-                print(f"  Already updated, skipping...")
-                return True
+            if "question_fraction_correct" in first_entry and "consistency_std" in first_entry:
+                # Also check if metrics have consistency
+                if "consistency" in results.get("metrics", {}):
+                    print(f"  Already updated with consistency, skipping...")
+                    return True
         
         # Recompute metrics
         results = recompute_aggregated_metrics(results)

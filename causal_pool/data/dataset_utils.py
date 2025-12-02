@@ -46,7 +46,7 @@ def load_counterfactual_train_dataset(dataset_name, random_seed=42, eval_size=12
     # do NOT train on descriptive
     train_dataset = concatenate_datasets(
         [
-            counterfactual_velocity_train,
+            # counterfactual_velocity_train,
             counterfactual_position_train,
         ]
     ).shuffle(seed=random_seed)
