@@ -1,259 +1,177 @@
 # Causal Pool
 
-## SFT
+A video understanding benchmark for evaluating vision-language models on causal reasoning in pool table physics. The dataset contains multiple-choice questions about cue ball movements, requiring models to understand physical causality from video observations.
+
+## Overview
+
+Causal Pool evaluates models on four question types:
+- **Descriptive**: What happened in the video?
+- **Predictive**: What will happen next?
+- **Counterfactual (velocity)**: What if the initial velocity changed?
+- **Counterfactual (position)**: What if the initial position changed?
+
+Each question includes a video of pool table physics simulation and multiple-choice options about ball trajectories, wall collisions, and pocket outcomes.
+
+## Setup
 
 ```sh
-module load StdEnv/2023 gcc/12.3 cuda/12.6
 uv sync
 ```
 
-## Eval
+For SLURM cluster usage, see `documents/dev.md` for detailed setup instructions.
 
-```sh
-salloc --nodes=1 --gpus-per-node=1 --time 0-08:00:00 &
+## Dataset Structure
 
-module load StdEnv/2023 gcc/12.3 cuda/12.6
-export TORCH_CUDA_ARCH_LIST="9.0"
-export CUDA_VISIBLE_DEVICES=$(./scripts/pick_idle_gpu.sh)
+Datasets are organized in `datasets/` with the following structure:
 
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  ~/scratch/vllm.sif \
-  --model Qwen/Qwen3-VL-4B-Instruct \
-  --host 0.0.0.0 --port 8000 \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.95 \
-  --max-model-len 32768 \
-  --max-num-seqs 256 \
-  --enforce-eager \
-  --media-io-kwargs.video.num_frames -1 \
-
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  vllm.sif \
-  --model Qwen/Qwen3-VL-4B-Thinking \
-  --host 0.0.0.0 --port 8000 \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.95 \
-  --max-model-len 40960 \
-  --max-num-seqs 256 \
-  --reasoning-parser qwen3 \
-  --enforce-eager \
-  --media-io-kwargs.video.num_frames -1 \
-
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  vllm.sif \
-  --model Qwen/Qwen3-VL-8B-Instruct \
-  --host 0.0.0.0 --port 8000 \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.9 \
-  --max-model-len 32768 \
-  --max-num-seqs 512 \
-  --enforce-eager \
-  --media-io-kwargs.video.num_frames -1 \
-
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  vllm.sif \
-  --model Qwen/Qwen3-VL-32B-Instruct \
-  --host 0.0.0.0 --port 8000 \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.95 \
-  --max-model-len 8192 \
-  --max-num-seqs 128 \
-  --enforce-eager \
-  --media-io-kwargs.video.num_frames -1 \
-
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  ~/scratch/vllm.sif \
-  --model OpenGVLab/InternVL3_5-4B \
-  --host 0.0.0.0 --port 8000 \
-  --trust-remote-code \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.9 \
-  --max-model-len 40960 \
-  --max-num-seqs 512 \
-  --max-num-batched-tokens 8192 \
-  --enforce-eager \
-
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  ~/scratch/vllm.sif \
-  --model Qwen/Qwen3-VL-30B-A3B-Instruct \
-  --host 0.0.0.0 --port 8000 \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.95 \
-  --max-model-len 32768 \
-  --max-num-seqs 256 \
-  --enforce-eager \
-  --enable-expert-parallel \
-  --media-io-kwargs.video.num_frames -1 \
+```
+datasets/
+└── <dataset_name>/
+    ├── splits/
+    │   ├── train-{question_type}.jsonl
+    │   └── test-{question_type}.jsonl
+    ├── shots/
+    │   └── <shot_id>/
+    │       └── video files (*-full.mp4, *-partial.mp4)
+    └── raw_qa.jsonl
 ```
 
+Each dataset entry contains:
+- `video`: Shot identifier
+- `question`: Question text with context
+- `options`: List of multiple-choice options
+- `ground_truth`: Correct answer(s) as indices
+- `metadata.question_type`: One of the four question types
+
+## Supervised Fine-Tuning (SFT)
+
+Train models on the dataset using LoRA:
+
 ```sh
-set -a
-source .env
-set +a
+# Configure dataset and model in causal_pool/sft/train.py
+python causal_pool/sft/train.py
+```
 
-source .venv/bin/activate
+Or use the SLURM script:
+```sh
+sbatch scripts/sft.sh
+```
 
-uv run python causal_pool/eval/eval.py \
-  --dataset ds2 \
-  --base-url "http://trig0001:8000/v1" \
+Training supports:
+- Counterfactual training (position/velocity)
+- Descriptive training
+- LoRA with configurable rank and target modules
+- Custom trainer with per-question accuracy metrics
+
+## Evaluation
+
+### Quick Start
+
+Evaluate a model on a dataset:
+
+```sh
+# Start vLLM server (see documents/dev.md for full setup)
+# Then run evaluation:
+python causal_pool/eval/eval.py \
+  --dataset <dataset_name> \
+  --base-url "http://localhost:8000/v1" \
   --model "Qwen/Qwen3-VL-4B-Instruct" \
   --num-samples 1 \
   --max-concurrent 256 \
-  --max-tokens 10 \
-  --counterfactual-velocity-size 0 \
-  --counterfactual-position-size 0 \
-  --descriptive-size 256 \
-  --predictive-size 256 \
-  --fps 8 \
-
-uv run python causal_pool/eval/eval.py \
-  --dataset 1k_simple \
-  --base-url "http://trig0006:8000/v1" \
-  --model "Qwen/Qwen3-VL-4B-Thinking" \
-  --num-samples 1 \
-  --max-concurrent 64 \
-  --max-tokens 32768 \
-
-uv run python causal_pool/eval/eval.py \
-  --dataset ds2 \
-  --base-url "http://trig0005:8000/v1" \
-  --model "Qwen/Qwen3-VL-8B-Instruct" \
-  --num-samples 1 \
-  --max-concurrent 128 \
-  --max-tokens 10 \
-  --counterfactual-velocity-size 0 \
-  --counterfactual-position-size 0 \
-  --descriptive-size 256 \
-  --predictive-size 256 \
-
-uv run python causal_pool/eval/eval.py \
-  --dataset ds2 \
-  --base-url "http://trig0005:8000/v1" \
-  --model "Qwen/Qwen3-VL-32B-Instruct" \
-  --num-samples 1 \
-  --max-concurrent 128 \
-  --max-tokens 10 \
-  --counterfactual-velocity-size 0 \
-  --counterfactual-position-size 0 \
-  --descriptive-size 256 \
-  --predictive-size 256 \
-
-uv run python eval/eval.py \
-  --dataset 1k_simple \
-  --base-url "http://trig0006:8000/v1" \
-  --model "OpenGVLab/InternVL3_5-4B" \
-  --num-samples 1 \
-  --max-concurrent 512 \
-  --max-tokens 10 \
-
-uv run python causal_pool/eval/eval.py \
-  --dataset ds1 \
-  --base-url "http://trig0001:8000/v1" \
-  --model "Qwen/Qwen3-VL-30B-A3B-Instruct" \
-  --num-samples 1 \
-  --max-concurrent 256 \
-  --max-tokens 10 \
-  -e 1 \
+  --max-tokens 10
 ```
 
-Manual eval:
-```sh
-python scripts/manual_eval.py -d ds2 -m "Qwen/Qwen3-VL-32B-Instruct" -u http://trig0005:8000/v1 --fps 15 -i 0
-```
+### Automated Evaluation (SLURM)
+
+Use the automated evaluation script that handles vLLM server lifecycle:
 
 ```sh
-HF_HUB_OFFLINE=1 python scripts/merge_lora_ckpt.py \
-  -b "Qwen/Qwen3-VL-4B-Instruct" \
-  -c "outputs_sft/checkpoint-810/" \
+# Via SLURM
+sbatch scripts/run_eval.sh --model "Qwen/Qwen3-VL-4B-Instruct" --dataset <dataset_name>
 
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  ~/scratch/vllm.sif \
-  --model outputs_sft/checkpoint-810/merged/ \
-  --served-model-name causalpool-4B \
-  --host 0.0.0.0 --port 8000 \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.9 \
-  --max-model-len 8192 \
-  --max-num-seqs 512 \
-  --max-num-batched-tokens 8192 \
-  --enforce-eager \
-
-python causal_pool/eval/eval.py \
-  --dataset 1k_simple \
-  --base-url "http://trig0032:8000/v1" \
-  --model "causalpool-4B" \
-  --num-samples 1 \
-  --max-concurrent 256 \
-  --max-tokens 10 \
+# Directly on compute node
+bash scripts/run_eval_direct.sh --model "Qwen/Qwen3-VL-4B-Instruct" --dataset <dataset_name>
 ```
 
-serve vllm with lora:
-```sh
-apptainer run --nv \
-  --bind /scratch/scottc/:/scratch/scottc/ \
-  --bind /home/scottc/links/:/home/scottc/links/ \
-  --bind /scratch/scottc/cache/:/home/scottc/.cache \
-  --bind /scratch/scottc/cache/triton/:/home/scottc/.triton/ \
-  --env HF_HUB_OFFLINE=1 \
-  ~/scratch/vllm.sif \
-  --model Qwen/Qwen3-VL-4B-Instruct \
-  --host 0.0.0.0 --port 8000 \
-  --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.9 \
-  --max-model-len 8192 \
-  --max-num-seqs 512 \
-  --max-num-batched-tokens 8192 \
-  --enforce-eager \
-  --enable-lora \
-  --lora-modules cf=/home/scottc/links/scratch/causal_pool/outputs/sft/ds2-cf/checkpoint-352 desc=/home/scottc/links/scratch/causal_pool/outputs/sft/ds2-desc/checkpoint-346 \
-  --max-lora-rank 128 \
-  --max-loras 2 \
-```
-this seems to be not working as expected
+### Batch Evaluation
+
+Evaluate multiple models configured in `configs/eval/config.yaml`:
 
 ```sh
-export OPENBLAS_NUM_THREADS=1
+python scripts/batch_eval.py
 ```
 
-Start Jupyter server:
+### Manual Interactive Evaluation
+
+For debugging individual questions:
+
 ```sh
-source .venv/bin/activate
-module load StdEnv/2023 gcc/12.3 cuda/12.6
-export HF_HUB_OFFLINE=1
-jupyter lab --no-browser --ip=0.0.0.0 --port=8888
+python scripts/manual_eval.py -d <dataset_name> -m "Qwen/Qwen3-VL-4B-Instruct" -u http://localhost:8000/v1 --fps 15 -i 0
 ```
+
+## Evaluation Configuration
+
+The evaluation system uses Hydra-based configs in `configs/eval/`:
+
+- `config.yaml`: Main config specifying which models to evaluate
+- `models/`: Model-specific configurations
+- `vllm/`: vLLM serving configurations
+- `eval/`: Evaluation hyperparameters
+
+See `configs/eval/README.md` for detailed configuration guide.
+
+## Metrics
+
+Two accuracy metrics are computed:
+- **Per-question accuracy**: Exact match of predicted answer(s) with ground truth
+- **Per-option accuracy**: Hamming distance between predicted and ground truth option sets
+
+Results are saved as JSON files in `results/` with detailed per-question breakdowns.
+
+## Project Structure
+
+```
+causal_pool/
+├── causal_pool/          # Main package
+│   ├── data/            # Dataset loading utilities
+│   ├── eval/            # Evaluation scripts and utilities
+│   ├── sft/             # Supervised fine-tuning code
+│   ├── metrics.py       # Accuracy metrics
+│   └── prompt_utils.py  # Prompt construction
+├── configs/             # Hydra configuration files
+├── datasets/            # Dataset files and splits
+├── scripts/             # Utility scripts
+│   ├── auto_eval.py    # Automated evaluation orchestrator
+│   ├── batch_eval.py   # Batch evaluation submission
+│   ├── manual_eval.py  # Interactive evaluation
+│   └── process_dataset.py  # Dataset processing
+├── outputs/            # Training outputs and logs
+└── results/            # Evaluation results
+```
+
+## Key Scripts
+
+- `scripts/auto_eval.py`: Orchestrates vLLM server launch and evaluation
+- `scripts/batch_eval.py`: Submits multiple evaluation jobs
+- `scripts/manual_eval.py`: Interactive evaluation for debugging
+- `scripts/process_dataset.py`: Process raw QA data into train/test splits
+- `scripts/merge_lora_ckpt.py`: Merge LoRA checkpoints with base model
+- `scripts/plot_category_metrics.py`: Visualize evaluation results
+
+## Supported Models
+
+- Qwen3-VL (4B, 8B, 32B, 30B-A3B Instruct/Thinking variants)
+- Custom fine-tuned CausalPool models
+
+## Requirements
+
+- Python >= 3.12
+- CUDA-capable GPU
+- vLLM for model serving (via Apptainer on SLURM clusters)
+- See `pyproject.toml` for full dependency list
+
+## Documentation
+
+- `documents/dev.md`: Detailed development and cluster usage guide
+- `configs/eval/README.md`: Evaluation configuration guide
+- `tests/README.md`: Testing documentation
