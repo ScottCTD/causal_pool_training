@@ -16,33 +16,72 @@ def process_entry(entry):
     entry["question_type"] = question_type
     return entry
 
-def load_causal_pool_dataset(dataset_name, random_seed=42, eval_size=128):
-    # train with only counterfactual
-    # eval with all question types
+
+def load_train_subset(dataset_name, subset_name, random_seed=42, eval_size=128):
     dataset_base_path = osp.join("datasets", dataset_name)
     raw_train = list(
         jsonlines.open(
-            osp.join(dataset_base_path, "splits", "train-counterfactual_velocity.jsonl")
-        )
-    ) + list(
-        jsonlines.open(
-            osp.join(dataset_base_path, "splits", "train-counterfactual_position.jsonl")
+            osp.join(dataset_base_path, "splits", "train-" + subset_name + ".jsonl")
         )
     )
     raw_train = [process_entry(entry) for entry in raw_train]
     random.seed(random_seed)
     random.shuffle(raw_train)
-
     train_dataset = Dataset.from_list(raw_train[:-eval_size])
     eval_dataset = Dataset.from_list(raw_train[-eval_size:])
+    return train_dataset, eval_dataset
 
-    # load descriptive
-    raw_descriptive = list(jsonlines.open(osp.join(dataset_base_path, "splits", "train-descriptive.jsonl")))
-    raw_descriptive = [process_entry(entry) for entry in raw_descriptive]
-    random.shuffle(raw_descriptive)
-    eval_descriptive = Dataset.from_list(raw_descriptive[:eval_size])
-    eval_dataset = concatenate_datasets([eval_dataset, eval_descriptive])
 
+def load_counterfactual_train_dataset(dataset_name, random_seed=42, eval_size=128):
+    counterfactual_velocity_train, counterfactual_velocity_eval = load_train_subset(
+        dataset_name, "counterfactual_velocity", random_seed, eval_size
+    )
+    counterfactual_position_train, counterfactual_position_eval = load_train_subset(
+        dataset_name, "counterfactual_position", random_seed, eval_size
+    )
+    descriptive_train, descriptive_eval = load_train_subset(
+        dataset_name, "descriptive", random_seed, eval_size
+    )
+
+    # do NOT train on descriptive
+    train_dataset = concatenate_datasets(
+        [
+            counterfactual_velocity_train,
+            counterfactual_position_train,
+        ]
+    ).shuffle(seed=random_seed)
+
+    eval_dataset = concatenate_datasets(
+        [
+            counterfactual_velocity_eval,
+            counterfactual_position_eval,
+            descriptive_eval,
+        ]
+    )
+    return train_dataset, eval_dataset
+
+
+def load_descriptive_train_dataset(dataset_name, random_seed=42, eval_size=128):
+    counterfactual_velocity_train, counterfactual_velocity_eval = load_train_subset(
+        dataset_name, "counterfactual_velocity", random_seed, eval_size
+    )
+    counterfactual_position_train, counterfactual_position_eval = load_train_subset(
+        dataset_name, "counterfactual_position", random_seed, eval_size
+    )
+    descriptive_train, descriptive_eval = load_train_subset(
+        dataset_name, "descriptive", random_seed, eval_size
+    )
+    
+    train_dataset = descriptive_train
+    
+    eval_dataset = concatenate_datasets(
+        [
+            counterfactual_velocity_eval,
+            counterfactual_position_eval,
+            descriptive_eval,
+        ]
+    )
+    
     return train_dataset, eval_dataset
 
 
@@ -59,7 +98,9 @@ def gather_test_dataset(dataset_name, sizes: Dict[str, int], random_seed=42) -> 
         if name not in names:
             raise ValueError(f"Invalid dataset name: {name}")
         size = sizes[name]
-        raw = list(jsonlines.open(osp.join(dataset_base_path, "test-" + name + ".jsonl")))
+        raw = list(
+            jsonlines.open(osp.join(dataset_base_path, "test-" + name + ".jsonl"))
+        )
         dataset = Dataset.from_list(raw).shuffle(seed=random_seed)
         # If size is -1, use all entries; otherwise select up to size
         if size != -1:

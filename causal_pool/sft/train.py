@@ -3,10 +3,10 @@ import os.path as osp
 import random
 from collections import defaultdict
 from typing import Dict
+import warnings
 
 import numpy as np
 import torch
-from custom_trainer import CausalPoolTrainer
 from peft import LoraConfig, get_peft_model
 from qwen_vl_utils import process_vision_info
 from transformers import (
@@ -15,17 +15,24 @@ from transformers import (
     GenerationConfig,
     Qwen3VLForConditionalGeneration,
     Seq2SeqTrainingArguments,
+    BitsAndBytesConfig,
+    TrainerCallback,
 )
 
-from causal_pool.data.dataset_utils import load_causal_pool_dataset
+from causal_pool.data.dataset_utils import load_counterfactual_train_dataset, load_descriptive_train_dataset
 from causal_pool.prompt_utils import build_question_prompt, index_to_letter
-from causal_pool.metrics import (
-    calculate_per_question_accuracy,
-    calculate_per_option_accuracy,
+from causal_pool.metrics import calculate_per_question_accuracy
+from causal_pool.sft.custom_trainer import CausalPoolTrainer
+
+warnings.filterwarnings(
+    "ignore",
+    category=UserWarning,
+    module=r"torchvision\.io\._video_deprecation_warning"
 )
 
 DATASET_NAME = "ds2"
-train_dataset, eval_dataset = load_causal_pool_dataset(DATASET_NAME, eval_size=16)
+# train_dataset, eval_dataset = load_counterfactual_train_dataset(DATASET_NAME, eval_size=128)
+train_dataset, eval_dataset = load_descriptive_train_dataset(DATASET_NAME, eval_size=128)
 
 model_name = "Qwen/Qwen3-VL-4B-Instruct"
 
@@ -35,6 +42,12 @@ model = Qwen3VLForConditionalGeneration.from_pretrained(
     device_map="auto",
     attn_implementation="flash_attention_2",
     local_files_only=True,
+    # quantization_config=BitsAndBytesConfig(
+    #     load_in_4bit=True,                        # Load the model in 4-bit precision to save memory
+    #     bnb_4bit_compute_dtype=torch.bfloat16,     # Data type used for internal computations in quantization
+    #     bnb_4bit_use_double_quant=True,           # Use double quantization to improve accuracy
+    #     bnb_4bit_quant_type="nf4"                 # Type of quantization. "nf4" is recommended for recent LLMs
+    # )
 )
 processor = AutoProcessor.from_pretrained(
     model_name, local_files_only=True, use_fast=True
@@ -62,8 +75,9 @@ peft_config = LoraConfig(
     ],
 )
 model = get_peft_model(model, peft_config)
-print(model)
+# print(model)
 model.print_trainable_parameters()
+print("Model static footprint (GB):", model.get_memory_footprint() / 1024**3)
 
 
 def get_assistant_mask(input_ids):
@@ -143,7 +157,7 @@ def data_collator(samples):
 
         # find all .mp4 files and randomly choose one
         shot_dir = osp.join("datasets", DATASET_NAME, "shots", video_name)
-        video_files = [f for f in os.listdir(shot_dir) if f.endswith(".mp4")]
+        video_files = [f for f in os.listdir(shot_dir) if f.endswith(".mp4") and "partial" not in f]
         video_paths = [osp.join(shot_dir, f) for f in video_files]
         video_path = random.choice(video_paths)
 
@@ -185,14 +199,14 @@ def data_collator(samples):
 
     # construct generation inputs
     # TODO: efficiency boost by only encode the video once
-    generation_inputs = get_model_inputs(
-        [c[:-1] for c in conversations], add_generation_prompt=True
-    )
+    # generation_inputs = get_model_inputs(
+    #     [c[:-1] for c in conversations], add_generation_prompt=True
+    # )
 
     return {
         **inputs,
         "labels": labels,
-        "generation_inputs": generation_inputs,
+        # "generation_inputs": generation_inputs,
     }
 
 
@@ -240,29 +254,30 @@ eval_generation_config = GenerationConfig(
     do_sample=False,
 )
 
-# Configure training arguments using SFTConfig
+run_name = f"{DATASET_NAME}-desc"
 training_args = Seq2SeqTrainingArguments(
     # data loading
-    dataloader_num_workers=6,
+    dataloader_num_workers=8,
     dataloader_pin_memory=True,
     dataloader_persistent_workers=True,
     remove_unused_columns=False,
     # training schedule / optimization
     num_train_epochs=1,
-    # max_steps=30,
-    per_device_train_batch_size=6,
+    # optim="adamw_8bit",
+    # max_steps=1,
+    per_device_train_batch_size=8,
     gradient_accumulation_steps=4,
     lr_scheduler_type="cosine",
     gradient_checkpointing=True,
     gradient_checkpointing_kwargs={"use_reentrant": False},
-    warmup_steps=50,
+    warmup_steps=20,
     learning_rate=1e-4,
     max_grad_norm=1.0,
     weight_decay=0.05,
     label_smoothing_factor=0.00,
     bf16=True,
     # eval
-    per_device_eval_batch_size=8,
+    per_device_eval_batch_size=12,
     predict_with_generate=True,
     generation_config=eval_generation_config,
     eval_strategy="steps",
@@ -271,7 +286,7 @@ training_args = Seq2SeqTrainingArguments(
     load_best_model_at_end=True,
     metric_for_best_model="overall-PQA",
     # Logging / reporting
-    output_dir=f"outputs/sft/{DATASET_NAME}",
+    output_dir=f"outputs/sft/{run_name}",
     logging_steps=1,
     report_to="wandb",
     # model saving
@@ -280,6 +295,20 @@ training_args = Seq2SeqTrainingArguments(
     save_total_limit=5,
 )
 
+def bytes_to_gb(x):
+    return x / 1024**3
+
+class CudaMemoryCallback(TrainerCallback):
+    def on_step_end(self, args, state, control, **kwargs):
+        device = torch.device("cuda", 0)
+        alloc = bytes_to_gb(torch.cuda.max_memory_allocated(device))
+        reserved = bytes_to_gb(torch.cuda.max_memory_reserved(device))
+        print(
+            f"[step {state.global_step}] "
+            f"allocated={alloc:.2f} GB, reserved={reserved:.2f} GB"
+        )
+        # Reset peak counter so next step starts fresh
+        torch.cuda.reset_peak_memory_stats(device)
 
 trainer = CausalPoolTrainer(
     model=model,
@@ -289,6 +318,7 @@ trainer = CausalPoolTrainer(
     eval_dataset=eval_dataset,
     data_collator=data_collator,
     compute_metrics=compute_metrics,
+    callbacks=[CudaMemoryCallback()],
 )
 
 trainer_stats = trainer.train()
